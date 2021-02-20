@@ -43,8 +43,10 @@ console.debug('start ' + process.env.INSTANCE_ID);
 const baseURL = `http://${process.env.ADDRESS}:8000`;
 console.debug('base url: ', baseURL);
 
-process.env.DEBUG = 'client';
-const client = axios.create({baseURL, validateStatus: () => true});
+import { Agent } from "http";
+const httpAgent = new Agent({ keepAlive: true });
+const httpsAgent = new Agent({ keepAlive: true });
+const client = axios.create({baseURL, validateStatus: () => true, httpAgent, httpsAgent});
 const logger = debug('client');
 // addLogger(client, logger);
 

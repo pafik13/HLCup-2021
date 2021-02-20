@@ -1,4 +1,4 @@
-FROM node:12-alpine as build-ts
+FROM node:14-alpine as build-ts
 
 WORKDIR /usr/src/app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN yarn
 
-FROM keymetrics/pm2:12-alpine
+FROM keymetrics/pm2:14-alpine
 
 WORKDIR /usr/app
 
