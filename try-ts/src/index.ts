@@ -34,9 +34,17 @@ type Treasure = {
   treasures: string[];
 };
 
+import * as promClient from 'prom-client';
+const apiMetrics = new promClient.Summary({
+  name: 'rest_api',
+  help: 'summary of rest api count and time',
+  labelNames: ['method', 'route', 'status', 'response_size'],
+});
+
 // import {addLogger} from 'axios-debug-log';
-import axios, {AxiosInstance} from 'axios';
+import axios, {AxiosError, AxiosInstance} from 'axios';
 import debug from 'debug';
+import config = require('axios-debug-log');
 
 console.debug('start ' + process.env.INSTANCE_ID);
 
@@ -47,6 +55,11 @@ process.env.DEBUG = 'client';
 const client = axios.create({baseURL, validateStatus: () => true});
 const logger = debug('client');
 // addLogger(client, logger);
+
+const metricsInterval = setInterval(() => {
+  logger(promClient.register.metrics());
+}, 30000);
+metricsInterval.unref();
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -65,37 +78,77 @@ class APIClient {
   }
 
   async post_license(coin: number[]): Promise<License | null> {
+    const end = apiMetrics.startTimer();
     const result = await this.client.post<License>('/licenses', coin);
-    if (result.status === 200) return result.data;
+    const isSuccess = result.status === 200;
+    end({
+      method: result.config.method,
+      route: result.config.url,
+      status: result.status,
+      response_size: isSuccess ? 1 : 0,
+    });
+    if (isSuccess) return result.data;
     return null;
   }
 
   async get_license(): Promise<License[] | null> {
+    const end = apiMetrics.startTimer();
     const result = await this.client.get<License[]>('/licenses');
-    if (result.status === 200) return result.data;
+    const isSuccess = result.status === 200;
+    end({
+      method: result.config.method,
+      route: result.config.url,
+      status: result.status,
+      response_size: result.status === 200 ? result.data.length : 0,
+    });
+    if (isSuccess) return result.data;
     return null;
   }
 
   async post_dig(dig: Dig): Promise<Treasure | null> {
+    const end = apiMetrics.startTimer();
     const result = await this.client.post<string[]>('/dig', dig);
-    if (result.status === 200) return {priority: 0, treasures: result.data};
+    const isSuccess = result.status === 200;
+    end({
+      method: result.config.method,
+      route: result.config.url,
+      status: result.status,
+      response_size: isSuccess ? result.data.length : 0,
+    });
+    if (isSuccess) return {priority: 0, treasures: result.data};
     if (result.status === 403 && this.license) delete this.license.id;
     return null;
   }
 
   async post_cash(treasure: string): Promise<number[] | null> {
+    const end = apiMetrics.startTimer();
     const result = await this.client.post<number[]>(
       '/cash',
       JSON.stringify(treasure),
       this.axiosConfigForCash
     );
-    if (result.status === 200) return result.data;
+    const isSuccess = result.status === 200;
+    end({
+      method: result.config.method,
+      route: result.config.url,
+      status: result.status,
+      response_size: isSuccess ? 1 : 0,
+    });
+    if (isSuccess) return result.data;
     return null;
   }
 
   async post_explore(area: Area): Promise<Explore | null> {
+    const end = apiMetrics.startTimer();
     const result = await this.client.post<Explore>('/explore', area);
-    if (result.status === 200) {
+    const isSuccess = result.status === 200;
+    end({
+      method: result.config.method,
+      route: result.config.url,
+      status: result.status,
+      response_size: isSuccess ? 1 : 0,
+    });
+    if (isSuccess) {
       result.data.priority = 0;
       return result.data;
     }
@@ -103,8 +156,16 @@ class APIClient {
   }
 
   async get_balance(): Promise<Wallet | null> {
+    const end = apiMetrics.startTimer();
     const result = await this.client.get<Wallet>('balance');
-    if (result.status === 200) return result.data;
+    const isSuccess = result.status === 200;
+    end({
+      method: result.config.method,
+      route: result.config.url,
+      status: result.status,
+      response_size: isSuccess ? 1 : 0,
+    });
+    if (isSuccess) return result.data;
     return null;
   }
 
@@ -159,8 +220,12 @@ const game = async (client: APIClient) => {
             }
           }
         }
-      } catch (error) {
-        logger('global error: %o', error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          logger('global error: %s', error.message);
+        } else {
+          logger('global error: %o', error);
+        }
         sleep(100);
       }
     }
