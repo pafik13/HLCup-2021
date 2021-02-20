@@ -111,8 +111,15 @@ class APIClient {
   }
 
   async update_license(coins: number[] = []): Promise<void> {
+    const result = await this.client.get('/health-check')
+    logger('health-check: %d, %o', result.status, result.data)
     const licence = await this.post_license(coins);
-    if (licence) this.license = licence;
+    if (licence) {
+      this.license = licence;
+      logger('license is got')
+    } else {
+      logger('license not issued')
+    }
   }
 }
 
