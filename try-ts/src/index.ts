@@ -38,13 +38,13 @@ import * as promClient from 'prom-client';
 const apiMetrics = new promClient.Summary({
   name: 'rest_api',
   help: 'summary of rest api count and time',
+  percentiles: [0.5, 0.999],
   labelNames: ['method', 'route', 'status', 'response_size'],
 });
 
 // import {addLogger} from 'axios-debug-log';
-import axios, {AxiosError, AxiosInstance} from 'axios';
+import axios, {AxiosInstance} from 'axios';
 import debug from 'debug';
-import config = require('axios-debug-log');
 
 console.debug('start ' + process.env.INSTANCE_ID);
 
@@ -56,8 +56,8 @@ const client = axios.create({baseURL, validateStatus: () => true});
 const logger = debug('client');
 // addLogger(client, logger);
 
-const metricsInterval = setInterval(() => {
-  logger(promClient.register.metrics());
+const metricsInterval = setInterval(async () => {
+  logger(await promClient.register.metrics());
 }, 30000);
 metricsInterval.unref();
 
@@ -170,8 +170,14 @@ class APIClient {
   }
 
   async update_license(coins: number[] = []): Promise<void> {
-    const licence = await this.post_license(coins);
-    if (licence) this.license = licence;
+    let license = await this.post_license(coins);
+    if (license) {
+      this.license = license;
+    } else {
+      await sleep(20);
+      const wallet = await this.get_balance();
+      if (wallet) license = await this.post_license(wallet.wallet);
+    }
   }
 }
 
@@ -221,6 +227,7 @@ const game = async (client: APIClient) => {
           }
         }
       } catch (error: unknown) {
+        logger('x: %d, y: %d', x, y);
         if (error instanceof Error) {
           logger('global error: %s', error.message);
         } else {
