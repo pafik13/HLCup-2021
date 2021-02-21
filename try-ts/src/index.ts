@@ -219,15 +219,13 @@ const splitArea = (area: Area): Area[] => {
   return [area1, area2];
 };
 
-const game = async (client: APIClient) => {
-  const instanceId = Number(process.env.INSTANCE_ID);
-
-  let area: Area = {
-    posX: instanceId * 875,
-    posY: instanceId * 875,
-    sizeX: 875,
-    sizeY: 875,
-  };
+const findAreaWithTreasures = async (
+  client: APIClient,
+  instanceId: number,
+  initArea: Area
+): Promise<{area: Area; explore: Explore | null}> => {
+  let area = initArea;
+  let explore = null;
   while (area.sizeX > 1 || area.sizeY > 1) {
     try {
       const areas = splitArea(area);
@@ -262,17 +260,22 @@ const game = async (client: APIClient) => {
       if (explore0 && explore1) {
         if (explore0.amount > explore1.amount) {
           area = explore0.area;
+          explore = explore0;
         } else {
           area = explore1.area;
+          explore = explore1;
         }
       } else if (!explore0 && !explore1) {
         area = areas[0];
+        explore = null;
       } else {
         if (explore1) {
           area = explore1.area;
+          explore = explore1;
         }
         if (explore0) {
           area = explore0.area;
+          explore = explore0;
         }
       }
     } catch (error: unknown) {
@@ -286,7 +289,68 @@ const game = async (client: APIClient) => {
       sleep(100);
     }
   }
-  logger(await promClient.register.metrics());
+  return {area, explore};
+};
+
+const game = async (client: APIClient) => {
+  const instanceId = Number(process.env.INSTANCE_ID);
+
+  const baseArea: Area = {
+    posX: instanceId * 875,
+    posY: instanceId * 875,
+    sizeX: 875,
+    sizeY: 875,
+  };
+
+  try {
+    let i = 875 * 875;
+    while (i--) {
+      while (
+        !client.license ||
+        !client.license.id ||
+        client.license.digUsed >= client.license.digAllowed
+      ) {
+        await client.update_license();
+      }
+
+      const {area, explore: maybyExplore} = await findAreaWithTreasures(
+        client,
+        instanceId,
+        baseArea
+      );
+      let explore = maybyExplore;
+      if (!explore) explore = await client.post_explore(area);
+      if (!explore || !explore.amount) continue;
+
+      let depth = 1;
+      let left = explore.amount;
+      while (depth <= 10 && left > 0) {
+        const dig: Dig = {
+          licenseID: client.license.id,
+          posX: explore.area.posX,
+          posY: explore.area.posY,
+          depth,
+        };
+
+        const treasures = await client.post_dig(dig);
+        client.license.digUsed++;
+        depth++;
+        if (treasures) {
+          for (const treasure of treasures.treasures) {
+            const res = await client.post_cash(treasure);
+            if (res) left--;
+          }
+        }
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logger('global error: %s', error.message);
+    } else {
+      logger('global error: %o', error);
+    }
+    logger(await promClient.register.metrics());
+  }
 };
 
 const apiClient = new APIClient(client);
