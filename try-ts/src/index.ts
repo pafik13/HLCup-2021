@@ -187,7 +187,7 @@ const game = async (client: APIClient) => {
   // };
   const instanceId = Number(process.env.INSTANCE_ID);
 
-  const step = 2;
+  const step = 3;
   for (let x = instanceId * 875; x < (instanceId + 1) * 875; x += step) {
     for (let y = instanceId * 875; y < (instanceId + 1) * 875; y += step) {
       try {
