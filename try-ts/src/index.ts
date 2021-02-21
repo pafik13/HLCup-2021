@@ -39,7 +39,7 @@ const apiMetrics = new promClient.Summary({
   name: 'rest_api',
   help: 'summary of rest api count and time',
   percentiles: [0.5, 0.999],
-  labelNames: ['method', 'route', 'status', 'response_size'],
+  labelNames: ['method', 'route', 'status', 'sizeX', 'sizeY'],
 });
 
 // import {addLogger} from 'axios-debug-log';
@@ -77,66 +77,66 @@ class APIClient {
     this.client = client;
   }
 
-  async post_license(coin: number[]): Promise<License | null> {
-    const end = apiMetrics.startTimer();
-    const result = await this.client.post<License>('/licenses', coin);
-    const isSuccess = result.status === 200;
-    end({
-      method: result.config.method,
-      route: result.config.url,
-      status: result.status,
-      response_size: isSuccess ? 1 : 0,
-    });
-    if (isSuccess) return result.data;
-    return null;
-  }
+  // async post_license(coin: number[]): Promise<License | null> {
+  //   const end = apiMetrics.startTimer();
+  //   const result = await this.client.post<License>('/licenses', coin);
+  //   const isSuccess = result.status === 200;
+  //   end({
+  //     method: result.config.method,
+  //     route: result.config.url,
+  //     status: result.status,
+  //     response_size: isSuccess ? 1 : 0,
+  //   });
+  //   if (isSuccess) return result.data;
+  //   return null;
+  // }
 
-  async get_license(): Promise<License[] | null> {
-    const end = apiMetrics.startTimer();
-    const result = await this.client.get<License[]>('/licenses');
-    const isSuccess = result.status === 200;
-    end({
-      method: result.config.method,
-      route: result.config.url,
-      status: result.status,
-      response_size: result.status === 200 ? result.data.length : 0,
-    });
-    if (isSuccess) return result.data;
-    return null;
-  }
+  // async get_license(): Promise<License[] | null> {
+  //   const end = apiMetrics.startTimer();
+  //   const result = await this.client.get<License[]>('/licenses');
+  //   const isSuccess = result.status === 200;
+  //   end({
+  //     method: result.config.method,
+  //     route: result.config.url,
+  //     status: result.status,
+  //     response_size: result.status === 200 ? result.data.length : 0,
+  //   });
+  //   if (isSuccess) return result.data;
+  //   return null;
+  // }
 
-  async post_dig(dig: Dig): Promise<Treasure | null> {
-    const end = apiMetrics.startTimer();
-    const result = await this.client.post<string[]>('/dig', dig);
-    const isSuccess = result.status === 200;
-    end({
-      method: result.config.method,
-      route: result.config.url,
-      status: result.status,
-      response_size: isSuccess ? result.data.length : 0,
-    });
-    if (isSuccess) return {priority: 0, treasures: result.data};
-    if (result.status === 403 && this.license) delete this.license.id;
-    return null;
-  }
+  // async post_dig(dig: Dig): Promise<Treasure | null> {
+  //   const end = apiMetrics.startTimer();
+  //   const result = await this.client.post<string[]>('/dig', dig);
+  //   const isSuccess = result.status === 200;
+  //   end({
+  //     method: result.config.method,
+  //     route: result.config.url,
+  //     status: result.status,
+  //     response_size: isSuccess ? result.data.length : 0,
+  //   });
+  //   if (isSuccess) return {priority: 0, treasures: result.data};
+  //   if (result.status === 403 && this.license) delete this.license.id;
+  //   return null;
+  // }
 
-  async post_cash(treasure: string): Promise<number[] | null> {
-    const end = apiMetrics.startTimer();
-    const result = await this.client.post<number[]>(
-      '/cash',
-      JSON.stringify(treasure),
-      this.axiosConfigForCash
-    );
-    const isSuccess = result.status === 200;
-    end({
-      method: result.config.method,
-      route: result.config.url,
-      status: result.status,
-      response_size: isSuccess ? 1 : 0,
-    });
-    if (isSuccess) return result.data;
-    return null;
-  }
+  // async post_cash(treasure: string): Promise<number[] | null> {
+  //   const end = apiMetrics.startTimer();
+  //   const result = await this.client.post<number[]>(
+  //     '/cash',
+  //     JSON.stringify(treasure),
+  //     this.axiosConfigForCash
+  //   );
+  //   const isSuccess = result.status === 200;
+  //   end({
+  //     method: result.config.method,
+  //     route: result.config.url,
+  //     status: result.status,
+  //     response_size: isSuccess ? 1 : 0,
+  //   });
+  //   if (isSuccess) return result.data;
+  //   return null;
+  // }
 
   async post_explore(area: Area): Promise<Explore | null> {
     const end = apiMetrics.startTimer();
@@ -146,7 +146,8 @@ class APIClient {
       method: result.config.method,
       route: result.config.url,
       status: result.status,
-      response_size: isSuccess ? 1 : 0,
+      sizeX: area.sizeX,
+      sizeY: area.sizeY,
     });
     if (isSuccess) {
       result.data.priority = 0;
@@ -158,29 +159,29 @@ class APIClient {
     return null;
   }
 
-  async get_balance(): Promise<Wallet | null> {
-    const end = apiMetrics.startTimer();
-    const result = await this.client.get<Wallet>('balance');
-    const isSuccess = result.status === 200;
-    end({
-      method: result.config.method,
-      route: result.config.url,
-      status: result.status,
-      response_size: isSuccess ? 1 : 0,
-    });
-    if (isSuccess) return result.data;
-    return null;
-  }
+  // async get_balance(): Promise<Wallet | null> {
+  //   const end = apiMetrics.startTimer();
+  //   const result = await this.client.get<Wallet>('balance');
+  //   const isSuccess = result.status === 200;
+  //   end({
+  //     method: result.config.method,
+  //     route: result.config.url,
+  //     status: result.status,
+  //     response_size: isSuccess ? 1 : 0,
+  //   });
+  //   if (isSuccess) return result.data;
+  //   return null;
+  // }
 
-  async update_license(coins: number[] = []): Promise<void> {
-    const license = await this.post_license(coins);
-    if (license) this.license = license;
-    // } else {
-    //   await sleep(20);
-    //   const wallet = await this.get_balance();
-    //   if (wallet) license = await this.post_license(wallet.wallet);
-    // }
-  }
+  // async update_license(coins: number[] = []): Promise<void> {
+  //   const license = await this.post_license(coins);
+  //   if (license) this.license = license;
+  //   // } else {
+  //   //   await sleep(20);
+  //   //   const wallet = await this.get_balance();
+  //   //   if (wallet) license = await this.post_license(wallet.wallet);
+  //   // }
+  // }
 }
 
 const splitArea = (area: Area): Area[] => {
@@ -222,69 +223,33 @@ const splitArea = (area: Area): Area[] => {
 const game = async (client: APIClient) => {
   const instanceId = Number(process.env.INSTANCE_ID);
 
-  let area: Area = {
-    posX: instanceId * 875,
-    posY: instanceId * 875,
-    sizeX: 875,
-    sizeY: 875,
-  };
-  while (area.sizeX > 1 || area.sizeY > 1) {
-    try {
-      const areas = splitArea(area);
-
-      let explores: Array<Explore | null> = [null, null];
-      try {
-        explores = await Promise.all(areas.map(it => client.post_explore(it)));
-      } catch (error) {
-        logger(
-          'instanceId: %d, area: %o; area0: %o; area1: %o;',
-          instanceId,
-          area,
-          areas[0],
-          areas[1]
-        );
-      }
-
-      const explore0 = explores[0];
-      const explore1 = explores[1];
-
-      if (instanceId === 1) {
-        logger(
-          'instanceId: %d, area: %o; area0: %o; area1: %o; explore0: %o; explore1: %o',
-          instanceId,
-          area,
-          areas[0],
-          areas[1],
-          explore0,
-          explore1
-        );
-      }
-      if (explore0 && explore1) {
-        if (explore0.amount > explore1.amount) {
-          area = explore0.area;
-        } else {
-          area = explore1.area;
-        }
-      } else if (!explore0 && !explore1) {
-        area = areas[0];
-      } else {
-        if (explore1) {
-          area = explore1.area;
-        }
-        if (explore0) {
-          area = explore0.area;
+  const partSize = 875;
+  const minX = instanceId * partSize;
+  const minY = instanceId * partSize;
+  const maxX = minX + partSize;
+  const maxY = minY + partSize;
+  const steps = [20, 25, 30];
+  try {
+    for (const step of steps) {
+      for (let x = minX; x < maxX; x += step) {
+        for (let y = minY; y < maxY; y += step) {
+          const area: Area = {
+            posX: x,
+            posY: y,
+            sizeX: step,
+            sizeY: step,
+          };
+          await client.post_explore(area);
         }
       }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        logger('global error: %s', error.message);
-      } else {
-        logger('global error: %o', error);
-      }
-      logger('area: %o', area);
-      logger(await promClient.register.metrics());
-      sleep(100);
     }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      logger('global error: %s', error.message);
+    } else {
+      logger('global error: %o', error);
+    }
+    logger(await promClient.register.metrics());
   }
   logger(await promClient.register.metrics());
 };
