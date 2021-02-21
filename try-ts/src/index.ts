@@ -171,13 +171,12 @@ class APIClient {
 
   async update_license(coins: number[] = []): Promise<void> {
     let license = await this.post_license(coins);
-    if (license) {
-      this.license = license;
-    } else {
-      await sleep(20);
-      const wallet = await this.get_balance();
-      if (wallet) license = await this.post_license(wallet.wallet);
-    }
+    if (license) this.license = license;
+    // } else {
+    //   await sleep(20);
+    //   const wallet = await this.get_balance();
+    //   if (wallet) license = await this.post_license(wallet.wallet);
+    // }
   }
 }
 
@@ -187,9 +186,17 @@ const game = async (client: APIClient) => {
   //   wallet: [],
   // };
   const instanceId = Number(process.env.INSTANCE_ID);
+
   for (let x = instanceId * 875; x < (instanceId + 1) * 875; x++) {
     for (let y = instanceId * 875; y < (instanceId + 1) * 875; y++) {
       try {
+        while (
+          !client.license ||
+          !client.license.id ||
+          client.license.digUsed >= client.license.digAllowed
+        ) {
+          await client.update_license();
+        }
         const area: Area = {
           posX: x,
           posY: y,
@@ -202,13 +209,6 @@ const game = async (client: APIClient) => {
         let depth = 1;
         let left = explore.amount;
         while (depth <= 10 && left > 0) {
-          while (
-            !client.license ||
-            !client.license.id ||
-            client.license.digUsed >= client.license.digAllowed
-          ) {
-            await client.update_license();
-          }
           const dig: Dig = {
             licenseID: client.license.id,
             posX: x,
