@@ -1,140 +1,61 @@
-    2021-02-21T11:54:55: PM2 log: Launching in no daemon mode
-    2021-02-21T11:54:55: PM2 log: App [index:0] starting in -cluster mode-
-    2021-02-21T11:54:55: PM2 log: App [index:0] online
-    2021-02-21T11:54:55: PM2 log: App [index:1] starting in -cluster mode-
-    2021-02-21T11:54:55: PM2 log: App [index:1] online
-    2021-02-21T11:54:55: PM2 log: App [index:2] starting in -cluster mode-
-    2021-02-21T11:54:55: PM2 log: App [index:2] online
-    2021-02-21T11:54:55: PM2 log: App [index:3] starting in -cluster mode-
-    2021-02-21T11:54:55: PM2 log: App [index:3] online
+    2021-02-21T14:42:53: PM2 log: Launching in no daemon mode
+    2021-02-21T14:42:53: PM2 log: App [index:0] starting in -cluster mode-
+    2021-02-21T14:42:53: PM2 log: App [index:0] online
+    2021-02-21T14:42:53: PM2 log: App [index:1] starting in -cluster mode-
+    2021-02-21T14:42:53: PM2 log: App [index:1] online
+    2021-02-21T14:42:53: PM2 log: App [index:2] starting in -cluster mode-
+    2021-02-21T14:42:53: PM2 log: App [index:2] online
+    2021-02-21T14:42:53: PM2 log: App [index:3] starting in -cluster mode-
+    2021-02-21T14:42:53: PM2 log: App [index:3] online
     start 0
-    base url:  http://2dd638dbe920:8000
-    2021-02-21T11:54:55.868Z client explore: { area: { posX: 0, posY: 0, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:55.881Z client explore: { area: { posX: 0, posY: 3, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:55.894Z client explore: { area: { posX: 0, posY: 6, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:55.903Z client explore: { area: { posX: 0, posY: 9, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:55.911Z client explore: { area: { posX: 0, posY: 12, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
-    2021-02-21T11:54:55.920Z client explore: { area: { posX: 0, posY: 15, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:55.957Z client explore: { area: { posX: 0, posY: 18, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    base url:  http://dbf63765a6b1:8000
     start 1
-    base url:  http://2dd638dbe920:8000
-    2021-02-21T11:54:55.981Z client explore: { area: { posX: 0, posY: 21, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:55.987Z client explore: { area: { posX: 0, posY: 24, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    base url:  http://dbf63765a6b1:8000
     start 2
-    base url:  http://2dd638dbe920:8000
-    2021-02-21T11:54:56.020Z client explore: { area: { posX: 0, posY: 27, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.027Z client explore: { area: { posX: 0, posY: 30, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.042Z client explore: { area: { posX: 1750, posY: 1750, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.046Z client explore: { area: { posX: 0, posY: 33, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.049Z client explore: { area: { posX: 875, posY: 875, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.054Z client explore: { area: { posX: 0, posY: 36, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.060Z client explore: { area: { posX: 0, posY: 39, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.060Z client explore: { area: { posX: 1750, posY: 1753, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.060Z client explore: { area: { posX: 875, posY: 878, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.067Z client explore: { area: { posX: 1750, posY: 1756, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.067Z client explore: { area: { posX: 0, posY: 42, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.068Z client explore: { area: { posX: 875, posY: 881, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.075Z client explore: { area: { posX: 875, posY: 884, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.078Z client explore: { area: { posX: 1750, posY: 1759, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.078Z client explore: { area: { posX: 0, posY: 45, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.082Z client explore: { area: { posX: 0, posY: 48, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.085Z client explore: { area: { posX: 1750, posY: 1762, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.086Z client explore: { area: { posX: 0, posY: 51, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.086Z client explore: { area: { posX: 875, posY: 887, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.091Z client explore: { area: { posX: 0, posY: 54, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.092Z client explore: { area: { posX: 875, posY: 890, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.094Z client explore: { area: { posX: 1750, posY: 1765, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:54:56.098Z client explore: { area: { posX: 875, posY: 893, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.098Z client explore: { area: { posX: 0, posY: 57, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.100Z client explore: { area: { posX: 1750, posY: 1768, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:54:56.106Z client explore: { area: { posX: 0, posY: 60, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    ...
-    ...
-    2021-02-21T11:59:27.974Z client explore: { area: { posX: 2185, posY: 2467, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.978Z client explore: { area: { posX: 1313, posY: 944, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.979Z client explore: { area: { posX: 3063, posY: 2865, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.979Z client explore: { area: { posX: 2185, posY: 2470, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.980Z client explore: { area: { posX: 435, posY: 669, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:59:27.981Z client explore: { area: { posX: 3063, posY: 2868, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
-    2021-02-21T11:59:27.983Z client explore: { area: { posX: 435, posY: 672, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.986Z client explore: { area: { posX: 2185, posY: 2473, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.988Z client explore: { area: { posX: 3063, posY: 2871, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.988Z client explore: { area: { posX: 435, posY: 675, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
-    2021-02-21T11:59:27.989Z client explore: { area: { posX: 1313, posY: 947, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
-    2021-02-21T11:59:27.990Z client explore: { area: { posX: 2185, posY: 2476, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.994Z client explore: { area: { posX: 1313, posY: 950, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.995Z client explore: { area: { posX: 435, posY: 678, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.995Z client explore: { area: { posX: 3063, posY: 2874, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.996Z client explore: { area: { posX: 2185, posY: 2479, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:27.998Z client explore: { area: { posX: 3063, posY: 2877, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.002Z client explore: { area: { posX: 1313, posY: 953, sizeX: 3, sizeY: 3 }, amount: 3, priority: 0 }
-    2021-02-21T11:59:28.002Z client explore: { area: { posX: 3063, posY: 2880, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.003Z client explore: { area: { posX: 2185, posY: 2482, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:59:28.004Z client explore: { area: { posX: 435, posY: 681, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.005Z client explore: { area: { posX: 1313, posY: 956, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.009Z client explore: { area: { posX: 3063, posY: 2883, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.010Z client explore: { area: { posX: 2185, posY: 2485, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.011Z client explore: { area: { posX: 1313, posY: 959, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:59:28.012Z client explore: { area: { posX: 435, posY: 684, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.013Z client explore: { area: { posX: 3063, posY: 2886, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.014Z client explore: { area: { posX: 2185, posY: 2488, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.016Z client explore: { area: { posX: 1313, posY: 962, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.018Z client explore: { area: { posX: 3063, posY: 2889, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.020Z client explore: { area: { posX: 2185, posY: 2491, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.022Z client explore: { area: { posX: 435, posY: 687, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.023Z client explore: { area: { posX: 1313, posY: 965, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.024Z client explore: { area: { posX: 3063, posY: 2892, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T11:59:28.025Z client explore: { area: { posX: 2185, posY: 2494, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.028Z client explore: { area: { posX: 1313, posY: 968, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.030Z client explore: { area: { posX: 3063, posY: 2895, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.030Z client explore: { area: { posX: 2185, posY: 2497, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.031Z client explore: { area: { posX: 435, posY: 690, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.032Z client explore: { area: { posX: 1313, posY: 971, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T11:59:28.034Z client explore: { area: { posX: 435, posY: 693, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
-    2021-02-21T11:59:28.038Z c
-    ..
-    ..
-    osY: 762, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.592Z client explore: { area: { posX: 873, posY: 765, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.594Z client explore: { area: { posX: 873, posY: 768, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.596Z client explore: { area: { posX: 873, posY: 771, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.598Z client explore: { area: { posX: 873, posY: 774, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.601Z client explore: { area: { posX: 873, posY: 777, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.603Z client explore: { area: { posX: 873, posY: 780, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.605Z client explore: { area: { posX: 873, posY: 783, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.607Z client explore: { area: { posX: 873, posY: 786, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.609Z client explore: { area: { posX: 873, posY: 789, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.611Z client explore: { area: { posX: 873, posY: 792, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.614Z client explore: { area: { posX: 873, posY: 795, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.616Z client explore: { area: { posX: 873, posY: 798, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.618Z client explore: { area: { posX: 873, posY: 801, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.620Z client explore: { area: { posX: 873, posY: 804, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.622Z client explore: { area: { posX: 873, posY: 807, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.624Z client explore: { area: { posX: 873, posY: 810, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.626Z client explore: { area: { posX: 873, posY: 813, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.628Z client explore: { area: { posX: 873, posY: 816, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.630Z client explore: { area: { posX: 873, posY: 819, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.632Z client explore: { area: { posX: 873, posY: 822, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.634Z client explore: { area: { posX: 873, posY: 825, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.637Z client explore: { area: { posX: 873, posY: 828, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.639Z client explore: { area: { posX: 873, posY: 831, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.641Z client explore: { area: { posX: 873, posY: 834, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.644Z client explore: { area: { posX: 873, posY: 837, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.647Z client explore: { area: { posX: 873, posY: 840, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
-    2021-02-21T12:03:57.649Z client explore: { area: { posX: 873, posY: 843, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.652Z client explore: { area: { posX: 873, posY: 846, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.659Z client explore: { area: { posX: 873, posY: 849, sizeX: 3, sizeY: 3 }, amount: 3, priority: 0 }
-    2021-02-21T12:03:57.662Z client explore: { area: { posX: 873, posY: 852, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.665Z client explore: { area: { posX: 873, posY: 855, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.675Z client explore: { area: { posX: 873, posY: 858, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.678Z client explore: { area: { posX: 873, posY: 861, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.681Z client explore: { area: { posX: 873, posY: 864, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.684Z client explore: { area: { posX: 873, posY: 867, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.687Z client explore: { area: { posX: 873, posY: 870, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
-    2021-02-21T12:03:57.690Z client explore: { area: { posX: 873, posY: 873, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
-    2021-02-21T12:03:57.697Z client # HELP rest_api summary of rest api count and time
+    base url:  http://dbf63765a6b1:8000
+    start 3
+    base url:  http://dbf63765a6b1:8000
+    2021-02-21T14:42:54.566Z client instanceId: 1, area: { posX: 875, posY: 875, sizeX: 875, sizeY: 875 }; area0: { posX: 875, posY: 875, sizeX: 437, sizeY: 875 }; area1: { posX: 1312, posY: 875, sizeX: 438, sizeY: 875 }; explore0: { area: { posX: 875, posY: 875, sizeX: 437, sizeY: 875 }, amount: 15179, priority: 0 }; explore1: { area: { posX: 1312, posY: 875, sizeX: 438, sizeY: 875 }, amount: 15217, priority: 0 }
+    2021-02-21T14:42:54.970Z client instanceId: 1, area: { posX: 1312, posY: 875, sizeX: 438, sizeY: 875 }; area0: { posX: 1312, posY: 875, sizeX: 438, sizeY: 437 }; area1: { posX: 1312, posY: 1312, sizeX: 438, sizeY: 438 }; explore0: { area: { posX: 1312, posY: 875, sizeX: 438, sizeY: 437 }, amount: 7538, priority: 0 }; explore1: { area: { posX: 1312, posY: 1312, sizeX: 438, sizeY: 438 }, amount: 7679, priority: 0 }
+    2021-02-21T14:42:55.107Z client instanceId: 1, area: { posX: 1312, posY: 1312, sizeX: 438, sizeY: 438 }; area0: { posX: 1312, posY: 1312, sizeX: 219, sizeY: 438 }; area1: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 438 }; explore0: { area: { posX: 1312, posY: 1312, sizeX: 219, sizeY: 438 }, amount: 3804, priority: 0 }; explore1: { area: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 438 }, amount: 3875, priority: 0 }
+    2021-02-21T14:42:55.314Z client instanceId: 1, area: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 438 }; area0: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 219 }; area1: { posX: 1531, posY: 1531, sizeX: 219, sizeY: 219 }; explore0: { area: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 219 }, amount: 1916, priority: 0 }; explore1: { area: { posX: 1531, posY: 1531, sizeX: 219, sizeY: 219 }, amount: 1959, priority: 0 }
+    2021-02-21T14:42:55.424Z client instanceId: 1, area: { posX: 1531, posY: 1531, sizeX: 219, sizeY: 219 }; area0: { posX: 1531, posY: 1531, sizeX: 109, sizeY: 219 }; area1: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 219 }; explore0: { area: { posX: 1531, posY: 1531, sizeX: 109, sizeY: 219 }, amount: 961, priority: 0 }; explore1: { area: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 219 }, amount: 998, priority: 0 }
+    2021-02-21T14:42:55.478Z client instanceId: 1, area: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 219 }; area0: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 109 }; area1: { posX: 1640, posY: 1640, sizeX: 110, sizeY: 110 }; explore0: { area: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 109 }, amount: 485, priority: 0 }; explore1: { area: { posX: 1640, posY: 1640, sizeX: 110, sizeY: 110 }, amount: 513, priority: 0 }
+    2021-02-21T14:42:55.524Z client instanceId: 1, area: { posX: 1640, posY: 1640, sizeX: 110, sizeY: 110 }; area0: { posX: 1640, posY: 1640, sizeX: 55, sizeY: 110 }; area1: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 110 }; explore0: { area: { posX: 1640, posY: 1640, sizeX: 55, sizeY: 110 }, amount: 244, priority: 0 }; explore1: { area: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 110 }, amount: 269, priority: 0 }
+    2021-02-21T14:42:55.559Z client instanceId: 1, area: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 110 }; area0: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 55 }; area1: { posX: 1695, posY: 1695, sizeX: 55, sizeY: 55 }; explore0: { area: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 55 }, amount: 134, priority: 0 }; explore1: { area: { posX: 1695, posY: 1695, sizeX: 55, sizeY: 55 }, amount: 135, priority: 0 }
+    2021-02-21T14:42:55.595Z client instanceId: 1, area: { posX: 1695, posY: 1695, sizeX: 55, sizeY: 55 }; area0: { posX: 1695, posY: 1695, sizeX: 27, sizeY: 55 }; area1: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 55 }; explore0: { area: { posX: 1695, posY: 1695, sizeX: 27, sizeY: 55 }, amount: 59, priority: 0 }; explore1: { area: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 55 }, amount: 76, priority: 0 }
+    2021-02-21T14:42:55.635Z client instanceId: 1, area: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 55 }; area0: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 27 }; area1: { posX: 1722, posY: 1722, sizeX: 28, sizeY: 28 }; explore0: { area: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 27 }, amount: 28, priority: 0 }; explore1: { area: { posX: 1722, posY: 1722, sizeX: 28, sizeY: 28 }, amount: 48, priority: 0 }
+    2021-02-21T14:42:55.670Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 28, sizeY: 28 }; area0: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 28 }; area1: { posX: 1736, posY: 1722, sizeX: 14, sizeY: 28 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 28 }, amount: 26, priority: 0 }; explore1: { area: { posX: 1736, posY: 1722, sizeX: 14, sizeY: 28 }, amount: 22, priority: 0 }
+    2021-02-21T14:42:55.701Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 28 }; area0: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 14 }; area1: { posX: 1722, posY: 1736, sizeX: 14, sizeY: 14 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 14 }, amount: 14, priority: 0 }; explore1: { area: { posX: 1722, posY: 1736, sizeX: 14, sizeY: 14 }, amount: 12, priority: 0 }
+    2021-02-21T14:42:55.724Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 14 }; area0: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 14 }; area1: { posX: 1729, posY: 1722, sizeX: 7, sizeY: 14 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 14 }, amount: 8, priority: 0 }; explore1: { area: { posX: 1729, posY: 1722, sizeX: 7, sizeY: 14 }, amount: 6, priority: 0 }
+    2021-02-21T14:42:55.744Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 14 }; area0: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 7 }; area1: { posX: 1722, posY: 1729, sizeX: 7, sizeY: 7 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 7 }, amount: 6, priority: 0 }; explore1: { area: { posX: 1722, posY: 1729, sizeX: 7, sizeY: 7 }, amount: 2, priority: 0 }
+    2021-02-21T14:42:55.761Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 7 }; area0: { posX: 1722, posY: 1722, sizeX: 3, sizeY: 7 }; area1: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 7 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 3, sizeY: 7 }, amount: 2, priority: 0 }; explore1: { area: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 7 }, amount: 4, priority: 0 }
+    2021-02-21T14:42:55.777Z client instanceId: 1, area: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 7 }; area0: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 3 }; area1: { posX: 1725, posY: 1725, sizeX: 4, sizeY: 4 }; explore0: { area: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 3 }, amount: 2, priority: 0 }; explore1: { area: { posX: 1725, posY: 1725, sizeX: 4, sizeY: 4 }, amount: 2, priority: 0 }
+    2021-02-21T14:42:55.787Z client instanceId: 1, area: { posX: 1725, posY: 1725, sizeX: 4, sizeY: 4 }; area0: { posX: 1725, posY: 1725, sizeX: 2, sizeY: 4 }; area1: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 4 }; explore0: { area: { posX: 1725, posY: 1725, sizeX: 2, sizeY: 4 }, amount: 0, priority: 0 }; explore1: { area: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 4 }, amount: 2, priority: 0 }
+    2021-02-21T14:42:55.787Z client # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.005827087873621587
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.024805565035372148
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 517.8675747250016
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 85264
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.0340316595
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.442613333
+    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 3.0490810260000005
+    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 40
+    2021-02-21T14:42:55.798Z client instanceId: 1, area: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 4 }; area0: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 2 }; area1: { posX: 1727, posY: 1727, sizeX: 2, sizeY: 2 }; explore0: { area: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 2 }, amount: 1, priority: 0 }; explore1: { area: { posX: 1727, posY: 1727, sizeX: 2, sizeY: 2 }, amount: 1, priority: 0 }
+    2021-02-21T14:42:55.805Z client instanceId: 1, area: { posX: 1727, posY: 1727, sizeX: 2, sizeY: 2 }; area0: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 2 }; area1: { posX: 1728, posY: 1727, sizeX: 1, sizeY: 2 }; explore0: { area: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 2 }, amount: 1, priority: 0 }; explore1: { area: { posX: 1728, posY: 1727, sizeX: 1, sizeY: 2 }, amount: 0, priority: 0 }
+    2021-02-21T14:42:55.813Z client instanceId: 1, area: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 2 }; area0: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 1 }; area1: { posX: 1727, posY: 1728, sizeX: 1, sizeY: 1 }; explore0: { area: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 }; explore1: { area: { posX: 1727, posY: 1728, sizeX: 1, sizeY: 1 }, amount: 0, priority: 0 }
+    2021-02-21T14:42:55.818Z client # HELP rest_api summary of rest api count and time
+    # TYPE rest_api summary
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.0324684935
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.41945421
+    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 3.121297722000001
+    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 40
+    2021-02-21T14:42:55.852Z client # HELP rest_api summary of rest api count and time
+    # TYPE rest_api summary
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.030378867
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.657198497
+    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 2.8166746549999995
+    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 40
+    2021-02-21T14:42:55.854Z client # HELP rest_api summary of rest api count and time
+    # TYPE rest_api summary
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.0306519565
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.487637022
+    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 2.9558079139999993
+    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 40

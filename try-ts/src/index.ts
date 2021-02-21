@@ -153,8 +153,7 @@ class APIClient {
       return result.data;
     }
     if (result.status === 422) {
-      await sleep(20)
-      return await this.post_explore(area)
+      throw Error('422');
     }
     return null;
   }
@@ -223,7 +222,7 @@ const splitArea = (area: Area): Area[] => {
 const game = async (client: APIClient) => {
   const instanceId = Number(process.env.INSTANCE_ID);
 
-  const area: Area = {
+  let area: Area = {
     posX: instanceId * 875,
     posY: instanceId * 875,
     sizeX: 875,
@@ -232,51 +231,48 @@ const game = async (client: APIClient) => {
   while (area.sizeX > 1 || area.sizeY > 1) {
     try {
       const areas = splitArea(area);
-      const explores = await Promise.all(
-        areas.map(it => client.post_explore(it))
-      );
+
+      let explores: Array<Explore | null> = [null, null];
+      try {
+        explores = await Promise.all(areas.map(it => client.post_explore(it)));
+      } catch (error) {
+        logger(
+          'instanceId: %d, area: %o; area0: %o; area1: %o;',
+          instanceId,
+          area,
+          areas[0],
+          areas[1]
+        );
+      }
+
       const explore0 = explores[0];
       const explore1 = explores[1];
 
-      logger(
-        'instanceId: %d, area: %o; area0: %o; area1: %o; explore0: %o; explore1: %o',
-        instanceId,
-        area,
-        areas[0],
-        areas[1],
-        explore0,
-        explore1
-      );
+      if (instanceId === 1) {
+        logger(
+          'instanceId: %d, area: %o; area0: %o; area1: %o; explore0: %o; explore1: %o',
+          instanceId,
+          area,
+          areas[0],
+          areas[1],
+          explore0,
+          explore1
+        );
+      }
       if (explore0 && explore1) {
         if (explore0.amount > explore1.amount) {
-          area.posX = explore0.area.posX;
-          area.posY = explore0.area.posX;
-          area.sizeX = explore0.area.sizeX;
-          area.sizeY = explore0.area.sizeY;
+          area = explore0.area;
         } else {
-          area.posX = explore1.area.posX;
-          area.posY = explore1.area.posX;
-          area.sizeX = explore1.area.sizeX;
-          area.sizeY = explore1.area.sizeY;
+          area = explore1.area;
         }
       } else if (!explore0 && !explore1) {
-        area.posX = areas[0].posX;
-        area.posY = areas[0].posX;
-        area.sizeX = areas[0].sizeX;
-        area.sizeY = areas[0].sizeY;
+        area = areas[0];
       } else {
         if (explore1) {
-          area.posX = explore1.area.posX;
-          area.posY = explore1.area.posX;
-          area.sizeX = explore1.area.sizeX;
-          area.sizeY = explore1.area.sizeY;
+          area = explore1.area;
         }
-
         if (explore0) {
-          area.posX = explore0.area.posX;
-          area.posY = explore0.area.posX;
-          area.sizeX = explore0.area.sizeX;
-          area.sizeY = explore0.area.sizeY;
+          area = explore0.area;
         }
       }
     } catch (error: unknown) {
