@@ -187,14 +187,15 @@ const game = async (client: APIClient) => {
   // };
   const instanceId = Number(process.env.INSTANCE_ID);
 
-  for (let x = instanceId * 875; x < (instanceId + 1) * 875; x++) {
-    for (let y = instanceId * 875; y < (instanceId + 1) * 875; y++) {
+  const step = 2;
+  for (let x = instanceId * 875; x < (instanceId + 1) * 875; x += step) {
+    for (let y = instanceId * 875; y < (instanceId + 1) * 875; y += step) {
       try {
         const area: Area = {
           posX: x,
           posY: y,
-          sizeX: 1,
-          sizeY: 1,
+          sizeX: step,
+          sizeY: step,
         };
         await client.post_explore(area);
       } catch (error: unknown) {
