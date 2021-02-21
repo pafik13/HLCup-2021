@@ -152,6 +152,10 @@ class APIClient {
       result.data.priority = 0;
       return result.data;
     }
+    if (result.status === 422) {
+      await sleep(20)
+      return await this.post_explore(area)
+    }
     return null;
   }
 
@@ -180,13 +184,9 @@ class APIClient {
   }
 }
 
-const splitArea = (
-  x: number,
-  y: number,
-  sizeX: number,
-  sizeY: number
-): Area[] => {
+const splitArea = (area: Area): Area[] => {
   let area1, area2: Area;
+  const {sizeX, sizeY, posX: x, posY: y} = area;
   if (sizeY > sizeX) {
     const midSizeY = Math.floor(sizeY / 2);
     area1 = {
@@ -221,37 +221,75 @@ const splitArea = (
 };
 
 const game = async (client: APIClient) => {
-  // const wallet: Wallet = {
-  //   balance: 0,
-  //   wallet: [],
-  // };
   const instanceId = Number(process.env.INSTANCE_ID);
 
-  const step = 3;
-  for (let x = instanceId * 875; x < (instanceId + 1) * 875; x += step) {
-    for (let y = instanceId * 875; y < (instanceId + 1) * 875; y += step) {
-      try {
-        const area: Area = {
-          posX: x,
-          posY: y,
-          sizeX: step,
-          sizeY: step,
-        };
-        const explore = await client.post_explore(area);
-        logger('explore: %o', explore);
-      } catch (error: unknown) {
-        logger('x: %d, y: %d', x, y);
-        if (error instanceof Error) {
-          logger('global error: %s', error.message);
+  const area: Area = {
+    posX: instanceId * 875,
+    posY: instanceId * 875,
+    sizeX: 875,
+    sizeY: 875,
+  };
+  while (area.sizeX > 1 || area.sizeY > 1) {
+    try {
+      const areas = splitArea(area);
+      const explores = await Promise.all(
+        areas.map(it => client.post_explore(it))
+      );
+      const explore0 = explores[0];
+      const explore1 = explores[1];
+
+      logger(
+        'instanceId: %d, area: %o; area0: %o; area1: %o; explore0: %o; explore1: %o',
+        instanceId,
+        area,
+        areas[0],
+        areas[1],
+        explore0,
+        explore1
+      );
+      if (explore0 && explore1) {
+        if (explore0.amount > explore1.amount) {
+          area.posX = explore0.area.posX;
+          area.posY = explore0.area.posX;
+          area.sizeX = explore0.area.sizeX;
+          area.sizeY = explore0.area.sizeY;
         } else {
-          logger('global error: %o', error);
+          area.posX = explore1.area.posX;
+          area.posY = explore1.area.posX;
+          area.sizeX = explore1.area.sizeX;
+          area.sizeY = explore1.area.sizeY;
         }
-        logger(await promClient.register.metrics());
-        sleep(100);
+      } else if (!explore0 && !explore1) {
+        area.posX = areas[0].posX;
+        area.posY = areas[0].posX;
+        area.sizeX = areas[0].sizeX;
+        area.sizeY = areas[0].sizeY;
+      } else {
+        if (explore1) {
+          area.posX = explore1.area.posX;
+          area.posY = explore1.area.posX;
+          area.sizeX = explore1.area.sizeX;
+          area.sizeY = explore1.area.sizeY;
+        }
+
+        if (explore0) {
+          area.posX = explore0.area.posX;
+          area.posY = explore0.area.posX;
+          area.sizeX = explore0.area.sizeX;
+          area.sizeY = explore0.area.sizeY;
+        }
       }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        logger('global error: %s', error.message);
+      } else {
+        logger('global error: %o', error);
+      }
+      logger('area: %o', area);
+      logger(await promClient.register.metrics());
+      sleep(100);
     }
   }
-
   logger(await promClient.register.metrics());
 };
 
