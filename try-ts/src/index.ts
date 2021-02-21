@@ -115,13 +115,25 @@ class APIClient {
 }
 
 const game = async (client: APIClient) => {
-  // const wallet: Wallet = {
-  //   balance: 0,
-  //   wallet: [],
-  // };
   const instanceId = Number(process.env.INSTANCE_ID);
-  for (let x = instanceId * 875; x < (instanceId + 1) * 875; x++) {
-    for (let y = instanceId * 875; y < (instanceId + 1) * 875; y++) {
+
+  let minX = 0;
+  let minY = 0;
+  let maxX = 0;
+  let maxY = 0;
+  const xParts = 5;
+  const yParts = 2;
+  const xPartSize = 3500 / xParts;
+  const yPartSize = 3500 / yParts;
+
+  minX = Math.round((instanceId % xParts) * xPartSize);
+  minY = Math.round(((instanceId / xParts) | 0) * yPartSize);
+
+  maxX = minX + xPartSize;
+  maxY = minY + yPartSize;
+
+  for (let x = minX; x < maxX; x++) {
+    for (let y = minY; y < maxY; y++) {
       try {
         const area: Area = {
           posX: x,
