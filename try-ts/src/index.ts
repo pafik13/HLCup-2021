@@ -51,9 +51,8 @@ console.debug('start ' + process.env.INSTANCE_ID);
 const baseURL = `http://${process.env.ADDRESS}:8000`;
 console.debug('base url: ', baseURL);
 
-process.env.DEBUG = 'client';
 const client = axios.create({baseURL, validateStatus: () => true});
-const logger = debug('client');
+const logger = debug('instance');
 // addLogger(client, logger);
 
 // const metricsInterval = setInterval(async () => {
@@ -184,74 +183,91 @@ class APIClient {
   // }
 }
 
-const splitArea = (area: Area): Area[] => {
-  let area1, area2: Area;
-  const {sizeX, sizeY, posX: x, posY: y} = area;
-  if (sizeY > sizeX) {
-    const midSizeY = Math.floor(sizeY / 2);
-    area1 = {
-      posX: x,
-      posY: y,
-      sizeX,
-      sizeY: midSizeY,
-    };
-    area2 = {
-      posX: x,
-      posY: y + midSizeY,
-      sizeX,
-      sizeY: sizeY - midSizeY,
-    };
-  } else {
-    const midSizeX = Math.floor(sizeX / 2);
-    area1 = {
-      posX: x,
-      posY: y,
-      sizeX: midSizeX,
-      sizeY,
-    };
-    area2 = {
-      posX: x + midSizeX,
-      posY: y,
-      sizeX: sizeX - midSizeX,
-      sizeY,
-    };
-  }
-
-  return [area1, area2];
-};
-
 const game = async (client: APIClient) => {
   const instanceId = Number(process.env.INSTANCE_ID);
+  const log = logger.extend(String(instanceId));
 
-  const partSize = 875;
-  const minX = instanceId * partSize;
-  const minY = instanceId * partSize;
-  const maxX = minX + partSize;
-  const maxY = minY + partSize;
-  const steps = [20, 25, 30];
-  try {
-    for (const step of steps) {
-      for (let x = minX; x < maxX; x += step) {
-        for (let y = minY; y < maxY; y += step) {
-          const area: Area = {
-            posX: x,
-            posY: y,
-            sizeX: step,
-            sizeY: step,
-          };
-          await client.post_explore(area);
+  let minX = 0;
+  let minY = 0;
+  let maxX = 0;
+  let maxY = 0;
+  const xParts = 5;
+  const yParts = 2;
+  const xPartSize = 3500 / xParts;
+  const yPartSize = 3500 / yParts;
+  for (let xPart = 0; xPart < xParts; xPart++) {
+    for (let yPart = 0; yPart < yParts; yPart++) {
+      if (instanceId === xPart + yPart) {
+        minX = Math.round(xPart * xPartSize);
+        minY = Math.round(yPart * yPartSize);
+      }
+    }
+  }
+
+  maxX = minX + xPartSize;
+  maxY = minY + yPartSize;
+
+  const wholeArea: Area = {
+    posX: minX,
+    posY: minY,
+    sizeX: xPartSize,
+    sizeY: yPartSize,
+  };
+
+  log('wholeArea: %o', wholeArea);
+
+  let emptyAreas = 0,
+    areasWithTreasures = 0;
+  // emtpyPoints = 0,
+  // pointWithTreasures = 0;
+  log('wholeExplore is started');
+  const wholeExplore = await client.post_explore(wholeArea);
+  if (!wholeExplore) {
+    log('wholeExplore is empty');
+  } else {
+    log('wholeExplore: %o', wholeExplore);
+
+    const step = Math.floor((xPartSize * yPartSize) / wholeExplore.amount);
+    for (let globalX = minX; globalX < maxX; globalX += step) {
+      for (let globalY = minY; globalY < maxY; globalY += step) {
+        const area: Area = {
+          posX: globalX,
+          posY: globalY,
+          sizeX: step,
+          sizeY: step,
+        };
+        try {
+          const explore = await client.post_explore(area);
+          if (explore && explore.amount) {
+            areasWithTreasures++;
+          } else {
+            emptyAreas++;
+          }
+        } catch (error: unknown) {
+          log('global error: x=%d, y=%d, step=%d', globalX, globalY, step);
+          if (error instanceof Error) {
+            log('global error: %s', error.message);
+          } else {
+            log('global error: %o', error);
+          }
+          log(await promClient.register.metrics());
         }
       }
     }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      logger('global error: %s', error.message);
-    } else {
-      logger('global error: %o', error);
-    }
-    logger(await promClient.register.metrics());
   }
-  logger(await promClient.register.metrics());
+  log(
+    'areas stats: empty=%d, with tresures=%d',
+    emptyAreas,
+    areasWithTreasures
+  );
+
+  // log(
+  //   'point stats: empty=%d, with tresures=%d',
+  //   emtpyPoints,
+  //   pointWithTreasures
+  // );
+
+  log(await promClient.register.metrics());
 };
 
 const apiClient = new APIClient(client);
