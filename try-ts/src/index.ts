@@ -170,7 +170,7 @@ class APIClient {
   }
 
   async update_license(coins: number[] = []): Promise<void> {
-    let license = await this.post_license(coins);
+    const license = await this.post_license(coins);
     if (license) this.license = license;
     // } else {
     //   await sleep(20);
@@ -190,42 +190,13 @@ const game = async (client: APIClient) => {
   for (let x = instanceId * 875; x < (instanceId + 1) * 875; x++) {
     for (let y = instanceId * 875; y < (instanceId + 1) * 875; y++) {
       try {
-        while (
-          !client.license ||
-          !client.license.id ||
-          client.license.digUsed >= client.license.digAllowed
-        ) {
-          await client.update_license();
-        }
         const area: Area = {
           posX: x,
           posY: y,
           sizeX: 1,
           sizeY: 1,
         };
-        const explore = await client.post_explore(area);
-        if (!explore || !explore.amount) continue;
-
-        let depth = 1;
-        let left = explore.amount;
-        while (depth <= 10 && left > 0) {
-          const dig: Dig = {
-            licenseID: client.license.id,
-            posX: x,
-            posY: y,
-            depth,
-          };
-
-          const treasures = await client.post_dig(dig);
-          client.license.digUsed++;
-          depth++;
-          if (treasures) {
-            for (const treasure of treasures.treasures) {
-              const res = await client.post_cash(treasure);
-              if (res) left--;
-            }
-          }
-        }
+        await client.post_explore(area);
       } catch (error: unknown) {
         logger('x: %d, y: %d', x, y);
         if (error instanceof Error) {
