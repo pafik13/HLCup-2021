@@ -56,10 +56,10 @@ const client = axios.create({baseURL, validateStatus: () => true});
 const logger = debug('client');
 // addLogger(client, logger);
 
-const metricsInterval = setInterval(async () => {
-  logger(await promClient.register.metrics());
-}, 30000);
-metricsInterval.unref();
+// const metricsInterval = setInterval(async () => {
+//   logger(await promClient.register.metrics());
+// }, 30000);
+// metricsInterval.unref();
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -180,6 +180,46 @@ class APIClient {
   }
 }
 
+const splitArea = (
+  x: number,
+  y: number,
+  sizeX: number,
+  sizeY: number
+): Area[] => {
+  let area1, area2: Area;
+  if (sizeY > sizeX) {
+    const midSizeY = Math.floor(sizeY / 2);
+    area1 = {
+      posX: x,
+      posY: y,
+      sizeX,
+      sizeY: midSizeY,
+    };
+    area2 = {
+      posX: x,
+      posY: y + midSizeY,
+      sizeX,
+      sizeY: sizeY - midSizeY,
+    };
+  } else {
+    const midSizeX = Math.floor(sizeX / 2);
+    area1 = {
+      posX: x,
+      posY: y,
+      sizeX: midSizeX,
+      sizeY,
+    };
+    area2 = {
+      posX: x + midSizeX,
+      posY: y,
+      sizeX: sizeX - midSizeX,
+      sizeY,
+    };
+  }
+
+  return [area1, area2];
+};
+
 const game = async (client: APIClient) => {
   // const wallet: Wallet = {
   //   balance: 0,
@@ -197,7 +237,8 @@ const game = async (client: APIClient) => {
           sizeX: step,
           sizeY: step,
         };
-        await client.post_explore(area);
+        const explore = await client.post_explore(area);
+        logger('explore: %o', explore);
       } catch (error: unknown) {
         logger('x: %d, y: %d', x, y);
         if (error instanceof Error) {
@@ -205,10 +246,13 @@ const game = async (client: APIClient) => {
         } else {
           logger('global error: %o', error);
         }
+        logger(await promClient.register.metrics());
         sleep(100);
       }
     }
   }
+
+  logger(await promClient.register.metrics());
 };
 
 const apiClient = new APIClient(client);

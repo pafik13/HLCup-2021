@@ -1,153 +1,140 @@
-    2021-02-21T10:42:19: PM2 log: Launching in no daemon mode
-    2021-02-21T10:42:19: PM2 log: App [index:0] starting in -cluster mode-
-    2021-02-21T10:42:19: PM2 log: App [index:0] online
-    2021-02-21T10:42:19: PM2 log: App [index:1] starting in -cluster mode-
-    2021-02-21T10:42:19: PM2 log: App [index:1] online
-    2021-02-21T10:42:19: PM2 log: App [index:2] starting in -cluster mode-
-    2021-02-21T10:42:20: PM2 log: App [index:2] online
-    2021-02-21T10:42:20: PM2 log: App [index:3] starting in -cluster mode-
-    2021-02-21T10:42:20: PM2 log: App [index:3] online
+    2021-02-21T11:54:55: PM2 log: Launching in no daemon mode
+    2021-02-21T11:54:55: PM2 log: App [index:0] starting in -cluster mode-
+    2021-02-21T11:54:55: PM2 log: App [index:0] online
+    2021-02-21T11:54:55: PM2 log: App [index:1] starting in -cluster mode-
+    2021-02-21T11:54:55: PM2 log: App [index:1] online
+    2021-02-21T11:54:55: PM2 log: App [index:2] starting in -cluster mode-
+    2021-02-21T11:54:55: PM2 log: App [index:2] online
+    2021-02-21T11:54:55: PM2 log: App [index:3] starting in -cluster mode-
+    2021-02-21T11:54:55: PM2 log: App [index:3] online
     start 0
-    base url:  http://93fd3be5686e:8000
+    base url:  http://2dd638dbe920:8000
+    2021-02-21T11:54:55.868Z client explore: { area: { posX: 0, posY: 0, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:55.881Z client explore: { area: { posX: 0, posY: 3, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:55.894Z client explore: { area: { posX: 0, posY: 6, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:55.903Z client explore: { area: { posX: 0, posY: 9, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:55.911Z client explore: { area: { posX: 0, posY: 12, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
+    2021-02-21T11:54:55.920Z client explore: { area: { posX: 0, posY: 15, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:55.957Z client explore: { area: { posX: 0, posY: 18, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
     start 1
-    base url:  http://93fd3be5686e:8000
+    base url:  http://2dd638dbe920:8000
+    2021-02-21T11:54:55.981Z client explore: { area: { posX: 0, posY: 21, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:55.987Z client explore: { area: { posX: 0, posY: 24, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
     start 2
-    base url:  http://93fd3be5686e:8000
-    start 3
-    base url:  http://93fd3be5686e:8000
-    2021-02-21T10:42:50.294Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006012574178315559
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.030803147996999902
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 29.490236417999995
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 4652
-    2021-02-21T10:42:50.474Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.005989212594643483
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.037617604136649045
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 29.4964442549999
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 4659
-    2021-02-21T10:42:50.577Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006034595433333333
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.035038038133887214
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 29.535211818999944
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 4645
-    2021-02-21T10:42:50.627Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006010214249451032
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.035566850476766186
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 29.399763097000065
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 4657
-    rest_api{quantile="0.5",method="post",route="/explore",status="422",response_size="0"} 0.004960054
-    rest_api{quantile="0.999",method="post",route="/explore",status="422",response_size="0"} 0.009256293
-    rest_api_sum{method="post",route="/explore",status="422",response_size="0"} 0.08821241599999999
-    rest_api_count{method="post",route="/explore",status="422",response_size="0"} 16
-    2021-02-21T10:43:20.288Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.0060199277268677505
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.029398136514523308
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 59.12002843299992
+    base url:  http://2dd638dbe920:8000
+    2021-02-21T11:54:56.020Z client explore: { area: { posX: 0, posY: 27, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.027Z client explore: { area: { posX: 0, posY: 30, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.042Z client explore: { area: { posX: 1750, posY: 1750, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.046Z client explore: { area: { posX: 0, posY: 33, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.049Z client explore: { area: { posX: 875, posY: 875, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.054Z client explore: { area: { posX: 0, posY: 36, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.060Z client explore: { area: { posX: 0, posY: 39, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.060Z client explore: { area: { posX: 1750, posY: 1753, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.060Z client explore: { area: { posX: 875, posY: 878, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.067Z client explore: { area: { posX: 1750, posY: 1756, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.067Z client explore: { area: { posX: 0, posY: 42, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.068Z client explore: { area: { posX: 875, posY: 881, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.075Z client explore: { area: { posX: 875, posY: 884, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.078Z client explore: { area: { posX: 1750, posY: 1759, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.078Z client explore: { area: { posX: 0, posY: 45, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.082Z client explore: { area: { posX: 0, posY: 48, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.085Z client explore: { area: { posX: 1750, posY: 1762, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.086Z client explore: { area: { posX: 0, posY: 51, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.086Z client explore: { area: { posX: 875, posY: 887, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.091Z client explore: { area: { posX: 0, posY: 54, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.092Z client explore: { area: { posX: 875, posY: 890, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.094Z client explore: { area: { posX: 1750, posY: 1765, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:54:56.098Z client explore: { area: { posX: 875, posY: 893, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.098Z client explore: { area: { posX: 0, posY: 57, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.100Z client explore: { area: { posX: 1750, posY: 1768, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:54:56.106Z client explore: { area: { posX: 0, posY: 60, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
     ...
     ...
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 42710
-    rest_api{quantile="0.5",method="post",route="/explore",status="422",response_size="0"} 0.006022919
-    rest_api{quantile="0.999",method="post",route="/explore",status="422",response_size="0"} 0.013687489
-    rest_api_sum{method="post",route="/explore",status="422",response_size="0"} 0.9075546049999997
-    rest_api_count{method="post",route="/explore",status="422",response_size="0"} 146
-    2021-02-21T10:47:20.290Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006051053314057138
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.02621806874091124
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 296.7864901159995
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 47756
-    2021-02-21T10:47:20.459Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.00604749978441558
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.026984397983554446
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 296.810764244
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 47795
-    2021-02-21T10:47:20.572Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006064034346705302
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.026573868336162574
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 297.00459553300027
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 47761
-    2021-02-21T10:47:20.625Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006064952969932916
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.022641732760119396
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 295.69673071900036
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 47476
-    rest_api{quantile="0.5",method="post",route="/explore",status="422",response_size="0"} 0.006022254
-    rest_api{quantile="0.999",method="post",route="/explore",status="422",response_size="0"} 0.013687489
-    rest_api_sum{method="post",route="/explore",status="422",response_size="0"} 1.0143792269999998
-    rest_api_count{method="post",route="/explore",status="422",response_size="0"} 163
-    2021-02-21T10:47:50.292Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006050272928965399
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.026178869471679113
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 326.50587523700017
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 52568
-    2021-02-21T10:47:50.459Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006047221070513095
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.0269194808572276
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 326.5102417980001
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 52586
-    2021-02-21T10:47:50.574Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006062049788375151
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.027779593023518147
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 326.7231308349997
+    2021-02-21T11:59:27.974Z client explore: { area: { posX: 2185, posY: 2467, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.978Z client explore: { area: { posX: 1313, posY: 944, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.979Z client explore: { area: { posX: 3063, posY: 2865, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.979Z client explore: { area: { posX: 2185, posY: 2470, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.980Z client explore: { area: { posX: 435, posY: 669, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:59:27.981Z client explore: { area: { posX: 3063, posY: 2868, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
+    2021-02-21T11:59:27.983Z client explore: { area: { posX: 435, posY: 672, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.986Z client explore: { area: { posX: 2185, posY: 2473, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.988Z client explore: { area: { posX: 3063, posY: 2871, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.988Z client explore: { area: { posX: 435, posY: 675, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
+    2021-02-21T11:59:27.989Z client explore: { area: { posX: 1313, posY: 947, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
+    2021-02-21T11:59:27.990Z client explore: { area: { posX: 2185, posY: 2476, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.994Z client explore: { area: { posX: 1313, posY: 950, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.995Z client explore: { area: { posX: 435, posY: 678, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.995Z client explore: { area: { posX: 3063, posY: 2874, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.996Z client explore: { area: { posX: 2185, posY: 2479, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:27.998Z client explore: { area: { posX: 3063, posY: 2877, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.002Z client explore: { area: { posX: 1313, posY: 953, sizeX: 3, sizeY: 3 }, amount: 3, priority: 0 }
+    2021-02-21T11:59:28.002Z client explore: { area: { posX: 3063, posY: 2880, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.003Z client explore: { area: { posX: 2185, posY: 2482, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:59:28.004Z client explore: { area: { posX: 435, posY: 681, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.005Z client explore: { area: { posX: 1313, posY: 956, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.009Z client explore: { area: { posX: 3063, posY: 2883, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.010Z client explore: { area: { posX: 2185, posY: 2485, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.011Z client explore: { area: { posX: 1313, posY: 959, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:59:28.012Z client explore: { area: { posX: 435, posY: 684, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.013Z client explore: { area: { posX: 3063, posY: 2886, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.014Z client explore: { area: { posX: 2185, posY: 2488, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.016Z client explore: { area: { posX: 1313, posY: 962, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.018Z client explore: { area: { posX: 3063, posY: 2889, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.020Z client explore: { area: { posX: 2185, posY: 2491, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.022Z client explore: { area: { posX: 435, posY: 687, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.023Z client explore: { area: { posX: 1313, posY: 965, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.024Z client explore: { area: { posX: 3063, posY: 2892, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T11:59:28.025Z client explore: { area: { posX: 2185, posY: 2494, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.028Z client explore: { area: { posX: 1313, posY: 968, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.030Z client explore: { area: { posX: 3063, posY: 2895, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.030Z client explore: { area: { posX: 2185, posY: 2497, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.031Z client explore: { area: { posX: 435, posY: 690, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.032Z client explore: { area: { posX: 1313, posY: 971, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T11:59:28.034Z client explore: { area: { posX: 435, posY: 693, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
+    2021-02-21T11:59:28.038Z c
     ..
     ..
+    osY: 762, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.592Z client explore: { area: { posX: 873, posY: 765, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.594Z client explore: { area: { posX: 873, posY: 768, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.596Z client explore: { area: { posX: 873, posY: 771, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.598Z client explore: { area: { posX: 873, posY: 774, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.601Z client explore: { area: { posX: 873, posY: 777, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.603Z client explore: { area: { posX: 873, posY: 780, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.605Z client explore: { area: { posX: 873, posY: 783, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.607Z client explore: { area: { posX: 873, posY: 786, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.609Z client explore: { area: { posX: 873, posY: 789, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.611Z client explore: { area: { posX: 873, posY: 792, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.614Z client explore: { area: { posX: 873, posY: 795, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.616Z client explore: { area: { posX: 873, posY: 798, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.618Z client explore: { area: { posX: 873, posY: 801, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.620Z client explore: { area: { posX: 873, posY: 804, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.622Z client explore: { area: { posX: 873, posY: 807, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.624Z client explore: { area: { posX: 873, posY: 810, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.626Z client explore: { area: { posX: 873, posY: 813, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.628Z client explore: { area: { posX: 873, posY: 816, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.630Z client explore: { area: { posX: 873, posY: 819, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.632Z client explore: { area: { posX: 873, posY: 822, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.634Z client explore: { area: { posX: 873, posY: 825, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.637Z client explore: { area: { posX: 873, posY: 828, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.639Z client explore: { area: { posX: 873, posY: 831, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.641Z client explore: { area: { posX: 873, posY: 834, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.644Z client explore: { area: { posX: 873, posY: 837, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.647Z client explore: { area: { posX: 873, posY: 840, sizeX: 3, sizeY: 3 }, amount: 2, priority: 0 }
+    2021-02-21T12:03:57.649Z client explore: { area: { posX: 873, posY: 843, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.652Z client explore: { area: { posX: 873, posY: 846, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.659Z client explore: { area: { posX: 873, posY: 849, sizeX: 3, sizeY: 3 }, amount: 3, priority: 0 }
+    2021-02-21T12:03:57.662Z client explore: { area: { posX: 873, posY: 852, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.665Z client explore: { area: { posX: 873, posY: 855, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.675Z client explore: { area: { posX: 873, posY: 858, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.678Z client explore: { area: { posX: 873, posY: 861, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.681Z client explore: { area: { posX: 873, posY: 864, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.684Z client explore: { area: { posX: 873, posY: 867, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.687Z client explore: { area: { posX: 873, posY: 870, sizeX: 3, sizeY: 3 }, amount: 1, priority: 0 }
+    2021-02-21T12:03:57.690Z client explore: { area: { posX: 873, posY: 873, sizeX: 3, sizeY: 3 }, amount: 0, priority: 0 }
+    2021-02-21T12:03:57.697Z client # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006051707121805843
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.026272432535482112
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 529.168908374002
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.005827087873621587
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.024805565035372148
+    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 517.8675747250016
     rest_api_count{method="post",route="/explore",status="200",response_size="1"} 85264
-    2021-02-21T10:51:50.575Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006057769328363698
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.02610888197894696
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 529.3173379810033
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 85264
-    2021-02-21T10:51:50.640Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.00606043896074729
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.02662083428069198
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 527.1815645219948
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 84681
-    rest_api{quantile="0.5",method="post",route="/explore",status="422",response_size="0"} 0.002845630142857143
-    rest_api{quantile="0.999",method="post",route="/explore",status="422",response_size="0"} 0.013620027596000025
-    rest_api_sum{method="post",route="/explore",status="422",response_size="0"} 2.4069969689999966
-    rest_api_count{method="post",route="/explore",status="422",response_size="0"} 583
-    2021-02-21T10:52:20.293Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006051435009183846
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.026043024134043784
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 529.1115977819986
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 85264
-    2021-02-21T10:52:20.462Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006051707121805843
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.026272432535482112
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 529.168908374002
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 85264
-    2021-02-21T10:52:20.575Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.006057769328363698
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.02610888197894696
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 529.3173379810033
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 85264
-    2021-02-21T10:52:20.636Z client # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.00606043896074729
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.02662083428069198
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 527.1815645219948
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 84681
-    rest_api{quantile="0.5",method="post",route="/explore",status="422",response_size="0"} 0.002845630142857143
-    rest_api{quantile="0.999",method="post",route="/explore",status="422",response_size="0"} 0.013620027596000025
-    rest_api_sum{method="post",route="/explore",status="422",response_size="0"} 2.4069969689999966
-    rest_api_count{method="post",route="/explore",status="422",response_size="0"} 583
