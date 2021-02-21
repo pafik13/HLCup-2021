@@ -195,14 +195,9 @@ const game = async (client: APIClient) => {
   const yParts = 2;
   const xPartSize = 3500 / xParts;
   const yPartSize = 3500 / yParts;
-  for (let xPart = 0; xPart < xParts; xPart++) {
-    for (let yPart = 0; yPart < yParts; yPart++) {
-      if (instanceId === xPart + yPart) {
-        minX = Math.round(xPart * xPartSize);
-        minY = Math.round(yPart * yPartSize);
-      }
-    }
-  }
+
+  minX = Math.round((instanceId % xParts) * xPartSize);
+  minY = Math.round(((instanceId / xParts) | 0) * yPartSize);
 
   maxX = minX + xPartSize;
   maxY = minY + yPartSize;
