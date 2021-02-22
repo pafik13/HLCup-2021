@@ -64,7 +64,19 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+class CallStats {
+  public success = 0;
+  public error = 0;
+}
+
 class APIClient {
+  public stats = {
+    dig: new CallStats(),
+    cash: new CallStats(),
+    license: new CallStats(),
+    explore: new CallStats(),
+  };
+
   private axiosConfigForCash = {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
@@ -76,19 +88,22 @@ class APIClient {
     this.client = client;
   }
 
-  // async post_license(coin: number[]): Promise<License | null> {
-  //   const end = apiMetrics.startTimer();
-  //   const result = await this.client.post<License>('/licenses', coin);
-  //   const isSuccess = result.status === 200;
-  //   end({
-  //     method: result.config.method,
-  //     route: result.config.url,
-  //     status: result.status,
-  //     response_size: isSuccess ? 1 : 0,
-  //   });
-  //   if (isSuccess) return result.data;
-  //   return null;
-  // }
+  async post_license(coin: number[]): Promise<License | null> {
+    const end = apiMetrics.startTimer();
+    const result = await this.client.post<License>('/licenses', coin);
+    const isSuccess = result.status === 200;
+    end({
+      method: result.config.method,
+      route: result.config.url,
+      status: result.status,
+    });
+    if (isSuccess) {
+      this.stats.license.success++;
+      return result.data;
+    }
+    this.stats.license.error++;
+    return null;
+  }
 
   // async get_license(): Promise<License[] | null> {
   //   const end = apiMetrics.startTimer();
@@ -104,38 +119,44 @@ class APIClient {
   //   return null;
   // }
 
-  // async post_dig(dig: Dig): Promise<Treasure | null> {
-  //   const end = apiMetrics.startTimer();
-  //   const result = await this.client.post<string[]>('/dig', dig);
-  //   const isSuccess = result.status === 200;
-  //   end({
-  //     method: result.config.method,
-  //     route: result.config.url,
-  //     status: result.status,
-  //     response_size: isSuccess ? result.data.length : 0,
-  //   });
-  //   if (isSuccess) return {priority: 0, treasures: result.data};
-  //   if (result.status === 403 && this.license) delete this.license.id;
-  //   return null;
-  // }
+  async post_dig(dig: Dig): Promise<Treasure | null> {
+    const end = apiMetrics.startTimer();
+    const result = await this.client.post<string[]>('/dig', dig);
+    const isSuccess = result.status === 200;
+    end({
+      method: result.config.method,
+      route: result.config.url,
+      status: result.status,
+    });
+    if (isSuccess) {
+      this.stats.dig.success++;
+      return {priority: 0, treasures: result.data};
+    }
+    this.stats.dig.error++;
+    if (result.status === 403 && this.license) delete this.license.id;
+    return null;
+  }
 
-  // async post_cash(treasure: string): Promise<number[] | null> {
-  //   const end = apiMetrics.startTimer();
-  //   const result = await this.client.post<number[]>(
-  //     '/cash',
-  //     JSON.stringify(treasure),
-  //     this.axiosConfigForCash
-  //   );
-  //   const isSuccess = result.status === 200;
-  //   end({
-  //     method: result.config.method,
-  //     route: result.config.url,
-  //     status: result.status,
-  //     response_size: isSuccess ? 1 : 0,
-  //   });
-  //   if (isSuccess) return result.data;
-  //   return null;
-  // }
+  async post_cash(treasure: string): Promise<number[] | null> {
+    const end = apiMetrics.startTimer();
+    const result = await this.client.post<number[]>(
+      '/cash',
+      JSON.stringify(treasure),
+      this.axiosConfigForCash
+    );
+    const isSuccess = result.status === 200;
+    end({
+      method: result.config.method,
+      route: result.config.url,
+      status: result.status,
+    });
+    if (isSuccess) {
+      this.stats.cash.success++;
+      return result.data;
+    }
+    this.stats.cash.error++;
+    return null;
+  }
 
   async post_explore(area: Area): Promise<Explore | null> {
     const end = apiMetrics.startTimer();
@@ -149,9 +170,11 @@ class APIClient {
       sizeY: area.sizeY,
     });
     if (isSuccess) {
+      this.stats.explore.success++;
       result.data.priority = 0;
       return result.data;
     }
+    this.stats.explore.error++;
     if (result.status === 422) {
       throw Error('422');
     }
@@ -172,15 +195,14 @@ class APIClient {
   //   return null;
   // }
 
-  // async update_license(coins: number[] = []): Promise<void> {
-  //   const license = await this.post_license(coins);
-  //   if (license) this.license = license;
-  //   // } else {
-  //   //   await sleep(20);
-  //   //   const wallet = await this.get_balance();
-  //   //   if (wallet) license = await this.post_license(wallet.wallet);
-  //   // }
-  // }
+  async update_license(coins: number[] = []): Promise<void> {
+    const license = await this.post_license(coins);
+    if (license) {
+      this.license = license;
+    } else {
+      //   this.licenseErrors++;
+    }
+  }
 }
 
 const splitArea = (area: Area): Area[] => {
@@ -240,16 +262,6 @@ const findAreaWithTreasures = async (
       const explore0 = explores[0];
       const explore1 = explores[1];
 
-      // if (instanceId === 1) {
-      //   logger(
-      //     'area: %o; area0: %o; area1: %o; explore0: %o; explore1: %o',
-      //     area,
-      //     areas[0],
-      //     areas[1],
-      //     explore0,
-      //     explore1
-      //   );
-      // }
       if (explore0 && explore1) {
         if (explore0.amount > explore1.amount) {
           area = explore0.area;
@@ -313,8 +325,6 @@ const game = async (client: APIClient) => {
 
   log('wholeArea: %o', wholeArea);
 
-  // emtpyPoints = 0,
-  // pointWithTreasures = 0;
   log('wholeExplore is started');
   const wholeExplore: Explore = {area: wholeArea, amount: 10}; //await client.post_explore(wholeArea);
   if (!wholeExplore) {
@@ -324,7 +334,7 @@ const game = async (client: APIClient) => {
 
     // Делители числа 1 750: 1, 2, 5, 7, 10, 14, 25, 35, 50, 70,  125,  175,  250,  350,  875, 1 750
     // Количество делителей: 16
-    const step = 125;
+    const step = 175;
     for (let globalX = minX; globalX < maxX; globalX += step) {
       for (let globalY = minY; globalY < maxY; globalY += step) {
         const area: Area = {
@@ -336,8 +346,41 @@ const game = async (client: APIClient) => {
         try {
           const explore = await client.post_explore(area);
           if (explore && explore.amount) {
-            const result = await findAreaWithTreasures(log, client, area);
-            log('findAreaWithTreasures result: %o', result);
+            const {explore: exploreWithTreasures} = await findAreaWithTreasures(
+              log,
+              client,
+              area
+            );
+
+            if (exploreWithTreasures && exploreWithTreasures.amount) {
+              let depth = 1;
+              let left = exploreWithTreasures.amount;
+              while (depth <= 10 && left > 0) {
+                while (
+                  !client.license ||
+                  !client.license.id ||
+                  client.license.digUsed >= client.license.digAllowed
+                ) {
+                  await client.update_license();
+                }
+                const dig: Dig = {
+                  licenseID: client.license.id,
+                  posX: exploreWithTreasures.area.posX,
+                  posY: exploreWithTreasures.area.posY,
+                  depth,
+                };
+
+                const treasures = await client.post_dig(dig);
+                client.license.digUsed++;
+                depth++;
+                if (treasures) {
+                  for (const treasure of treasures.treasures) {
+                    const res = await client.post_cash(treasure);
+                    if (res) left--;
+                  }
+                }
+              }
+            }
           }
         } catch (error: unknown) {
           log('global error: x=%d, y=%d, step=%d', globalX, globalY, step);
@@ -346,19 +389,12 @@ const game = async (client: APIClient) => {
           } else {
             log('global error: %o', error);
           }
-          log(await promClient.register.metrics());
         }
       }
     }
   }
 
-  // log(
-  //   'point stats: empty=%d, with tresures=%d',
-  //   emtpyPoints,
-  //   pointWithTreasures
-  // );
-
-  log(await promClient.register.metrics());
+  log('End. client stats: %o', client.stats);
 };
 
 const apiClient = new APIClient(client);
