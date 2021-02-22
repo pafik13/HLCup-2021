@@ -1,57 +1,57 @@
-    2021-02-22T06:42:05: PM2 log: Launching in no daemon mode
-    2021-02-22T06:42:05: PM2 log: App [index:0] starting in -cluster mode-
-    2021-02-22T06:42:06: PM2 log: App [index:0] online
-    2021-02-22T06:42:06: PM2 log: App [index:1] starting in -cluster mode-
-    2021-02-22T06:42:06: PM2 log: App [index:1] online
-    2021-02-22T06:42:06: PM2 log: App [index:2] starting in -cluster mode-
-    2021-02-22T06:42:06: PM2 log: App [index:2] online
-    2021-02-22T06:42:06: PM2 log: App [index:3] starting in -cluster mode-
-    2021-02-22T06:42:06: PM2 log: App [index:3] online
+    2021-02-22T06:56:28: PM2 log: Launching in no daemon mode
+    2021-02-22T06:56:28: PM2 log: App [index:0] starting in -cluster mode-
+    2021-02-22T06:56:28: PM2 log: App [index:0] online
+    2021-02-22T06:56:28: PM2 log: App [index:1] starting in -cluster mode-
+    2021-02-22T06:56:28: PM2 log: App [index:1] online
+    2021-02-22T06:56:28: PM2 log: App [index:2] starting in -cluster mode-
+    2021-02-22T06:56:29: PM2 log: App [index:2] online
+    2021-02-22T06:56:29: PM2 log: App [index:3] starting in -cluster mode-
+    2021-02-22T06:56:29: PM2 log: App [index:3] online
     start 0
-    base url:  http://655279fa47e8:8000
-    2021-02-22T06:42:06.526Z instance:0 wholeArea: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T06:42:06.527Z instance:0 wholeExplore is started
-    2021-02-22T06:42:06.528Z instance:0 wholeExplore: { area: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    base url:  http://2f6eecda3aed:8000
+    2021-02-22T06:56:29.331Z instance:0 wholeArea: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T06:56:29.332Z instance:0 wholeExplore is started
+    2021-02-22T06:56:29.333Z instance:0 wholeExplore: { area: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
     start 1
-    base url:  http://655279fa47e8:8000
-    2021-02-22T06:42:06.571Z instance:1 wholeArea: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T06:42:06.572Z instance:1 wholeExplore is started
-    2021-02-22T06:42:06.572Z instance:1 wholeExplore: { area: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    base url:  http://2f6eecda3aed:8000
+    2021-02-22T06:56:29.488Z instance:1 wholeArea: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T06:56:29.488Z instance:1 wholeExplore is started
+    2021-02-22T06:56:29.489Z instance:1 wholeExplore: { area: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
     start 2
-    base url:  http://655279fa47e8:8000
-    2021-02-22T06:42:06.669Z instance:2 wholeArea: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T06:42:06.669Z instance:2 wholeExplore is started
-    2021-02-22T06:42:06.670Z instance:2 wholeExplore: { area: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    base url:  http://2f6eecda3aed:8000
+    2021-02-22T06:56:29.659Z instance:2 wholeArea: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T06:56:29.660Z instance:2 wholeExplore is started
+    2021-02-22T06:56:29.660Z instance:2 wholeExplore: { area: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
     start 3
-    base url:  http://655279fa47e8:8000
-    2021-02-22T06:42:06.759Z instance:3 wholeArea: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T06:42:06.760Z instance:3 wholeExplore is started
-    2021-02-22T06:42:06.760Z instance:3 wholeExplore: { area: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
-    2021-02-22T06:45:52.413Z instance:1 areas stats: empty=6, with tresures=15619
-    2021-02-22T06:45:52.421Z instance:1 # HELP rest_api summary of rest api count and time
+    base url:  http://2f6eecda3aed:8000
+    2021-02-22T06:56:29.794Z instance:3 wholeArea: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T06:56:29.795Z instance:3 wholeExplore is started
+    2021-02-22T06:56:29.795Z instance:3 wholeExplore: { area: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    2021-02-22T06:57:20.240Z instance:0 areas stats: empty=0, with tresures=2500
+    2021-02-22T06:57:20.252Z instance:0 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 0.014151603939571614
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 0.04860908329804981
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 224.5919150380004
-    rest_api_count{method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 15625
-    2021-02-22T06:45:52.515Z instance:0 areas stats: empty=6, with tresures=15619
-    2021-02-22T06:45:52.531Z instance:0 # HELP rest_api summary of rest api count and time
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 0.019952882228371625
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 0.052137102125
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 50.575179720999955
+    rest_api_count{method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 2500
+    2021-02-22T06:57:20.653Z instance:3 areas stats: empty=0, with tresures=2500
+    2021-02-22T06:57:20.667Z instance:3 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 0.014171430482417473
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 0.05066248709948671
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 224.71309915999916
-    rest_api_count{method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 15625
-    2021-02-22T06:45:52.608Z instance:2 areas stats: empty=6, with tresures=15619
-    2021-02-22T06:45:52.620Z instance:2 # HELP rest_api summary of rest api count and time
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 0.019995991347619046
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 0.05726250933333333
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 50.52974773900015
+    rest_api_count{method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 2500
+    2021-02-22T06:57:20.697Z instance:1 areas stats: empty=0, with tresures=2500
+    2021-02-22T06:57:20.704Z instance:1 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 0.014146451131579516
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 0.04981598965204678
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 224.69161482699914
-    rest_api_count{method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 15625
-    2021-02-22T06:45:52.817Z instance:3 areas stats: empty=5, with tresures=15620
-    2021-02-22T06:45:52.839Z instance:3 # HELP rest_api summary of rest api count and time
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 0.020077895022048365
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 0.05479879666666666
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 50.847583998999966
+    rest_api_count{method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 2500
+    2021-02-22T06:57:20.717Z instance:2 areas stats: empty=0, with tresures=2500
+    2021-02-22T06:57:20.724Z instance:2 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 0.014203809529927638
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 0.05198444522156085
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 224.84551520400083
-    rest_api_count{method="post",route="/explore",status="200",sizeX="14",sizeY="14"} 15625
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 0.020049080064999995
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 0.058231748666666666
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 50.72247770399997
+    rest_api_count{method="post",route="/explore",status="200",sizeX="35",sizeY="35"} 2500
