@@ -73,8 +73,14 @@ class APIClient {
   public stats = {
     dig: new CallStats(),
     cash: new CallStats(),
-    license: new CallStats(),
+    licenseFree: new CallStats(),
+    licensePaid: new CallStats(),
     explore: new CallStats(),
+  };
+
+  public wallet: Wallet = {
+    balance: 0,
+    wallet: [],
   };
 
   private axiosConfigForCash = {
@@ -88,9 +94,9 @@ class APIClient {
     this.client = client;
   }
 
-  async post_license(coin: number[]): Promise<License | null> {
+  async post_license(coins: number[]): Promise<License | null> {
     const end = apiMetrics.startTimer();
-    const result = await this.client.post<License>('/licenses', coin);
+    const result = await this.client.post<License>('/licenses', coins);
     const isSuccess = result.status === 200;
     end({
       method: result.config.method,
@@ -98,10 +104,18 @@ class APIClient {
       status: result.status,
     });
     if (isSuccess) {
-      this.stats.license.success++;
+      if (coins.length) {
+        this.stats.licensePaid.success++;
+      } else {
+        this.stats.licenseFree.success++;
+      }
       return result.data;
     }
-    this.stats.license.error++;
+    if (coins.length) {
+      this.stats.licensePaid.error++;
+    } else {
+      this.stats.licenseFree.error++;
+    }
     return null;
   }
 
@@ -152,6 +166,10 @@ class APIClient {
     });
     if (isSuccess) {
       this.stats.cash.success++;
+      this.wallet.balance += result.data.length;
+      for (const coin of result.data) {
+        this.wallet.wallet.push(coin);
+      }
       return result.data;
     }
     this.stats.cash.error++;
@@ -196,6 +214,13 @@ class APIClient {
   // }
 
   async update_license(coins: number[] = []): Promise<void> {
+    if (this.wallet.balance) {
+      const coin = this.wallet.wallet.shift();
+      if (coin) {
+        coins.push(coin);
+        this.wallet.balance--;
+      }
+    }
     const license = await this.post_license(coins);
     if (license) {
       this.license = license;
@@ -307,7 +332,7 @@ const game = async (client: APIClient) => {
   let maxX = 0;
   let maxY = 0;
   const xParts = 2;
-  const yParts = 2;
+  const yParts = 5;
   const xPartSize = 3500 / xParts;
   const yPartSize = 3500 / yParts;
 
@@ -335,7 +360,7 @@ const game = async (client: APIClient) => {
 
     // Делители числа 1 750: 1, 2, 5, 7, 10, 14, 25, 35, 50, 70,  125,  175,  250,  350,  875, 1 750
     // Количество делителей: 16
-    const step = 125;
+    const step = 50;
     for (let globalX = minX; globalX < maxX; globalX += step) {
       for (let globalY = minY; globalY < maxY; globalY += step) {
         const area: Area = {
