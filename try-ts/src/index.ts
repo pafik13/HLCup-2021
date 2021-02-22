@@ -119,6 +119,15 @@ class APIClient {
         ++this.stats.licenseFree.error[result.status] || 1;
     }
     logger('licence error, stats: %o', this.stats);
+    const timeLabel = `health-check-${Date.now}`;
+    console.time(timeLabel);
+    try {
+      const health = await this.client.get('/health-check');
+      logger('healt: %o, status: %d', health.data, health.status);
+    } catch (error) {
+      logger('helthcheck error: %o', error);
+    }
+    console.timeEnd(timeLabel);
     return null;
   }
 
