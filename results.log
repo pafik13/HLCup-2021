@@ -1,61 +1,61 @@
-    2021-02-22T07:56:26: PM2 log: Launching in no daemon mode
-    2021-02-22T07:56:26: PM2 log: App [index:0] starting in -cluster mode-
-    2021-02-22T07:56:26: PM2 log: App [index:0] online
-    2021-02-22T07:56:26: PM2 log: App [index:1] starting in -cluster mode-
-    2021-02-22T07:56:26: PM2 log: App [index:1] online
-    2021-02-22T07:56:26: PM2 log: App [index:2] starting in -cluster mode-
-    2021-02-22T07:56:26: PM2 log: App [index:2] online
-    2021-02-22T07:56:26: PM2 log: App [index:3] starting in -cluster mode-
-    2021-02-22T07:56:26: PM2 log: App [index:3] online
+    2021-02-22T08:12:27: PM2 log: Launching in no daemon mode
+    2021-02-22T08:12:27: PM2 log: App [index:0] starting in -cluster mode-
+    2021-02-22T08:12:27: PM2 log: App [index:0] online
+    2021-02-22T08:12:27: PM2 log: App [index:1] starting in -cluster mode-
+    2021-02-22T08:12:27: PM2 log: App [index:1] online
+    2021-02-22T08:12:27: PM2 log: App [index:2] starting in -cluster mode-
+    2021-02-22T08:12:27: PM2 log: App [index:2] online
+    2021-02-22T08:12:27: PM2 log: App [index:3] starting in -cluster mode-
+    2021-02-22T08:12:27: PM2 log: App [index:3] online
     start 0
-    base url:  http://1f51b57caa40:8000
-    2021-02-22T07:56:26.826Z instance:0 wholeArea: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T07:56:26.845Z instance:0 wholeExplore is started
-    2021-02-22T07:56:26.846Z instance:0 wholeExplore: { area: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    base url:  http://7e32685d15f5:8000
+    2021-02-22T08:12:27.936Z instance:0 wholeArea: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T08:12:27.937Z instance:0 wholeExplore is started
+    2021-02-22T08:12:27.938Z instance:0 wholeExplore: { area: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
     start 1
-    base url:  http://1f51b57caa40:8000
-    2021-02-22T07:56:26.903Z instance:1 wholeArea: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T07:56:26.903Z instance:1 wholeExplore is started
-    2021-02-22T07:56:26.904Z instance:1 wholeExplore: { area: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    base url:  http://7e32685d15f5:8000
+    2021-02-22T08:12:28.020Z instance:1 wholeArea: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T08:12:28.021Z instance:1 wholeExplore is started
+    2021-02-22T08:12:28.021Z instance:1 wholeExplore: { area: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
     start 2
-    base url:  http://1f51b57caa40:8000
-    2021-02-22T07:56:27.051Z instance:2 wholeArea: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T07:56:27.052Z instance:2 wholeExplore is started
-    2021-02-22T07:56:27.052Z instance:2 wholeExplore: { area: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    base url:  http://7e32685d15f5:8000
+    2021-02-22T08:12:28.168Z instance:2 wholeArea: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T08:12:28.169Z instance:2 wholeExplore is started
+    2021-02-22T08:12:28.169Z instance:2 wholeExplore: { area: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
     start 3
-    base url:  http://1f51b57caa40:8000
-    2021-02-22T07:56:27.188Z instance:3 wholeArea: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T07:56:27.189Z instance:3 wholeExplore is started
-    2021-02-22T07:56:27.189Z instance:3 wholeExplore: { area: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
-    2021-02-22T07:56:32.873Z instance:0 areas stats: empty=0, with tresures=196
-    2021-02-22T07:56:32.876Z instance:0 amounts: [ 621, 652, 618, 634, 652, 636, 609, 624, 601, 614, 633, 614, 664, 674, 604, 631, 619, 660, 628, 633, 667, 685, 661, 657, 616, 607, 627, 591, 623, 591, 588, 641, 604, 691, 609, 585, 663, 638, 667, 646, 630, 652, 611, 628, 580, 596, 626, 630, 634, 633, 637, 616, 661, 634, 591, 661, 608, 626, 636, 623, 644, 679, 616, 628, 608, 606, 583, 643, 602, 615, 610, 641, 597, 638, 606, 612, 662, 625, 600, 628, 609, 631, 640, 625, 621, 645, 552, 632, 591, 605, 617, 623, 599, 611, 670, 615, 593, 616, 608, 573, ... 96 more items ]
-    2021-02-22T07:56:32.897Z instance:0 # HELP rest_api summary of rest api count and time
+    base url:  http://7e32685d15f5:8000
+    2021-02-22T08:12:28.271Z instance:3 wholeArea: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T08:12:28.272Z instance:3 wholeExplore is started
+    2021-02-22T08:12:28.273Z instance:3 wholeExplore: { area: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    2021-02-22T08:12:31.687Z instance:0 areas stats: empty=0, with tresures=100
+    2021-02-22T08:12:31.690Z instance:0 amounts: [ 1220, 1237, 1296, 1241, 1250, 1224, 1223, 1221, 1242, 1249, 1166, 1184, 1252, 1265, 1256, 1272, 1282, 1292, 1209, 1240, 1195, 1205, 1168, 1251, 1261, 1260, 1221, 1233, 1271, 1225, 1220, 1213, 1227, 1203, 1250, 1186, 1231, 1189, 1228, 1225, 1207, 1175, 1220, 1173, 1242, 1215, 1152, 1263, 1200, 1199, 1146, 1171, 1187, 1287, 1270, 1194, 1224, 1188, 1223, 1217, 1285, 1173, 1258, 1227, 1202, 1190, 1228, 1215, 1228, 1218, 1217, 1224, 1239, 1222, 1181, 1250, 1244, 1207, 1184, 1181, 1259, 1241, 1182, 1262, 1199, 1230, 1169, 1252, 1231, 1198, 1288, 1251, 1202, 1171, 1207, 1233, 1183, 1199, 1246, 1264 ]
+    2021-02-22T08:12:31.702Z instance:0 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.029488156
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.059998234
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 5.987694744999998
-    rest_api_count{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 196
-    2021-02-22T07:56:32.922Z instance:1 areas stats: empty=0, with tresures=196
-    2021-02-22T07:56:32.925Z instance:1 amounts: [ 617, 635, 620, 586, 602, 590, 641, 633, 602, 592, 672, 681, 650, 622, 625, 637, 616, 611, 604, 606, 607, 571, 640, 637, 641, 648, 622, 608, 613, 648, 611, 594, 617, 599, 608, 614, 645, 612, 609, 692, 629, 659, 623, 623, 608, 639, 632, 615, 636, 621, 608, 581, 649, 619, 637, 673, 603, 595, 607, 659, 592, 653, 600, 597, 681, 633, 605, 586, 600, 601, 613, 587, 617, 598, 660, 642, 633, 607, 581, 662, 641, 554, 617, 638, 581, 614, 615, 636, 603, 625, 626, 630, 642, 611, 595, 632, 638, 605, 622, 642, ... 96 more items ]
-    2021-02-22T07:56:32.948Z instance:1 # HELP rest_api summary of rest api count and time
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 0.035961212
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 0.069146833
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 3.7262931040000016
+    rest_api_count{method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 100
+    2021-02-22T08:12:31.807Z instance:1 areas stats: empty=0, with tresures=100
+    2021-02-22T08:12:31.809Z instance:1 amounts: [ 1209, 1219, 1220, 1201, 1163, 1173, 1202, 1287, 1305, 1230, 1234, 1238, 1169, 1201, 1185, 1190, 1259, 1220, 1283, 1209, 1207, 1213, 1204, 1245, 1228, 1188, 1172, 1250, 1221, 1272, 1184, 1173, 1204, 1262, 1185, 1198, 1264, 1214, 1144, 1251, 1173, 1202, 1225, 1244, 1234, 1233, 1237, 1198, 1220, 1203, 1221, 1237, 1202, 1202, 1263, 1195, 1201, 1253, 1223, 1181, 1236, 1277, 1205, 1176, 1190, 1171, 1297, 1212, 1209, 1195, 1207, 1221, 1166, 1177, 1225, 1213, 1233, 1254, 1186, 1232, 1259, 1270, 1216, 1202, 1158, 1154, 1205, 1252, 1223, 1199, 1256, 1259, 1254, 1214, 1220, 1238, 1172, 1220, 1248, 1238 ]
+    2021-02-22T08:12:31.817Z instance:1 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.0286079695
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.050392849
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 5.9761033009999975
-    rest_api_count{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 196
-    2021-02-22T07:56:33.000Z instance:2 areas stats: empty=0, with tresures=196
-    2021-02-22T07:56:33.002Z instance:2 amounts: [ 570, 638, 634, 629, 644, 637, 590, 638, 636, 671, 606, 596, 646, 649, 609, 651, 632, 570, 647, 612, 608, 614, 579, 657, 623, 620, 602, 634, 623, 607, 581, 664, 641, 699, 598, 612, 624, 631, 600, 607, 638, 606, 620, 635, 620, 608, 613, 599, 662, 633, 644, 606, 636, 634, 605, 591, 624, 629, 629, 575, 587, 651, 637, 573, 623, 661, 587, 596, 634, 594, 628, 643, 644, 628, 611, 649, 617, 618, 671, 582, 616, 587, 621, 630, 638, 636, 605, 663, 618, 597, 633, 642, 654, 606, 643, 625, 628, 613, 646, 617, ... 96 more items ]
-    2021-02-22T07:56:33.025Z instance:2 # HELP rest_api summary of rest api count and time
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 0.035393442
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 0.075033221
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 3.761396225
+    rest_api_count{method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 100
+    2021-02-22T08:12:31.981Z instance:2 areas stats: empty=0, with tresures=100
+    2021-02-22T08:12:31.983Z instance:2 amounts: [ 1158, 1293, 1232, 1241, 1181, 1247, 1231, 1212, 1206, 1279, 1230, 1132, 1217, 1308, 1238, 1187, 1226, 1200, 1212, 1189, 1213, 1227, 1220, 1191, 1240, 1256, 1211, 1238, 1262, 1163, 1256, 1259, 1164, 1209, 1277, 1186, 1265, 1186, 1193, 1208, 1224, 1217, 1265, 1155, 1236, 1265, 1212, 1207, 1190, 1211, 1227, 1225, 1221, 1194, 1194, 1214, 1181, 1210, 1307, 1239, 1214, 1216, 1278, 1247, 1235, 1213, 1226, 1257, 1274, 1148, 1189, 1200, 1214, 1191, 1217, 1235, 1169, 1215, 1267, 1224, 1221, 1195, 1218, 1237, 1191, 1247, 1253, 1235, 1238, 1243, 1287, 1186, 1186, 1249, 1242, 1251, 1209, 1239, 1230, 1269 ]
+    2021-02-22T08:12:31.990Z instance:2 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.029010918
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.075815411
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 5.900655799000001
-    rest_api_count{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 196
-    2021-02-22T07:56:33.108Z instance:3 areas stats: empty=0, with tresures=196
-    2021-02-22T07:56:33.110Z instance:3 amounts: [ 585, 648, 629, 639, 606, 631, 620, 607, 627, 629, 628, 623, 660, 631, 598, 635, 612, 630, 621, 640, 626, 622, 644, 616, 591, 636, 587, 655, 585, 641, 610, 657, 586, 563, 644, 620, 627, 655, 667, 677, 623, 589, 615, 618, 621, 652, 669, 604, 624, 657, 609, 638, 613, 588, 563, 670, 608, 599, 624, 602, 577, 661, 663, 656, 642, 649, 674, 679, 637, 651, 597, 559, 637, 623, 619, 632, 646, 672, 632, 613, 669, 623, 649, 598, 592, 656, 615, 589, 679, 622, 636, 650, 632, 602, 638, 628, 616, 655, 613, 616, ... 96 more items ]
-    2021-02-22T07:56:33.131Z instance:3 # HELP rest_api summary of rest api count and time
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 0.0348341115
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 0.10007134
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 3.7808332690000017
+    rest_api_count{method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 100
+    2021-02-22T08:12:32.039Z instance:3 areas stats: empty=0, with tresures=100
+    2021-02-22T08:12:32.041Z instance:3 amounts: [ 1190, 1259, 1239, 1187, 1226, 1219, 1198, 1219, 1256, 1247, 1168, 1261, 1211, 1220, 1194, 1237, 1254, 1235, 1242, 1213, 1165, 1235, 1260, 1212, 1220, 1235, 1273, 1206, 1165, 1270, 1185, 1223, 1187, 1203, 1287, 1301, 1247, 1309, 1268, 1271, 1170, 1224, 1207, 1266, 1246, 1233, 1238, 1225, 1216, 1240, 1231, 1207, 1192, 1237, 1186, 1219, 1237, 1240, 1234, 1203, 1193, 1200, 1226, 1221, 1224, 1198, 1180, 1179, 1200, 1193, 1253, 1281, 1236, 1188, 1283, 1318, 1224, 1256, 1201, 1255, 1235, 1258, 1245, 1246, 1176, 1258, 1264, 1203, 1214, 1171, 1303, 1262, 1248, 1223, 1167, 1216, 1251, 1267, 1170, 1160 ]
+    2021-02-22T08:12:32.051Z instance:3 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.029684455999999998
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.075394098
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 5.883262218000002
-    rest_api_count{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 196
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 0.036196653
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 0.093501328
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 3.741339591
+    rest_api_count{method="post",route="/explore",status="200",sizeX="175",sizeY="175"} 100
