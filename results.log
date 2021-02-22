@@ -1,61 +1,122 @@
-    2021-02-22T07:56:26: PM2 log: Launching in no daemon mode
-    2021-02-22T07:56:26: PM2 log: App [index:0] starting in -cluster mode-
-    2021-02-22T07:56:26: PM2 log: App [index:0] online
-    2021-02-22T07:56:26: PM2 log: App [index:1] starting in -cluster mode-
-    2021-02-22T07:56:26: PM2 log: App [index:1] online
-    2021-02-22T07:56:26: PM2 log: App [index:2] starting in -cluster mode-
-    2021-02-22T07:56:26: PM2 log: App [index:2] online
-    2021-02-22T07:56:26: PM2 log: App [index:3] starting in -cluster mode-
-    2021-02-22T07:56:26: PM2 log: App [index:3] online
+    2021-02-22T08:40:23: PM2 log: Launching in no daemon mode
+    2021-02-22T08:40:23: PM2 log: App [index:0] starting in -cluster mode-
+    2021-02-22T08:40:23: PM2 log: App [index:0] online
+    2021-02-22T08:40:23: PM2 log: App [index:1] starting in -cluster mode-
+    2021-02-22T08:40:23: PM2 log: App [index:1] online
+    2021-02-22T08:40:23: PM2 log: App [index:2] starting in -cluster mode-
+    2021-02-22T08:40:23: PM2 log: App [index:2] online
+    2021-02-22T08:40:23: PM2 log: App [index:3] starting in -cluster mode-
+    2021-02-22T08:40:23: PM2 log: App [index:3] online
     start 0
-    base url:  http://1f51b57caa40:8000
-    2021-02-22T07:56:26.826Z instance:0 wholeArea: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T07:56:26.845Z instance:0 wholeExplore is started
-    2021-02-22T07:56:26.846Z instance:0 wholeExplore: { area: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    base url:  http://e65ace414e1b:8000
+    2021-02-22T08:40:24.076Z instance:0 wholeArea: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T08:40:24.077Z instance:0 wholeExplore is started
+    2021-02-22T08:40:24.078Z instance:0 wholeExplore: { area: { posX: 0, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
     start 1
-    base url:  http://1f51b57caa40:8000
-    2021-02-22T07:56:26.903Z instance:1 wholeArea: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T07:56:26.903Z instance:1 wholeExplore is started
-    2021-02-22T07:56:26.904Z instance:1 wholeExplore: { area: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    base url:  http://e65ace414e1b:8000
+    2021-02-22T08:40:24.312Z instance:1 wholeArea: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T08:40:24.312Z instance:1 wholeExplore is started
+    2021-02-22T08:40:24.313Z instance:1 wholeExplore: { area: { posX: 1750, posY: 0, sizeX: 1750, sizeY: 1750 }, amount: 10 }
     start 2
-    base url:  http://1f51b57caa40:8000
-    2021-02-22T07:56:27.051Z instance:2 wholeArea: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T07:56:27.052Z instance:2 wholeExplore is started
-    2021-02-22T07:56:27.052Z instance:2 wholeExplore: { area: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    base url:  http://e65ace414e1b:8000
+    2021-02-22T08:40:24.402Z instance:2 wholeArea: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T08:40:24.403Z instance:2 wholeExplore is started
+    2021-02-22T08:40:24.404Z instance:2 wholeExplore: { area: { posX: 0, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    2021-02-22T08:40:24.455Z instance:0 findAreaWithTreasures result: { area: { posX: 27, posY: 119, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 27, posY: 119, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
     start 3
-    base url:  http://1f51b57caa40:8000
-    2021-02-22T07:56:27.188Z instance:3 wholeArea: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }
-    2021-02-22T07:56:27.189Z instance:3 wholeExplore is started
-    2021-02-22T07:56:27.189Z instance:3 wholeExplore: { area: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
-    2021-02-22T07:56:32.873Z instance:0 areas stats: empty=0, with tresures=196
-    2021-02-22T07:56:32.876Z instance:0 amounts: [ 621, 652, 618, 634, 652, 636, 609, 624, 601, 614, 633, 614, 664, 674, 604, 631, 619, 660, 628, 633, 667, 685, 661, 657, 616, 607, 627, 591, 623, 591, 588, 641, 604, 691, 609, 585, 663, 638, 667, 646, 630, 652, 611, 628, 580, 596, 626, 630, 634, 633, 637, 616, 661, 634, 591, 661, 608, 626, 636, 623, 644, 679, 616, 628, 608, 606, 583, 643, 602, 615, 610, 641, 597, 638, 606, 612, 662, 625, 600, 628, 609, 631, 640, 625, 621, 645, 552, 632, 591, 605, 617, 623, 599, 611, 670, 615, 593, 616, 608, 573, ... 96 more items ]
-    2021-02-22T07:56:32.897Z instance:0 # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.029488156
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.059998234
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 5.987694744999998
-    rest_api_count{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 196
-    2021-02-22T07:56:32.922Z instance:1 areas stats: empty=0, with tresures=196
-    2021-02-22T07:56:32.925Z instance:1 amounts: [ 617, 635, 620, 586, 602, 590, 641, 633, 602, 592, 672, 681, 650, 622, 625, 637, 616, 611, 604, 606, 607, 571, 640, 637, 641, 648, 622, 608, 613, 648, 611, 594, 617, 599, 608, 614, 645, 612, 609, 692, 629, 659, 623, 623, 608, 639, 632, 615, 636, 621, 608, 581, 649, 619, 637, 673, 603, 595, 607, 659, 592, 653, 600, 597, 681, 633, 605, 586, 600, 601, 613, 587, 617, 598, 660, 642, 633, 607, 581, 662, 641, 554, 617, 638, 581, 614, 615, 636, 603, 625, 626, 630, 642, 611, 595, 632, 638, 605, 622, 642, ... 96 more items ]
-    2021-02-22T07:56:32.948Z instance:1 # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.0286079695
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.050392849
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 5.9761033009999975
-    rest_api_count{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 196
-    2021-02-22T07:56:33.000Z instance:2 areas stats: empty=0, with tresures=196
-    2021-02-22T07:56:33.002Z instance:2 amounts: [ 570, 638, 634, 629, 644, 637, 590, 638, 636, 671, 606, 596, 646, 649, 609, 651, 632, 570, 647, 612, 608, 614, 579, 657, 623, 620, 602, 634, 623, 607, 581, 664, 641, 699, 598, 612, 624, 631, 600, 607, 638, 606, 620, 635, 620, 608, 613, 599, 662, 633, 644, 606, 636, 634, 605, 591, 624, 629, 629, 575, 587, 651, 637, 573, 623, 661, 587, 596, 634, 594, 628, 643, 644, 628, 611, 649, 617, 618, 671, 582, 616, 587, 621, 630, 638, 636, 605, 663, 618, 597, 633, 642, 654, 606, 643, 625, 628, 613, 646, 617, ... 96 more items ]
-    2021-02-22T07:56:33.025Z instance:2 # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.029010918
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.075815411
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 5.900655799000001
-    rest_api_count{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 196
-    2021-02-22T07:56:33.108Z instance:3 areas stats: empty=0, with tresures=196
-    2021-02-22T07:56:33.110Z instance:3 amounts: [ 585, 648, 629, 639, 606, 631, 620, 607, 627, 629, 628, 623, 660, 631, 598, 635, 612, 630, 621, 640, 626, 622, 644, 616, 591, 636, 587, 655, 585, 641, 610, 657, 586, 563, 644, 620, 627, 655, 667, 677, 623, 589, 615, 618, 621, 652, 669, 604, 624, 657, 609, 638, 613, 588, 563, 670, 608, 599, 624, 602, 577, 661, 663, 656, 642, 649, 674, 679, 637, 651, 597, 559, 637, 623, 619, 632, 646, 672, 632, 613, 669, 623, 649, 598, 592, 656, 615, 589, 679, 622, 636, 650, 632, 602, 638, 628, 616, 655, 613, 616, ... 96 more items ]
-    2021-02-22T07:56:33.131Z instance:3 # HELP rest_api summary of rest api count and time
-    # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.029684455999999998
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 0.075394098
-    rest_api_sum{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 5.883262218000002
-    rest_api_count{method="post",route="/explore",status="200",sizeX="125",sizeY="125"} 196
+    base url:  http://e65ace414e1b:8000
+    2021-02-22T08:40:24.579Z instance:3 wholeArea: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }
+    2021-02-22T08:40:24.579Z instance:3 wholeExplore is started
+    2021-02-22T08:40:24.580Z instance:3 wholeExplore: { area: { posX: 1750, posY: 1750, sizeX: 1750, sizeY: 1750 }, amount: 10 }
+    2021-02-22T08:40:24.676Z instance:1 findAreaWithTreasures result: { area: { posX: 1822, posY: 75, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1822, posY: 75, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:24.763Z instance:0 findAreaWithTreasures result: { area: { posX: 108, posY: 154, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 108, posY: 154, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:24.771Z instance:2 findAreaWithTreasures result: { area: { posX: 0, posY: 1857, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 0, posY: 1857, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:25.024Z instance:3 findAreaWithTreasures result: { area: { posX: 1761, posY: 1873, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1761, posY: 1873, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:25.045Z instance:1 findAreaWithTreasures result: { area: { posX: 1832, posY: 233, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1832, posY: 233, sizeX: 1, sizeY: 1 }, amount: 2, priority: 0 } }
+    2021-02-22T08:40:25.151Z instance:2 findAreaWithTreasures result: { area: { posX: 31, posY: 1967, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 31, posY: 1967, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:25.182Z instance:0 findAreaWithTreasures result: { area: { posX: 124, posY: 343, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 124, posY: 343, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:25.440Z instance:3 findAreaWithTreasures result: { area: { posX: 1807, posY: 1967, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1807, posY: 1967, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:25.474Z instance:1 findAreaWithTreasures result: { area: { posX: 1856, posY: 341, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1856, posY: 341, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:25.562Z instance:0 findAreaWithTreasures result: { area: { posX: 26, posY: 420, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 26, posY: 420, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:25.578Z instance:2 findAreaWithTreasures result: { area: { posX: 88, posY: 2040, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 88, posY: 2040, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:25.821Z instance:3 findAreaWithTreasures result: { area: { posX: 1860, posY: 2079, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1860, posY: 2079, sizeX: 1, sizeY: 1 }, amount: 2, priority: 0 } }
+    2021-02-22T08:40:25.825Z instance:1 findAreaWithTreasures result: { area: { posX: 1841, posY: 451, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1841, posY: 451, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:40:25.975Z instance:0 findAreaWithTreasures result: { area: { posX: 96, posY: 524, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 96, posY: 524, sizeX: 1, sizeY: 1 }, amount: 2, priority: 0 } }
+    20
+    ...
+    ...
+    2021-02-22T08:41:35.480Z instance:2 findAreaWithTreasures result: { area: { posX: 1665, posY: 1925, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1665, posY: 1925, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:35.494Z instance:0 findAreaWithTreasures result: { area: { posX: 1711, posY: 200, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1711, posY: 200, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:35.561Z instance:3 findAreaWithTreasures result: { area: { posX: 3494, posY: 1833, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3494, posY: 1833, sizeX: 1, sizeY: 1 }, amount: 2, priority: 0 } }
+    2021-02-22T08:41:35.644Z instance:1 findAreaWithTreasures result: { area: { posX: 3426, posY: 203, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3426, posY: 203, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:35.842Z instance:2 findAreaWithTreasures result: { area: { posX: 1679, posY: 2099, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1679, posY: 2099, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:35.879Z instance:0 findAreaWithTreasures result: { area: { posX: 1670, posY: 362, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1670, posY: 362, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:35.946Z instance:3 findAreaWithTreasures result: { area: { posX: 3392, posY: 1948, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3392, posY: 1948, sizeX: 1, sizeY: 1 }, amount: 2, priority: 0 } }
+    2021-02-22T08:41:36.028Z instance:1 findAreaWithTreasures result: { area: { posX: 3489, posY: 331, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3489, posY: 331, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:36.288Z instance:2 findAreaWithTreasures result: { area: { posX: 1653, posY: 2249, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1653, posY: 2249, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:36.314Z instance:0 findAreaWithTreasures result: { area: { posX: 1744, posY: 420, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1744, posY: 420, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:36.410Z instance:3 findAreaWithTreasures result: { area: { posX: 3466, posY: 2097, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3466, posY: 2097, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:36.489Z instance:1 findAreaWithTreasures result: { area: { posX: 3396, posY: 458, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3396, posY: 458, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:36.681Z instance:2 findAreaWithTreasures result: { area: { posX: 1701, posY: 2285, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1701, posY: 2285, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:36.687Z instance:0 findAreaWithTreasures result: { area: { posX: 1685, posY: 587, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1685, posY: 587, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:36.813Z instance:3 findAreaWithTreasures result: { area: { posX: 3384, posY: 2186, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3384, posY: 2186, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:36.857Z instance:1 findAreaWithTreasures result: { area: { posX: 3449, posY: 580, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3449, posY: 580, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:37.071Z instance:0 findAreaWithTreasures result: { area: { posX: 1677, posY: 655, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1677, posY: 655, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:37.075Z instance:2 findAreaWithTreasures result: { area: { posX: 1740, posY: 2494, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1740, posY: 2494, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:37.198Z instance:3 findAreaWithTreasures result: { area: { posX: 3457, posY: 2277, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3457, posY: 2277, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:37.242Z instance:1 findAreaWithTreasures result: { area: { posX: 3476, posY: 637, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3476, posY: 637, sizeX: 1, sizeY: 1 }, amount: 2, priority: 0 } }
+    2021-02-22T08:41:37.455Z instance:2 findAreaWithTreasures result: { area: { posX: 1733, posY: 2609, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1733, posY: 2609, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:37.496Z instance:0 findAreaWithTreasures result: { area: { posX: 1740, posY: 846, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 1740, posY: 846, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:37.544Z instance:3 findAreaWithTreasures result: { area: { posX: 3448, posY: 2408, sizeX: 1, sizeY: 1 }, explore: { area: { posX: 3448, posY: 2408, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 } }
+    2021-02-22T08:41:37.593Z instance:1 findAreaWithTreasures result: { area: { posX: 3382, posY: 850, s
+    ..
+    ..
+    rest_api_count{method="post",route="/explore",status="200",sizeX="7",sizeY="4"} 24
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="3",sizeY="4"} 0.0131831845
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="3",sizeY="4"} 0.015893272
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="3",sizeY="4"} 0.15928074300000003
+    rest_api_count{method="post",route="/explore",status="200",sizeX="3",sizeY="4"} 12
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="3",sizeY="2"} 0.008621156000000001
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="3",sizeY="2"} 0.009523184
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="3",sizeY="2"} 0.034485444000000004
+    rest_api_count{method="post",route="/explore",status="200",sizeX="3",sizeY="2"} 4
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="8",sizeY="15"} 0.021946661
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="8",sizeY="15"} 0.055977006
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="8",sizeY="15"} 1.8988585699999998
+    rest_api_count{method="post",route="/explore",status="200",sizeX="8",sizeY="15"} 86
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="8",sizeY="7"} 0.0179302915
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="8",sizeY="7"} 0.025490698
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="8",sizeY="7"} 0.754963255
+    rest_api_count{method="post",route="/explore",status="200",sizeX="8",sizeY="7"} 44
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="4",sizeY="7"} 0.014686412999999999
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="4",sizeY="7"} 0.031751728
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="4",sizeY="7"} 0.4107171779999999
+    rest_api_count{method="post",route="/explore",status="200",sizeX="4",sizeY="7"} 28
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="4",sizeY="3"} 0.013703465500000001
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="4",sizeY="3"} 0.024417374
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="4",sizeY="3"} 0.196001339
+    rest_api_count{method="post",route="/explore",status="200",sizeX="4",sizeY="3"} 14
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="7",sizeY="15"} 0.023294422
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="7",sizeY="15"} 0.028368947
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="7",sizeY="15"} 0.18948132699999998
+    rest_api_count{method="post",route="/explore",status="200",sizeX="7",sizeY="15"} 8
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="32",sizeY="62"} 0.033778395
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="32",sizeY="62"} 0.089164417
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="32",sizeY="62"} 1.7469131379999998
+    rest_api_count{method="post",route="/explore",status="200",sizeX="32",sizeY="62"} 50
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="16",sizeY="32"} 0.0325565305
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="16",sizeY="32"} 0.04733056
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="16",sizeY="32"} 1.6144366729999997
+    rest_api_count{method="post",route="/explore",status="200",sizeX="16",sizeY="32"} 50
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="7",sizeY="7"} 0.020040453
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="7",sizeY="7"} 0.021530113
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="7",sizeY="7"} 0.05994740700000001
+    rest_api_count{method="post",route="/explore",status="200",sizeX="7",sizeY="7"} 3
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="2",sizeY="3"} 0.0094062
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="2",sizeY="3"} 0.010416296
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="2",sizeY="3"} 0.037296617000000004
+    rest_api_count{method="post",route="/explore",status="200",sizeX="2",sizeY="3"} 4
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="2",sizeY="1"} 0.006602679
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="2",sizeY="1"} 0.006935683
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="2",sizeY="1"} 0.013205358
+    rest_api_count{method="post",route="/explore",status="200",sizeX="2",sizeY="1"} 2

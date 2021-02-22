@@ -336,7 +336,7 @@ const game = async (client: APIClient) => {
         try {
           const explore = await client.post_explore(area);
           if (explore && explore.amount) {
-            const result = findAreaWithTreasures(log, client, area);
+            const result = await findAreaWithTreasures(log, client, area);
             log('findAreaWithTreasures result: %o', result);
           }
         } catch (error: unknown) {
