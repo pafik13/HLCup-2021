@@ -224,7 +224,7 @@ const game = async (client: APIClient) => {
 
     // Делители числа 1 750: 1, 2, 5, 7, 10, 14, 25, 35, 50, 70,  125,  175,  250,  350,  875, 1 750
     // Количество делителей: 16
-    const step = 35
+    const step = 50
     for (let globalX = minX; globalX < maxX; globalX += step) {
       for (let globalY = minY; globalY < maxY; globalY += step) {
         const area: Area = {
