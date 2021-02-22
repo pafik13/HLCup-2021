@@ -66,7 +66,7 @@ function sleep(ms: number) {
 
 class CallStats {
   public success = 0;
-  public error = 0;
+  public error: Record<number, number> = {};
 }
 
 class APIClient {
@@ -112,10 +112,13 @@ class APIClient {
       return result.data;
     }
     if (coins.length) {
-      this.stats.licensePaid.error++;
+      this.stats.licensePaid.error[result.status] =
+        ++this.stats.licensePaid.error[result.status] || 1;
     } else {
-      this.stats.licenseFree.error++;
+      this.stats.licenseFree.error[result.status] =
+        ++this.stats.licenseFree.error[result.status] || 1;
     }
+    logger('licence error, stats: %o', this.stats);
     return null;
   }
 
@@ -146,8 +149,10 @@ class APIClient {
       this.stats.dig.success++;
       return {priority: 0, treasures: result.data};
     }
-    this.stats.dig.error++;
+    this.stats.dig.error[result.status] =
+      ++this.stats.dig.error[result.status] || 1;
     if (result.status === 403 && this.license) delete this.license.id;
+    logger('dig error, stats: %o', this.stats);
     return null;
   }
 
@@ -172,7 +177,9 @@ class APIClient {
       }
       return result.data;
     }
-    this.stats.cash.error++;
+    this.stats.cash.error[result.status] =
+      ++this.stats.cash.error[result.status] || 1;
+    logger('cash error, stats: %o', this.stats);
     return null;
   }
 
@@ -192,7 +199,9 @@ class APIClient {
       result.data.priority = 0;
       return result.data;
     }
-    this.stats.explore.error++;
+    this.stats.explore.error[result.status] =
+      ++this.stats.explore.error[result.status] || 1;
+    logger('explore error, stats: %o', this.stats);
     if (result.status === 422) {
       throw Error('422');
     }
@@ -224,9 +233,6 @@ class APIClient {
     const license = await this.post_license(coins);
     if (license) {
       this.license = license;
-    } else {
-      //   this.licenseErrors++;
-      await sleep(20 * Math.random());
     }
   }
 }
@@ -360,7 +366,7 @@ const game = async (client: APIClient) => {
 
     // Делители числа 1 750: 1, 2, 5, 7, 10, 14, 25, 35, 50, 70,  125,  175,  250,  350,  875, 1 750
     // Количество делителей: 16
-    const step = 50;
+    const step = 35;
     for (let globalX = minX; globalX < maxX; globalX += step) {
       for (let globalY = minY; globalY < maxY; globalY += step) {
         const area: Area = {
@@ -415,6 +421,7 @@ const game = async (client: APIClient) => {
           } else {
             log('global error: %o', error);
           }
+          log('client stats: %o', client.stats);
         }
       }
     }
