@@ -51,7 +51,10 @@ console.debug('start ' + process.env.INSTANCE_ID);
 const baseURL = `http://${process.env.ADDRESS}:8000`;
 console.debug('base url: ', baseURL);
 
-const client = axios.create({baseURL, validateStatus: () => true});
+const client = axios.create({
+  baseURL,
+  validateStatus: () => true /*, timeout: 10*/,
+});
 const logger = debug('instance');
 // addLogger(client, logger);
 
@@ -119,7 +122,7 @@ class APIClient {
         ++this.stats.licenseFree.error[result.status] || 1;
     }
     logger('licence error, stats: %o', this.stats);
-    const timeLabel = `health-check-${Date.now}`;
+    const timeLabel = `health-check-${Date.now()}`;
     console.time(timeLabel);
     try {
       const health = await this.client.get('/health-check');
@@ -366,12 +369,11 @@ const game = async (client: APIClient) => {
 
   log('wholeArea: %o', wholeArea);
 
-  log('wholeExplore is started');
   const wholeExplore: Explore = {area: wholeArea, amount: 10}; //await client.post_explore(wholeArea);
   if (!wholeExplore) {
     log('wholeExplore is empty');
   } else {
-    log('wholeExplore: %o', wholeExplore);
+    // log('wholeExplore: %o', wholeExplore);
 
     // Делители числа 1 750: 1, 2, 5, 7, 10, 14, 25, 35, 50, 70,  125,  175,  250,  350,  875, 1 750
     // Количество делителей: 16
