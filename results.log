@@ -1,61 +1,153 @@
-    2021-02-21T14:42:53: PM2 log: Launching in no daemon mode
-    2021-02-21T14:42:53: PM2 log: App [index:0] starting in -cluster mode-
-    2021-02-21T14:42:53: PM2 log: App [index:0] online
-    2021-02-21T14:42:53: PM2 log: App [index:1] starting in -cluster mode-
-    2021-02-21T14:42:53: PM2 log: App [index:1] online
-    2021-02-21T14:42:53: PM2 log: App [index:2] starting in -cluster mode-
-    2021-02-21T14:42:53: PM2 log: App [index:2] online
-    2021-02-21T14:42:53: PM2 log: App [index:3] starting in -cluster mode-
-    2021-02-21T14:42:53: PM2 log: App [index:3] online
+    2021-02-21T22:33:59: PM2 log: Launching in no daemon mode
+    2021-02-21T22:33:59: PM2 log: App [index:0] starting in -cluster mode-
+    2021-02-21T22:33:59: PM2 log: App [index:0] online
+    2021-02-21T22:33:59: PM2 log: App [index:1] starting in -cluster mode-
+    2021-02-21T22:33:59: PM2 log: App [index:1] online
+    2021-02-21T22:33:59: PM2 log: App [index:2] starting in -cluster mode-
+    2021-02-21T22:33:59: PM2 log: App [index:2] online
+    2021-02-21T22:33:59: PM2 log: App [index:3] starting in -cluster mode-
+    2021-02-21T22:33:59: PM2 log: App [index:3] online
+    2021-02-21T22:33:59: PM2 log: App [index:4] starting in -cluster mode-
+    2021-02-21T22:33:59: PM2 log: App [index:4] online
+    2021-02-21T22:33:59: PM2 log: App [index:5] starting in -cluster mode-
     start 0
-    base url:  http://dbf63765a6b1:8000
+    base url:  http://3e98cf9bc5e3:8000
+    2021-02-21T22:33:59.815Z instance:0 wholeArea: { posX: 0, posY: 0, sizeX: 700, sizeY: 1750 }
+    2021-02-21T22:33:59.816Z instance:0 wholeExplore is started
+    2021-02-21T22:33:59: PM2 log: App [index:5] online
+    2021-02-21T22:33:59: PM2 log: App [index:6] starting in -cluster mode-
     start 1
-    base url:  http://dbf63765a6b1:8000
+    base url:  http://3e98cf9bc5e3:8000
+    2021-02-21T22:34:00.104Z instance:1 wholeArea: { posX: 700, posY: 0, sizeX: 700, sizeY: 1750 }
+    2021-02-21T22:34:00.105Z instance:1 wholeExplore is started
     start 2
-    base url:  http://dbf63765a6b1:8000
+    base url:  http://3e98cf9bc5e3:8000
+    2021-02-21T22:34:00.142Z instance:2 wholeArea: { posX: 1400, posY: 0, sizeX: 700, sizeY: 1750 }
+    2021-02-21T22:34:00.142Z instance:2 wholeExplore is started
+    2021-02-21T22:34:00: PM2 log: App [index:6] online
+    2021-02-21T22:34:00: PM2 log: App [index:7] starting in -cluster mode-
+    2021-02-21T22:34:00.220Z instance:0 wholeExplore: { area: { posX: 0, posY: 0, sizeX: 700, sizeY: 1750 }, amount: 49283, priority: 0 }
     start 3
-    base url:  http://dbf63765a6b1:8000
-    2021-02-21T14:42:54.566Z client instanceId: 1, area: { posX: 875, posY: 875, sizeX: 875, sizeY: 875 }; area0: { posX: 875, posY: 875, sizeX: 437, sizeY: 875 }; area1: { posX: 1312, posY: 875, sizeX: 438, sizeY: 875 }; explore0: { area: { posX: 875, posY: 875, sizeX: 437, sizeY: 875 }, amount: 15179, priority: 0 }; explore1: { area: { posX: 1312, posY: 875, sizeX: 438, sizeY: 875 }, amount: 15217, priority: 0 }
-    2021-02-21T14:42:54.970Z client instanceId: 1, area: { posX: 1312, posY: 875, sizeX: 438, sizeY: 875 }; area0: { posX: 1312, posY: 875, sizeX: 438, sizeY: 437 }; area1: { posX: 1312, posY: 1312, sizeX: 438, sizeY: 438 }; explore0: { area: { posX: 1312, posY: 875, sizeX: 438, sizeY: 437 }, amount: 7538, priority: 0 }; explore1: { area: { posX: 1312, posY: 1312, sizeX: 438, sizeY: 438 }, amount: 7679, priority: 0 }
-    2021-02-21T14:42:55.107Z client instanceId: 1, area: { posX: 1312, posY: 1312, sizeX: 438, sizeY: 438 }; area0: { posX: 1312, posY: 1312, sizeX: 219, sizeY: 438 }; area1: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 438 }; explore0: { area: { posX: 1312, posY: 1312, sizeX: 219, sizeY: 438 }, amount: 3804, priority: 0 }; explore1: { area: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 438 }, amount: 3875, priority: 0 }
-    2021-02-21T14:42:55.314Z client instanceId: 1, area: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 438 }; area0: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 219 }; area1: { posX: 1531, posY: 1531, sizeX: 219, sizeY: 219 }; explore0: { area: { posX: 1531, posY: 1312, sizeX: 219, sizeY: 219 }, amount: 1916, priority: 0 }; explore1: { area: { posX: 1531, posY: 1531, sizeX: 219, sizeY: 219 }, amount: 1959, priority: 0 }
-    2021-02-21T14:42:55.424Z client instanceId: 1, area: { posX: 1531, posY: 1531, sizeX: 219, sizeY: 219 }; area0: { posX: 1531, posY: 1531, sizeX: 109, sizeY: 219 }; area1: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 219 }; explore0: { area: { posX: 1531, posY: 1531, sizeX: 109, sizeY: 219 }, amount: 961, priority: 0 }; explore1: { area: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 219 }, amount: 998, priority: 0 }
-    2021-02-21T14:42:55.478Z client instanceId: 1, area: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 219 }; area0: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 109 }; area1: { posX: 1640, posY: 1640, sizeX: 110, sizeY: 110 }; explore0: { area: { posX: 1640, posY: 1531, sizeX: 110, sizeY: 109 }, amount: 485, priority: 0 }; explore1: { area: { posX: 1640, posY: 1640, sizeX: 110, sizeY: 110 }, amount: 513, priority: 0 }
-    2021-02-21T14:42:55.524Z client instanceId: 1, area: { posX: 1640, posY: 1640, sizeX: 110, sizeY: 110 }; area0: { posX: 1640, posY: 1640, sizeX: 55, sizeY: 110 }; area1: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 110 }; explore0: { area: { posX: 1640, posY: 1640, sizeX: 55, sizeY: 110 }, amount: 244, priority: 0 }; explore1: { area: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 110 }, amount: 269, priority: 0 }
-    2021-02-21T14:42:55.559Z client instanceId: 1, area: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 110 }; area0: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 55 }; area1: { posX: 1695, posY: 1695, sizeX: 55, sizeY: 55 }; explore0: { area: { posX: 1695, posY: 1640, sizeX: 55, sizeY: 55 }, amount: 134, priority: 0 }; explore1: { area: { posX: 1695, posY: 1695, sizeX: 55, sizeY: 55 }, amount: 135, priority: 0 }
-    2021-02-21T14:42:55.595Z client instanceId: 1, area: { posX: 1695, posY: 1695, sizeX: 55, sizeY: 55 }; area0: { posX: 1695, posY: 1695, sizeX: 27, sizeY: 55 }; area1: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 55 }; explore0: { area: { posX: 1695, posY: 1695, sizeX: 27, sizeY: 55 }, amount: 59, priority: 0 }; explore1: { area: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 55 }, amount: 76, priority: 0 }
-    2021-02-21T14:42:55.635Z client instanceId: 1, area: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 55 }; area0: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 27 }; area1: { posX: 1722, posY: 1722, sizeX: 28, sizeY: 28 }; explore0: { area: { posX: 1722, posY: 1695, sizeX: 28, sizeY: 27 }, amount: 28, priority: 0 }; explore1: { area: { posX: 1722, posY: 1722, sizeX: 28, sizeY: 28 }, amount: 48, priority: 0 }
-    2021-02-21T14:42:55.670Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 28, sizeY: 28 }; area0: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 28 }; area1: { posX: 1736, posY: 1722, sizeX: 14, sizeY: 28 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 28 }, amount: 26, priority: 0 }; explore1: { area: { posX: 1736, posY: 1722, sizeX: 14, sizeY: 28 }, amount: 22, priority: 0 }
-    2021-02-21T14:42:55.701Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 28 }; area0: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 14 }; area1: { posX: 1722, posY: 1736, sizeX: 14, sizeY: 14 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 14 }, amount: 14, priority: 0 }; explore1: { area: { posX: 1722, posY: 1736, sizeX: 14, sizeY: 14 }, amount: 12, priority: 0 }
-    2021-02-21T14:42:55.724Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 14, sizeY: 14 }; area0: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 14 }; area1: { posX: 1729, posY: 1722, sizeX: 7, sizeY: 14 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 14 }, amount: 8, priority: 0 }; explore1: { area: { posX: 1729, posY: 1722, sizeX: 7, sizeY: 14 }, amount: 6, priority: 0 }
-    2021-02-21T14:42:55.744Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 14 }; area0: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 7 }; area1: { posX: 1722, posY: 1729, sizeX: 7, sizeY: 7 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 7 }, amount: 6, priority: 0 }; explore1: { area: { posX: 1722, posY: 1729, sizeX: 7, sizeY: 7 }, amount: 2, priority: 0 }
-    2021-02-21T14:42:55.761Z client instanceId: 1, area: { posX: 1722, posY: 1722, sizeX: 7, sizeY: 7 }; area0: { posX: 1722, posY: 1722, sizeX: 3, sizeY: 7 }; area1: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 7 }; explore0: { area: { posX: 1722, posY: 1722, sizeX: 3, sizeY: 7 }, amount: 2, priority: 0 }; explore1: { area: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 7 }, amount: 4, priority: 0 }
-    2021-02-21T14:42:55.777Z client instanceId: 1, area: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 7 }; area0: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 3 }; area1: { posX: 1725, posY: 1725, sizeX: 4, sizeY: 4 }; explore0: { area: { posX: 1725, posY: 1722, sizeX: 4, sizeY: 3 }, amount: 2, priority: 0 }; explore1: { area: { posX: 1725, posY: 1725, sizeX: 4, sizeY: 4 }, amount: 2, priority: 0 }
-    2021-02-21T14:42:55.787Z client instanceId: 1, area: { posX: 1725, posY: 1725, sizeX: 4, sizeY: 4 }; area0: { posX: 1725, posY: 1725, sizeX: 2, sizeY: 4 }; area1: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 4 }; explore0: { area: { posX: 1725, posY: 1725, sizeX: 2, sizeY: 4 }, amount: 0, priority: 0 }; explore1: { area: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 4 }, amount: 2, priority: 0 }
-    2021-02-21T14:42:55.787Z client # HELP rest_api summary of rest api count and time
+    base url:  http://3e98cf9bc5e3:8000
+    2021-02-21T22:34:00.289Z instance:3 wholeArea: { posX: 2100, posY: 0, sizeX: 700, sizeY: 1750 }
+    2021-02-21T22:34:00.290Z instance:3 wholeExplore is started
+    2021-02-21T22:34:00: PM2 log: App [index:7] online
+    2021-02-21T22:34:00: PM2 log: App [index:8] starting in -cluster mode-
+    2021-02-21T22:34:00: PM2 log: App [index:8] online
+    2021-02-21T22:34:00: PM2 log: App [index:9] starting in -cluster mode-
+    start 5
+    base url:  http://3e98cf9bc5e3:8000
+    2021-02-21T22:34:00.491Z instance:5 wholeArea: { posX: 0, posY: 1750, sizeX: 700, sizeY: 1750 }
+    2021-02-21T22:34:00.492Z instance:5 wholeExplore is started
+    2021-02-21T22:34:00.568Z instance:2 wholeExplore: { area: { posX: 1400, posY: 0, sizeX: 700, sizeY: 1750 }, amount: 48864, priority: 0 }
+    2021-02-21T22:34:00.578Z instance:1 wholeExplore: { area: { posX: 700, posY: 0, sizeX: 700, sizeY: 1750 }, amount: 48526, priority: 0 }
+    2021-02-21T22:34:00: PM2 log: App [index:9] online
+    start 4
+    base url:  http://3e98cf9bc5e3:8000
+    2021-02-21T22:34:00.706Z instance:4 wholeArea: { posX: 2800, posY: 0, sizeX: 700, sizeY: 1750 }
+    2021-02-21T22:34:00.707Z instance:4 wholeExplore is started
+    2021-02-21T22:34:00.880Z instance:3 wholeExplore: { area: { posX: 2100, posY: 0, sizeX: 700, sizeY: 1750 }, amount: 48626, priority: 0 }
+    start 8
+    ...
+    ...
+    rest_api_count{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 1
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.035062287991269855
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.07945072359811976
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 299.33279641199886
+    rest_api_count{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 8410
+    rest_api{quantile="0.5",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.034917835999999994
+    rest_api{quantile="0.999",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.067174465
+    rest_api_sum{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 2.226801362
+    rest_api_count{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 62
+    2021-02-21T22:39:04.878Z instance:9 global error: x=3496, y=1798, step=12
+    2021-02-21T22:39:04.879Z instance:9 global error: 422
+    2021-02-21T22:39:04.882Z instance:9 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.0340316595
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.442613333
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 3.0490810260000005
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 40
-    2021-02-21T14:42:55.798Z client instanceId: 1, area: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 4 }; area0: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 2 }; area1: { posX: 1727, posY: 1727, sizeX: 2, sizeY: 2 }; explore0: { area: { posX: 1727, posY: 1725, sizeX: 2, sizeY: 2 }, amount: 1, priority: 0 }; explore1: { area: { posX: 1727, posY: 1727, sizeX: 2, sizeY: 2 }, amount: 1, priority: 0 }
-    2021-02-21T14:42:55.805Z client instanceId: 1, area: { posX: 1727, posY: 1727, sizeX: 2, sizeY: 2 }; area0: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 2 }; area1: { posX: 1728, posY: 1727, sizeX: 1, sizeY: 2 }; explore0: { area: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 2 }, amount: 1, priority: 0 }; explore1: { area: { posX: 1728, posY: 1727, sizeX: 1, sizeY: 2 }, amount: 0, priority: 0 }
-    2021-02-21T14:42:55.813Z client instanceId: 1, area: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 2 }; area0: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 1 }; area1: { posX: 1727, posY: 1728, sizeX: 1, sizeY: 1 }; explore0: { area: { posX: 1727, posY: 1727, sizeX: 1, sizeY: 1 }, amount: 1, priority: 0 }; explore1: { area: { posX: 1727, posY: 1728, sizeX: 1, sizeY: 1 }, amount: 0, priority: 0 }
-    2021-02-21T14:42:55.818Z client # HELP rest_api summary of rest api count and time
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.768657512
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.768657512
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.768657512
+    rest_api_count{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 1
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.035062287991269855
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.07945072359811976
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 299.33279641199886
+    rest_api_count{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 8410
+    rest_api{quantile="0.5",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.034918278
+    rest_api{quantile="0.999",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.067174465
+    rest_api_sum{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 2.278583565
+    rest_api_count{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 63
+    2021-02-21T22:39:04.911Z instance:9 global error: x=3496, y=1810, step=12
+    2021-02-21T22:39:04.912Z instance:9 global error: 422
+    2021-02-21T22:39:04.913Z instance:9 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.0324684935
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.41945421
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 3.121297722000001
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 40
-    2021-02-21T14:42:55.852Z client # HELP rest_api summary of rest api count and time
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.768657512
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.768657512
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.768657512
+    rest_api_count{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 1
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.035062287991269855
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.07945072359811976
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 299.33279641199886
+    rest_api_count{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 8410
+    rest_api{quantile="0.5",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.034917835999999994
+    rest_api{quantile="0.999",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.067174465
+    rest_api_sum{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 2.307793798
+    rest_api_count{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 64
+    2021-02-21T22:39:04.954Z instance:9 global error: x=3496, y=1822, step=12
+    2021-02-21T22:39:04.954Z instance:9 global error: 422
+    2021-02-21T22:39:04.963Z instance:9 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.030378867
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.657198497
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 2.8166746549999995
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 40
-    2021-02-21T14:42:55.854Z client # HELP rest_api summary of rest api count and time
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.768657512
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.768657512
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.768657512
+    rest_api_count{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 1
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.035062287991269855
+    ..
+    ..
+    rest_api_sum{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 3.8551192880000005
+    rest_api_count{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 144
+    2021-02-21T22:39:09.596Z instance:4 global error: x=3496, y=1728, step=12
+    2021-02-21T22:39:09.596Z instance:4 global error: 422
+    2021-02-21T22:39:09.598Z instance:4 # HELP rest_api summary of rest api count and time
     # TYPE rest_api summary
-    rest_api{quantile="0.5",method="post",route="/explore",status="200",response_size="1"} 0.0306519565
-    rest_api{quantile="0.999",method="post",route="/explore",status="200",response_size="1"} 0.487637022
-    rest_api_sum{method="post",route="/explore",status="200",response_size="1"} 2.9558079139999993
-    rest_api_count{method="post",route="/explore",status="200",response_size="1"} 40
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.586213859
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.586213859
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.586213859
+    rest_api_count{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 1
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.035110434385942045
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.0866588782274136
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 303.04586207800094
+    rest_api_count{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 8468
+    rest_api{quantile="0.5",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.031575726
+    rest_api{quantile="0.999",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.072188495
+    rest_api_sum{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 3.8588495380000003
+    rest_api_count{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 145
+    2021-02-21T22:39:09.603Z instance:4 global error: x=3496, y=1740, step=12
+    2021-02-21T22:39:09.603Z instance:4 global error: 422
+    2021-02-21T22:39:09.606Z instance:4 # HELP rest_api summary of rest api count and time
+    # TYPE rest_api summary
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.586213859
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.586213859
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.586213859
+    rest_api_count{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 1
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.035110434385942045
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.0866588782274136
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 303.04586207800094
+    rest_api_count{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 8468
+    rest_api{quantile="0.5",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.0314756525
+    rest_api{quantile="0.999",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.072188495
+    rest_api_sum{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 3.8629323550000003
+    rest_api_count{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 146
+    2021-02-21T22:39:09.606Z instance:4 areas stats: empty=25, with tresures=8443
+    2021-02-21T22:39:09.608Z instance:4 # HELP rest_api summary of rest api count and time
+    # TYPE rest_api summary
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.586213859
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.586213859
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 0.586213859
+    rest_api_count{method="post",route="/explore",status="200",sizeX="700",sizeY="1750"} 1
+    rest_api{quantile="0.5",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.035110434385942045
+    rest_api{quantile="0.999",method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 0.0866588782274136
+    rest_api_sum{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 303.04586207800094
+    rest_api_count{method="post",route="/explore",status="200",sizeX="12",sizeY="12"} 8468
+    rest_api{quantile="0.5",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.0314756525
+    rest_api{quantile="0.999",method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 0.072188495
+    rest_api_sum{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 3.8629323550000003
+    rest_api_count{method="post",route="/explore",status="422",sizeX="12",sizeY="12"} 146

@@ -222,7 +222,7 @@ const game = async (client: APIClient) => {
   } else {
     log('wholeExplore: %o', wholeExplore);
 
-    const step = Math.floor((xPartSize * yPartSize) / wholeExplore.amount);
+    const step = Math.floor((xPartSize * yPartSize) / wholeExplore.amount / 2);
     for (let globalX = minX; globalX < maxX; globalX += step) {
       for (let globalY = minY; globalY < maxY; globalY += step) {
         const area: Area = {
