@@ -191,7 +191,7 @@ const game = async (client: APIClient) => {
   let minY = 0;
   let maxX = 0;
   let maxY = 0;
-  const xParts = 5;
+  const xParts = 2;
   const yParts = 2;
   const xPartSize = 3500 / xParts;
   const yPartSize = 3500 / yParts;
@@ -216,13 +216,13 @@ const game = async (client: APIClient) => {
   // emtpyPoints = 0,
   // pointWithTreasures = 0;
   log('wholeExplore is started');
-  const wholeExplore = await client.post_explore(wholeArea);
+  const wholeExplore:Explore = { area: wholeArea, amount: 10  }//await client.post_explore(wholeArea);
   if (!wholeExplore) {
     log('wholeExplore is empty');
   } else {
     log('wholeExplore: %o', wholeExplore);
 
-    const step = Math.floor((xPartSize * yPartSize) / wholeExplore.amount / 2);
+    const step = 8
     for (let globalX = minX; globalX < maxX; globalX += step) {
       for (let globalY = minY; globalY < maxY; globalY += step) {
         const area: Area = {
