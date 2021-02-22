@@ -213,7 +213,7 @@ const game = async (client: APIClient) => {
 
   let emptyAreas = 0,
     areasWithTreasures = 0;
-  // const amounts = []
+  const amounts = []
   // emtpyPoints = 0,
   // pointWithTreasures = 0;
   log('wholeExplore is started');
@@ -225,7 +225,7 @@ const game = async (client: APIClient) => {
 
     // Делители числа 1 750: 1, 2, 5, 7, 10, 14, 25, 35, 50, 70,  125,  175,  250,  350,  875, 1 750
     // Количество делителей: 16
-    const step = 125
+    const step = 70
     for (let globalX = minX; globalX < maxX; globalX += step) {
       for (let globalY = minY; globalY < maxY; globalY += step) {
         const area: Area = {
@@ -237,7 +237,7 @@ const game = async (client: APIClient) => {
         try {
           const explore = await client.post_explore(area);
           if (explore && explore.amount) {
-            // amounts.push(explore.amount)
+            amounts.push(explore.amount)
             areasWithTreasures++;
           } else {
             emptyAreas++;
@@ -259,7 +259,7 @@ const game = async (client: APIClient) => {
     emptyAreas,
     areasWithTreasures
   );
-  // log('amounts: %o', amounts)
+  log('amounts: %o', amounts)
 
   // log(
   //   'point stats: empty=%d, with tresures=%d',
