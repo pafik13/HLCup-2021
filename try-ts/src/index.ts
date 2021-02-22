@@ -44,7 +44,7 @@ const apiMetrics = new promClient.Summary({
 
 // import {addLogger} from 'axios-debug-log';
 import axios, {AxiosInstance} from 'axios';
-import debug from 'debug';
+import debug, {Debugger} from 'debug';
 
 console.debug('start ' + process.env.INSTANCE_ID);
 
@@ -183,6 +183,108 @@ class APIClient {
   // }
 }
 
+const splitArea = (area: Area): Area[] => {
+  let area1, area2: Area;
+  const {sizeX, sizeY, posX: x, posY: y} = area;
+  if (sizeY > sizeX) {
+    const midSizeY = Math.floor(sizeY / 2);
+    area1 = {
+      posX: x,
+      posY: y,
+      sizeX,
+      sizeY: midSizeY,
+    };
+    area2 = {
+      posX: x,
+      posY: y + midSizeY,
+      sizeX,
+      sizeY: sizeY - midSizeY,
+    };
+  } else {
+    const midSizeX = Math.floor(sizeX / 2);
+    area1 = {
+      posX: x,
+      posY: y,
+      sizeX: midSizeX,
+      sizeY,
+    };
+    area2 = {
+      posX: x + midSizeX,
+      posY: y,
+      sizeX: sizeX - midSizeX,
+      sizeY,
+    };
+  }
+
+  return [area1, area2];
+};
+
+const findAreaWithTreasures = async (
+  logger: Debugger,
+  client: APIClient,
+  initArea: Area
+): Promise<{area: Area; explore: Explore | null}> => {
+  let area = initArea;
+  let explore = null;
+  while (area.sizeX > 1 || area.sizeY > 1) {
+    try {
+      const areas = splitArea(area);
+
+      let explores: Array<Explore | null> = [null, null];
+      try {
+        explores = await Promise.all(areas.map(it => client.post_explore(it)));
+      } catch (error) {
+        logger('area: %o; area0: %o; area1: %o;', area, areas[0], areas[1]);
+      }
+
+      const explore0 = explores[0];
+      const explore1 = explores[1];
+
+      // if (instanceId === 1) {
+      //   logger(
+      //     'area: %o; area0: %o; area1: %o; explore0: %o; explore1: %o',
+      //     area,
+      //     areas[0],
+      //     areas[1],
+      //     explore0,
+      //     explore1
+      //   );
+      // }
+      if (explore0 && explore1) {
+        if (explore0.amount > explore1.amount) {
+          area = explore0.area;
+          explore = explore0;
+        } else {
+          area = explore1.area;
+          explore = explore1;
+        }
+      } else if (!explore0 && !explore1) {
+        area = areas[0];
+        explore = null;
+      } else {
+        if (explore1) {
+          area = explore1.area;
+          explore = explore1;
+        }
+        if (explore0) {
+          area = explore0.area;
+          explore = explore0;
+        }
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        logger('findAreaWithTreasures error: %s', error.message);
+      } else {
+        logger('findAreaWithTreasures error: %o', error);
+      }
+      logger('findAreaWithTreasures error area: %o', area);
+      // logger(await promClient.register.metrics());
+      // sleep(100);
+    }
+  }
+  return {area, explore};
+};
+
 const game = async (client: APIClient) => {
   const instanceId = Number(process.env.INSTANCE_ID);
   const log = logger.extend(String(instanceId));
@@ -211,13 +313,10 @@ const game = async (client: APIClient) => {
 
   log('wholeArea: %o', wholeArea);
 
-  let emptyAreas = 0,
-    areasWithTreasures = 0;
-  const amounts = []
   // emtpyPoints = 0,
   // pointWithTreasures = 0;
   log('wholeExplore is started');
-  const wholeExplore:Explore = { area: wholeArea, amount: 10  }//await client.post_explore(wholeArea);
+  const wholeExplore: Explore = {area: wholeArea, amount: 10}; //await client.post_explore(wholeArea);
   if (!wholeExplore) {
     log('wholeExplore is empty');
   } else {
@@ -225,7 +324,7 @@ const game = async (client: APIClient) => {
 
     // Делители числа 1 750: 1, 2, 5, 7, 10, 14, 25, 35, 50, 70,  125,  175,  250,  350,  875, 1 750
     // Количество делителей: 16
-    const step = 125
+    const step = 125;
     for (let globalX = minX; globalX < maxX; globalX += step) {
       for (let globalY = minY; globalY < maxY; globalY += step) {
         const area: Area = {
@@ -237,10 +336,8 @@ const game = async (client: APIClient) => {
         try {
           const explore = await client.post_explore(area);
           if (explore && explore.amount) {
-            amounts.push(explore.amount)
-            areasWithTreasures++;
-          } else {
-            emptyAreas++;
+            const result = findAreaWithTreasures(log, client, area);
+            log('findAreaWithTreasures result: %o', result);
           }
         } catch (error: unknown) {
           log('global error: x=%d, y=%d, step=%d', globalX, globalY, step);
@@ -254,12 +351,6 @@ const game = async (client: APIClient) => {
       }
     }
   }
-  log(
-    'areas stats: empty=%d, with tresures=%d',
-    emptyAreas,
-    areasWithTreasures
-  );
-  log('amounts: %o', amounts)
 
   // log(
   //   'point stats: empty=%d, with tresures=%d',
