@@ -288,7 +288,8 @@ const splitArea = (area: Area): Area[] => {
 const findAreaWithTreasures = async (
   logger: Debugger,
   client: APIClient,
-  initArea: Area
+  initArea: Area,
+  exploresStore: Array<Explore>
 ): Promise<{area: Area; explore: Explore | null}> => {
   let area = initArea;
   let explore = null;
@@ -310,9 +311,11 @@ const findAreaWithTreasures = async (
         if (explore0.amount > explore1.amount) {
           area = explore0.area;
           explore = explore0;
+          if (explore1.amount) exploresStore.push(explore1);
         } else {
           area = explore1.area;
           explore = explore1;
+          if (explore0.amount) exploresStore.push(explore0);
         }
       } else if (!explore0 && !explore1) {
         area = areas[0];
@@ -413,37 +416,46 @@ const game = async (client: APIClient) => {
         try {
           const explore = await client.post_explore(area);
           if (explore && explore.amount) {
-            const {explore: exploreWithTreasures} = await findAreaWithTreasures(
-              log,
-              client,
-              area
-            );
+            const explores = [explore];
+            while (explores.length) {
+              const baseExplore = explores.pop();
+              if (baseExplore) {
+                const {
+                  explore: exploreWithTreasures,
+                } = await findAreaWithTreasures(
+                  log,
+                  client,
+                  baseExplore.area,
+                  explores
+                );
 
-            if (exploreWithTreasures && exploreWithTreasures.amount) {
-              let depth = 1;
-              let left = exploreWithTreasures.amount;
-              while (depth <= 10 && left > 0) {
-                while (
-                  !client.license ||
-                  !client.license.id ||
-                  client.license.digUsed >= client.license.digAllowed
-                ) {
-                  await client.update_license();
-                }
-                const dig: Dig = {
-                  licenseID: client.license.id,
-                  posX: exploreWithTreasures.area.posX,
-                  posY: exploreWithTreasures.area.posY,
-                  depth,
-                };
+                if (exploreWithTreasures && exploreWithTreasures.amount) {
+                  let depth = 1;
+                  let left = exploreWithTreasures.amount;
+                  while (depth <= 10 && left > 0) {
+                    while (
+                      !client.license ||
+                      !client.license.id ||
+                      client.license.digUsed >= client.license.digAllowed
+                    ) {
+                      await client.update_license();
+                    }
+                    const dig: Dig = {
+                      licenseID: client.license.id,
+                      posX: exploreWithTreasures.area.posX,
+                      posY: exploreWithTreasures.area.posY,
+                      depth,
+                    };
 
-                const treasures = await client.post_dig(dig);
-                client.license.digUsed++;
-                depth++;
-                if (treasures) {
-                  for (const treasure of treasures.treasures) {
-                    const res = await client.post_cash(treasure);
-                    if (res) left--;
+                    const treasures = await client.post_dig(dig);
+                    client.license.digUsed++;
+                    depth++;
+                    if (treasures) {
+                      for (const treasure of treasures.treasures) {
+                        const res = await client.post_cash(treasure);
+                        if (res) left--;
+                      }
+                    }
                   }
                 }
               }
