@@ -56,7 +56,6 @@ const client = axios.create({
   validateStatus: () => true /*, timeout: 10*/,
 });
 const logger = debug('instance');
-// addLogger(client, logger);
 
 // const metricsInterval = setInterval(async () => {
 //   logger(await promClient.register.metrics());
@@ -93,8 +92,10 @@ class APIClient {
   };
   public client: AxiosInstance;
   public license?: License;
+  readonly start: number;
   constructor(client: AxiosInstance) {
     this.client = client;
+    this.start = Date.now();
   }
 
   async post_license(coins: number[]): Promise<License | null> {
@@ -121,16 +122,15 @@ class APIClient {
       this.stats.licenseFree.error[result.status] =
         ++this.stats.licenseFree.error[result.status] || 1;
     }
-    logger('licence error, stats: %o', this.stats);
-    const timeLabel = `health-check-${Date.now()}`;
-    console.time(timeLabel);
-    try {
-      const health = await this.client.get('/health-check');
-      logger('healt: %o, status: %d', health.data, health.status);
-    } catch (error) {
-      logger('helthcheck error: %o', error);
-    }
-    console.timeEnd(timeLabel);
+    // const timeLabel = `health-check-${Date.now()}`;
+    // console.time(timeLabel);
+    // try {
+    //   const health = await this.client.get('/health-check');
+    //   logger('healt: %o, status: %d', health.data, health.status);
+    // } catch (error) {
+    //   logger('helthcheck error: %o', error);
+    // }
+    // console.timeEnd(timeLabel);
     return null;
   }
 
@@ -164,7 +164,7 @@ class APIClient {
     this.stats.dig.error[result.status] =
       ++this.stats.dig.error[result.status] || 1;
     if (result.status === 403 && this.license) delete this.license.id;
-    logger('dig error, stats: %o', this.stats);
+    // logger('dig error, stats: %o', this.stats);
     return null;
   }
 
@@ -191,7 +191,7 @@ class APIClient {
     }
     this.stats.cash.error[result.status] =
       ++this.stats.cash.error[result.status] || 1;
-    logger('cash error, stats: %o', this.stats);
+    // logger('cash error, stats: %o', this.stats);
     return null;
   }
 
@@ -213,7 +213,7 @@ class APIClient {
     }
     this.stats.explore.error[result.status] =
       ++this.stats.explore.error[result.status] || 1;
-    logger('explore error, stats: %o', this.stats);
+    // logger('explore error, stats: %o', this.stats);
     if (result.status === 422) {
       throw Error('422');
     }
@@ -341,7 +341,31 @@ const findAreaWithTreasures = async (
   return {area, explore};
 };
 
+const noop = () => {};
+
 const game = async (client: APIClient) => {
+  const statsInterval = setInterval(async () => {
+    let total = 0,
+      errors = 0;
+    for (const stat of Object.values(client.stats)) {
+      total += stat.success;
+      for (const value of Object.values(stat.error)) {
+        total += value;
+        errors += value;
+      }
+    }
+    const periodInSeconds = (Date.now() - client.start) / 1000;
+    const rps = total / periodInSeconds;
+    log(
+      'client total %d; errors: %d, rps: %d, stats: %o',
+      total,
+      errors,
+      rps,
+      client.stats
+    );
+  }, 2000);
+  statsInterval.unref();
+
   const instanceId = Number(process.env.INSTANCE_ID);
   const log = logger.extend(String(instanceId));
 
@@ -350,7 +374,7 @@ const game = async (client: APIClient) => {
   let maxX = 0;
   let maxY = 0;
   const xParts = 2;
-  const yParts = 5;
+  const yParts = 2;
   const xPartSize = 3500 / xParts;
   const yPartSize = 3500 / yParts;
 
@@ -426,13 +450,14 @@ const game = async (client: APIClient) => {
             }
           }
         } catch (error: unknown) {
-          log('global error: x=%d, y=%d, step=%d', globalX, globalY, step);
-          if (error instanceof Error) {
-            log('global error: %s', error.message);
-          } else {
-            log('global error: %o', error);
-          }
-          log('client stats: %o', client.stats);
+          noop();
+          //   log('global error: x=%d, y=%d, step=%d', globalX, globalY, step);
+          //   if (error instanceof Error) {
+          //     log('global error: %s', error.message);
+          //   } else {
+          //     log('global error: %o', error);
+          //   }
+          //   log('client stats: %o', client.stats);
         }
       }
     }
