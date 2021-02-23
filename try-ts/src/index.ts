@@ -43,7 +43,7 @@ const apiMetrics = new promClient.Summary({
 });
 
 // import {addLogger} from 'axios-debug-log';
-import axios, {AxiosInstance} from 'axios';
+import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 import debug, {Debugger} from 'debug';
 
 console.debug('start ' + process.env.INSTANCE_ID);
@@ -71,6 +71,8 @@ class CallStats {
   public error: Record<number, number> = {};
 }
 
+const timeoutStatus = 100;
+
 class APIClient {
   public stats = {
     dig: new CallStats(),
@@ -85,10 +87,11 @@ class APIClient {
     wallet: [],
   };
 
-  private axiosConfigForCash = {
+  private axiosConfigForCash: AxiosRequestConfig = {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
     },
+    timeout: 100,
   };
   public client: AxiosInstance;
   public license?: License;
@@ -99,39 +102,36 @@ class APIClient {
   }
 
   async post_license(coins: number[]): Promise<License | null> {
-    const end = apiMetrics.startTimer();
-    const result = await this.client.post<License>('/licenses', coins);
-    const isSuccess = result.status === 200;
-    end({
-      method: result.config.method,
-      route: result.config.url,
-      status: result.status,
-    });
-    if (isSuccess) {
-      if (coins.length) {
-        this.stats.licensePaid.success++;
-      } else {
-        this.stats.licenseFree.success++;
+    try {
+      const result = await this.client.post<License>('/licenses', coins, { timeout: 100 });
+      const isSuccess = result.status === 200;
+      if (isSuccess) {
+        if (coins.length) {
+          this.stats.licensePaid.success++;
+        } else {
+          this.stats.licenseFree.success++;
+        }
+        return result.data;
       }
-      return result.data;
+      if (coins.length) {
+        this.stats.licensePaid.error[result.status] =
+          ++this.stats.licensePaid.error[result.status] || 1;
+      } else {
+        this.stats.licenseFree.error[result.status] =
+          ++this.stats.licenseFree.error[result.status] || 1;
+      }
+      return null;
+    } catch (error) {
+      if (coins.length) {
+        this.stats.licensePaid.error[timeoutStatus] =
+          ++this.stats.licensePaid.error[timeoutStatus] || 1;
+      } else {
+        this.stats.licenseFree.error[timeoutStatus] =
+          ++this.stats.licenseFree.error[timeoutStatus] || 1;
+      }
+      return null; 
     }
-    if (coins.length) {
-      this.stats.licensePaid.error[result.status] =
-        ++this.stats.licensePaid.error[result.status] || 1;
-    } else {
-      this.stats.licenseFree.error[result.status] =
-        ++this.stats.licenseFree.error[result.status] || 1;
-    }
-    // const timeLabel = `health-check-${Date.now()}`;
-    // console.time(timeLabel);
-    // try {
-    //   const health = await this.client.get('/health-check');
-    //   logger('healt: %o, status: %d', health.data, health.status);
-    // } catch (error) {
-    //   logger('helthcheck error: %o', error);
-    // }
-    // console.timeEnd(timeLabel);
-    return null;
+  
   }
 
   // async get_license(): Promise<License[] | null> {
@@ -169,30 +169,29 @@ class APIClient {
   }
 
   async post_cash(treasure: string): Promise<number[] | null> {
-    const end = apiMetrics.startTimer();
-    const result = await this.client.post<number[]>(
-      '/cash',
-      JSON.stringify(treasure),
-      this.axiosConfigForCash
-    );
-    const isSuccess = result.status === 200;
-    end({
-      method: result.config.method,
-      route: result.config.url,
-      status: result.status,
-    });
-    if (isSuccess) {
-      this.stats.cash.success++;
-      this.wallet.balance += result.data.length;
-      for (const coin of result.data) {
-        this.wallet.wallet.push(coin);
+    try {
+      const result = await this.client.post<number[]>(
+        '/cash',
+        JSON.stringify(treasure),
+        this.axiosConfigForCash
+      );
+      const isSuccess = result.status === 200;
+      if (isSuccess) {
+        this.stats.cash.success++;
+        this.wallet.balance += result.data.length;
+        for (const coin of result.data) {
+          this.wallet.wallet.push(coin);
+        }
+        return result.data;
       }
-      return result.data;
+      this.stats.cash.error[result.status] =
+        ++this.stats.cash.error[result.status] || 1;
+      return null;
+    } catch (error) {
+      this.stats.cash.error[timeoutStatus] =
+        ++this.stats.cash.error[timeoutStatus] || 1;
+      return null;
     }
-    this.stats.cash.error[result.status] =
-      ++this.stats.cash.error[result.status] || 1;
-    // logger('cash error, stats: %o', this.stats);
-    return null;
   }
 
   async post_explore(area: Area): Promise<Explore | null> {
@@ -357,7 +356,7 @@ const game = async (client: APIClient) => {
         errors += value;
       }
     }
-    const periodInSeconds = (Date.now() - client.start) / 1000;
+    const periodInSeconds = ((Date.now() - client.start) / 1000) | 0;
     const rps = total / periodInSeconds;
     log(
       'client total %d; errors: %d, rps: %d, stats: %o',
@@ -395,7 +394,6 @@ const game = async (client: APIClient) => {
   };
 
   log('wholeArea: %o', wholeArea);
-
   const wholeExplore: Explore = {area: wholeArea, amount: 10}; //await client.post_explore(wholeArea);
   if (!wholeExplore) {
     log('wholeExplore is empty');
@@ -404,7 +402,8 @@ const game = async (client: APIClient) => {
 
     // Делители числа 1 750: 1, 2, 5, 7, 10, 14, 25, 35, 50, 70,  125,  175,  250,  350,  875, 1 750
     // Количество делителей: 16
-    const step = 35;
+    const step = 50;
+    log('step: %d', step)
     for (let globalX = minX; globalX < maxX; globalX += step) {
       for (let globalY = minY; globalY < maxY; globalY += step) {
         const area: Area = {
@@ -419,6 +418,7 @@ const game = async (client: APIClient) => {
             const explores = [explore];
             while (explores.length) {
               const baseExplore = explores.pop();
+              // log('baseExplore: %o, exploresSize: %d', baseExplore, explores.length);
               if (baseExplore) {
                 const {
                   explore: exploreWithTreasures,
@@ -463,13 +463,14 @@ const game = async (client: APIClient) => {
           }
         } catch (error: unknown) {
           noop();
-          //   log('global error: x=%d, y=%d, step=%d', globalX, globalY, step);
-          //   if (error instanceof Error) {
-          //     log('global error: %s', error.message);
-          //   } else {
-          //     log('global error: %o', error);
-          //   }
-          //   log('client stats: %o', client.stats);
+          // log('global error: x=%d, y=%d, step=%d', globalX, globalY, step);
+          // if (error instanceof Error) {
+          //   log('global error: %s', error.message);
+          // } else {
+          //   log('global error: %o', error);
+          // }
+          // log('client stats: %o', client.stats);
+          await sleep(100);
         }
       }
     }
