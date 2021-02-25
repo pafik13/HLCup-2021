@@ -1,5 +1,5 @@
 type License = {
-  id?: number;
+  id: number;
   digAllowed: number;
   digUsed: number;
 };
@@ -37,7 +37,7 @@ type Treasure = {
 import {performance} from 'perf_hooks';
 
 // import {addLogger} from 'axios-debug-log';
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
+import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios';
 import debug, {Debugger} from 'debug';
 
 const STEP = 35;
@@ -98,6 +98,7 @@ class APIClient {
   };
   public client: AxiosInstance;
   public license?: License;
+  readonly licenseCache: License[] = [];
   readonly start: number;
   constructor(client: AxiosInstance) {
     this.client = client;
@@ -163,7 +164,7 @@ class APIClient {
     }
     this.stats.dig.error[result.status] =
       ++this.stats.dig.error[result.status] || 1;
-    if (result.status === 403 && this.license) delete this.license.id;
+    if (result.status === 403 && this.license) delete this.license;
     // logger('dig error, stats: %o', this.stats);
     return null;
   }
@@ -191,8 +192,10 @@ class APIClient {
   }
 
   async post_explore(area: Area): Promise<Explore | null> {
+    const start = performance.now();
     const result = await this.client.post<Explore>('/explore', area);
     const isSuccess = result.status === 200;
+    this.stats.cash.setTime(result.status, performance.now() - start);
     if (isSuccess) {
       this.stats.explore.success++;
       result.data.priority = 0;
@@ -200,7 +203,6 @@ class APIClient {
     }
     this.stats.explore.error[result.status] =
       ++this.stats.explore.error[result.status] || 1;
-    // logger('explore error, stats: %o', this.stats);
     if (result.status === 422) {
       throw Error('422');
     }
@@ -223,6 +225,9 @@ class APIClient {
 
   async update_license(coins: number[] = []): Promise<number> {
     const start = performance.now();
+    if (this.licenseCache.length) {
+      this.license = this.licenseCache.pop();
+    }
     if (this.wallet.balance) {
       const coin = this.wallet.wallet.shift();
       if (coin) {
@@ -232,9 +237,57 @@ class APIClient {
     }
     const license = await this.post_license(coins);
     if (license) {
-      this.license = license;
+      if (!this.license || this.license.digUsed >= this.license.digAllowed) {
+        this.license = license;
+      } else {
+        this.licenseCache.push(license);
+      }
     }
     return performance.now() - start;
+  }
+
+  async init_licenses(coins: number[] = []): Promise<number> {
+    const globalStart = performance.now();
+    let result: AxiosResponse<License>;
+    do {
+      const start = performance.now();
+      result = await this.client.post<License>('/licenses', coins);
+      const isSuccess = result.status === 200;
+      if (isSuccess) {
+        if (coins.length) {
+          this.stats.licensePaid.success++;
+          this.stats.licensePaid.setTime(
+            result.status,
+            performance.now() - start
+          );
+        } else {
+          this.stats.licenseFree.success++;
+          this.stats.licenseFree.setTime(
+            result.status,
+            performance.now() - start
+          );
+        }
+        this.licenseCache.push(result.data);
+      }
+      if (coins.length) {
+        this.stats.licensePaid.setTime(
+          result.status,
+          performance.now() - start
+        );
+
+        this.stats.licensePaid.error[result.status] =
+          ++this.stats.licensePaid.error[result.status] || 1;
+      } else {
+        this.stats.licenseFree.setTime(
+          result.status,
+          performance.now() - start
+        );
+
+        this.stats.licenseFree.error[result.status] =
+          ++this.stats.licenseFree.error[result.status] || 1;
+      }
+    } while (this.licenseCache.length < 2 && result.status !== 409);
+    return performance.now() - globalStart;
   }
 }
 
@@ -345,7 +398,6 @@ const worker: asyncWorker<QContext, Explore, void> = async function (
   while (depth <= 10 && left > 0) {
     while (
       !client.license ||
-      !client.license.id ||
       client.license.digUsed >= client.license.digAllowed
     ) {
       await client.update_license();
@@ -387,6 +439,16 @@ const game = async (client: APIClient) => {
     worker,
     1
   );
+  client
+    .init_licenses()
+    .then(time =>
+      log(
+        'license id: %d licenseCacheLength: %d time: %d',
+        client.license?.id,
+        client.licenseCache.length,
+        time
+      )
+    );
 
   const statsInterval = setInterval(async () => {
     let total = 0,
@@ -401,8 +463,9 @@ const game = async (client: APIClient) => {
     const periodInSeconds = ((Date.now() - client.start) / 1000) | 0;
     const rps = total / periodInSeconds;
     log(
-      'client qlen: %d, total %d; errors: %d, rps: %d, stats: %o',
+      'client qlen: %d, lcache: %d, total %d; errors: %d, rps: %d, stats: %o',
       q.length(),
+      client.licenseCache.length,
       total,
       errors,
       rps,
@@ -469,6 +532,7 @@ const game = async (client: APIClient) => {
                 );
 
                 if (exploreWithTreasures && exploreWithTreasures.amount) {
+                  if (q.length() > 5) await sleep(1000);
                   q.push(exploreWithTreasures);
                 }
               }
