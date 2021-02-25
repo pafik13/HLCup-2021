@@ -36,19 +36,12 @@ type Treasure = {
 
 import {performance} from 'perf_hooks';
 
-import * as promClient from 'prom-client';
-const apiMetrics = new promClient.Summary({
-  name: 'rest_api',
-  help: 'summary of rest api count and time',
-  percentiles: [0.5, 0.999],
-  labelNames: ['method', 'route', 'status', 'sizeX', 'sizeY'],
-});
-
 // import {addLogger} from 'axios-debug-log';
 import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 import debug, {Debugger} from 'debug';
 
-console.debug('start ' + process.env.INSTANCE_ID);
+const STEP = 35;
+console.debug('start ' + process.env.INSTANCE_ID, 'STEP', STEP);
 
 const baseURL = `http://${process.env.ADDRESS}:8000`;
 console.debug('base url: ', baseURL);
@@ -83,8 +76,6 @@ class CallStats {
   };
 }
 
-const timeoutStatus = 100;
-
 class APIClient {
   public stats = {
     dig: new CallStats(),
@@ -107,7 +98,6 @@ class APIClient {
   };
   public client: AxiosInstance;
   public license?: License;
-  private licenseCache: License[] = [];
   readonly start: number;
   constructor(client: AxiosInstance) {
     this.client = client;
@@ -133,21 +123,6 @@ class APIClient {
         );
       }
       return result.data;
-    }
-    if (result.status === 409) {
-      if (this.licenseCache.length) return this.licenseCache.pop() || null;
-      const licenses = await this.get_license();
-      log(
-        'post_license 409: error: %o, license: %o',
-        result.data,
-        this.license
-      );
-      log('post_license 409: licenses: %o', licenses);
-      if (licenses) {
-        licenses.sort((a, b) => a.digUsed - b.digUsed);
-        this.license = licenses[0];
-        log('post_license 409: license: %o', this.license);
-      }
     }
     if (coins.length) {
       this.stats.licensePaid.setTime(result.status, performance.now() - start);
@@ -216,16 +191,8 @@ class APIClient {
   }
 
   async post_explore(area: Area): Promise<Explore | null> {
-    const end = apiMetrics.startTimer();
     const result = await this.client.post<Explore>('/explore', area);
     const isSuccess = result.status === 200;
-    end({
-      method: result.config.method,
-      route: result.config.url,
-      status: result.status,
-      sizeX: area.sizeX,
-      sizeY: area.sizeY,
-    });
     if (isSuccess) {
       this.stats.explore.success++;
       result.data.priority = 0;
@@ -265,15 +232,7 @@ class APIClient {
     }
     const license = await this.post_license(coins);
     if (license) {
-      if (
-        !this.license ||
-        !this.license.id ||
-        this.license.digUsed >= this.license.digAllowed
-      ) {
-        this.license = license;
-      } else {
-        this.licenseCache.push(license);
-      }
+      this.license = license;
     }
     return performance.now() - start;
   }
@@ -374,6 +333,46 @@ const findAreaWithTreasures = async (
   return {area, explore};
 };
 
+const worker = async (client: APIClient, explore: Explore) => {
+  let depth = 1;
+  let left = explore.amount;
+  while (depth <= 10 && left > 0) {
+    while (
+      !client.license ||
+      !client.license.id ||
+      client.license.digUsed >= client.license.digAllowed
+    ) {
+      await client.update_license();
+    }
+    const dig: Dig = {
+      licenseID: client.license.id,
+      posX: explore.area.posX,
+      posY: explore.area.posY,
+      depth,
+    };
+
+    const treasures = await client.post_dig(dig);
+    client.license.digUsed++;
+    depth++;
+    if (treasures) {
+      for (const treasure of treasures.treasures) {
+        const res = await client.post_cash(treasure);
+        if (res) left--;
+      }
+    }
+  }
+};
+
+type QTask = {client: APIClient; explore: Explore; logger: Debugger};
+const workerDummy = async (task: QTask) => {
+  const {client, explore, logger} = task;
+  logger('explore: %, len: %d, stats: %o', explore, q.length, client.stats);
+};
+
+import {promise} from 'fastq';
+
+const q = promise<unknown, QTask, void>(workerDummy, 1);
+
 const noop = () => {};
 
 const game = async (client: APIClient) => {
@@ -432,34 +431,20 @@ const game = async (client: APIClient) => {
 
     // Делители числа 1 750: 1, 2, 5, 7, 10, 14, 25, 35, 50, 70,  125,  175,  250,  350,  875, 1 750
     // Количество делителей: 16
-    const step = 50;
-    log('step: %d', step);
-    for (let globalX = minX; globalX < maxX; globalX += step) {
-      for (let globalY = minY; globalY < maxY; globalY += step) {
+    for (let globalX = minX; globalX < maxX; globalX += STEP) {
+      for (let globalY = minY; globalY < maxY; globalY += STEP) {
         const area: Area = {
           posX: globalX,
           posY: globalY,
-          sizeX: step,
-          sizeY: step,
+          sizeX: STEP,
+          sizeY: STEP,
         };
         try {
           const explore = await client.post_explore(area);
           if (explore && explore.amount) {
             const explores = [explore];
             while (explores.length) {
-              if (
-                !client.license ||
-                !client.license.id ||
-                client.license.digUsed >= client.license.digAllowed
-              ) {
-                client
-                  .update_license()
-                  .then(time =>
-                    log('license id: %d time: %d', client.license?.id, time)
-                  );
-              }
               const baseExplore = explores.pop();
-              // log('baseExplore: %o, exploresSize: %d', baseExplore, explores.length);
               if (baseExplore) {
                 const {
                   explore: exploreWithTreasures,
@@ -471,33 +456,7 @@ const game = async (client: APIClient) => {
                 );
 
                 if (exploreWithTreasures && exploreWithTreasures.amount) {
-                  let depth = 1;
-                  let left = exploreWithTreasures.amount;
-                  while (depth <= 10 && left > 0) {
-                    while (
-                      !client.license ||
-                      !client.license.id ||
-                      client.license.digUsed >= client.license.digAllowed
-                    ) {
-                      await client.update_license();
-                    }
-                    const dig: Dig = {
-                      licenseID: client.license.id,
-                      posX: exploreWithTreasures.area.posX,
-                      posY: exploreWithTreasures.area.posY,
-                      depth,
-                    };
-
-                    const treasures = await client.post_dig(dig);
-                    client.license.digUsed++;
-                    depth++;
-                    if (treasures) {
-                      for (const treasure of treasures.treasures) {
-                        const res = await client.post_cash(treasure);
-                        if (res) left--;
-                      }
-                    }
-                  }
+                  q.push({client, explore: exploreWithTreasures, logger: log});
                 }
               }
             }

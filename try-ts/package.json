@@ -31,6 +31,6 @@
     "axios": "^0.21.1",
     "axios-debug-log": "^0.8.2",
     "debug": "^4.3.1",
-    "prom-client": "^13.1.0"
+    "fastq": "^1.11.0"
   }
 }
