@@ -19,6 +19,9 @@
     "pretest": "npm run compile",
     "posttest": "npm run lint"
   },
+  "engines": {
+    "node": "^12"
+  },
   "devDependencies": {
     "@types/node": "^14.11.2",
     "gts": "^3.1.0",
