@@ -107,6 +107,7 @@ class APIClient {
   };
   public client: AxiosInstance;
   public license?: License;
+  private licenseCache: License[] = [];
   readonly start: number;
   constructor(client: AxiosInstance) {
     this.client = client;
@@ -134,6 +135,7 @@ class APIClient {
       return result.data;
     }
     if (result.status === 409) {
+      if (this.licenseCache.length) return this.licenseCache.pop() || null;
       const licenses = await this.get_license();
       log(
         'post_license 409: error: %o, license: %o',
@@ -141,6 +143,11 @@ class APIClient {
         this.license
       );
       log('post_license 409: licenses: %o', licenses);
+      if (licenses) {
+        licenses.sort((a, b) => a.digUsed - b.digUsed);
+        this.license = licenses[0];
+        log('post_license 409: license: %o', this.license);
+      }
     }
     if (coins.length) {
       this.stats.licensePaid.setTime(result.status, performance.now() - start);
@@ -258,7 +265,15 @@ class APIClient {
     }
     const license = await this.post_license(coins);
     if (license) {
-      this.license = license;
+      if (
+        !this.license ||
+        !this.license.id ||
+        this.license.digUsed >= this.license.digAllowed
+      ) {
+        this.license = license;
+      } else {
+        this.licenseCache.push(license);
+      }
     }
     return performance.now() - start;
   }
