@@ -333,7 +333,13 @@ const findAreaWithTreasures = async (
   return {area, explore};
 };
 
-const worker = async (client: APIClient, explore: Explore) => {
+import {asyncWorker, promise} from 'fastq';
+
+const worker: asyncWorker<QContext, Explore, void> = async function (
+  explore: Explore
+) {
+  const {client} = this;
+
   let depth = 1;
   let left = explore.amount;
   while (depth <= 10 && left > 0) {
@@ -363,19 +369,25 @@ const worker = async (client: APIClient, explore: Explore) => {
   }
 };
 
-type QTask = {client: APIClient; explore: Explore; logger: Debugger};
-const workerDummy = async (task: QTask) => {
-  const {client, explore, logger} = task;
-  logger('explore: %, len: %d, stats: %o', explore, q.length, client.stats);
+// type QTask = {client: APIClient; explore: Explore; logger: Debugger};
+type QContext = {client: APIClient; log: Debugger};
+const workerDummy: asyncWorker<QContext, Explore, void> = async function (
+  explore: Explore
+) {
+  const {log, client} = this;
+  log('explore: %o, stats: %o', explore, client.stats);
+  await sleep(300);
 };
-
-import {promise} from 'fastq';
-
-const q = promise<unknown, QTask, void>(workerDummy, 1);
 
 const noop = () => {};
 
 const game = async (client: APIClient) => {
+  const q = promise<{client: APIClient; log: Debugger}, Explore, void>(
+    {client, log},
+    worker,
+    1
+  );
+
   const statsInterval = setInterval(async () => {
     let total = 0,
       errors = 0;
@@ -389,7 +401,8 @@ const game = async (client: APIClient) => {
     const periodInSeconds = ((Date.now() - client.start) / 1000) | 0;
     const rps = total / periodInSeconds;
     log(
-      'client total %d; errors: %d, rps: %d, stats: %o',
+      'client qlen: %d, total %d; errors: %d, rps: %d, stats: %o',
+      q.length(),
       total,
       errors,
       rps,
@@ -456,7 +469,7 @@ const game = async (client: APIClient) => {
                 );
 
                 if (exploreWithTreasures && exploreWithTreasures.amount) {
-                  q.push({client, explore: exploreWithTreasures, logger: log});
+                  q.push(exploreWithTreasures);
                 }
               }
             }
