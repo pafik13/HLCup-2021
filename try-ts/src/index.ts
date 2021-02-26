@@ -76,6 +76,16 @@ class CallStats {
   };
 }
 
+class DigStats {
+  public depth: Record<number, number> = {};
+  public amount: Record<number, number> = {};
+  public treasuresByDepth: Record<number, number[]> = {};
+  public treasuresByAmount: Record<number, number[]> = {};
+
+  public cashByDepth: Record<number, number[]> = {};
+  public cashByAmount: Record<number, number[]> = {};
+}
+
 class APIClient {
   public stats = {
     dig: new CallStats(),
@@ -85,6 +95,8 @@ class APIClient {
     licenseList: new CallStats(),
     explore: new CallStats(),
   };
+
+  public digStats = new DigStats();
 
   public wallet: Wallet = {
     balance: 0,
@@ -392,10 +404,18 @@ const worker: asyncWorker<QContext, Explore, void> = async function (
   explore: Explore
 ) {
   const {client} = this;
+  const {digStats} = client;
 
   let depth = 1;
   let left = explore.amount;
   while (depth <= 10 && left > 0) {
+    if (!digStats.treasuresByAmount[left])
+      digStats.treasuresByAmount[left] = [];
+    if (!digStats.treasuresByDepth[depth])
+      digStats.treasuresByAmount[depth] = [];
+    if (!digStats.cashByAmount[left]) digStats.cashByAmount[left] = [];
+    if (!digStats.cashByDepth[depth]) digStats.cashByDepth[depth] = [];
+
     while (
       !client.license ||
       client.license.digUsed >= client.license.digAllowed
@@ -410,14 +430,26 @@ const worker: asyncWorker<QContext, Explore, void> = async function (
     };
 
     const treasures = await client.post_dig(dig);
-    client.license.digUsed++;
-    depth++;
     if (treasures) {
+      digStats.amount[explore.amount] = ++digStats.amount[explore.amount] || 1;
+      digStats.depth[depth] = ++digStats.depth[depth] || 1;
+
+      digStats.treasuresByAmount[explore.amount].push(
+        treasures.treasures.length
+      );
+      digStats.treasuresByAmount[depth].push(treasures.treasures.length);
+
       for (const treasure of treasures.treasures) {
         const res = await client.post_cash(treasure);
-        if (res) left--;
+        if (res) {
+          left--;
+          digStats.cashByAmount[explore.amount].push(res.length);
+          digStats.cashByDepth[depth].push(res.length);
+        }
       }
     }
+    client.license.digUsed++;
+    depth++;
   }
 };
 
@@ -463,13 +495,14 @@ const game = async (client: APIClient) => {
     const periodInSeconds = ((Date.now() - client.start) / 1000) | 0;
     const rps = total / periodInSeconds;
     log(
-      'client qlen: %d, lcache: %d, total %d; errors: %d, rps: %d, stats: %o',
+      'client qlen: %d, lcache: %d, total %d; errors: %d, rps: %d, dig stats: %o',
       q.length(),
       client.licenseCache.length,
       total,
       errors,
       rps,
-      client.stats
+      client.digStats
+      // client.stats
     );
   }, 5000);
   statsInterval.unref();
