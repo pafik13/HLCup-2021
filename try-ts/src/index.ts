@@ -39,8 +39,10 @@ import {performance} from 'perf_hooks';
 // import {addLogger} from 'axios-debug-log';
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios';
 import debug, {Debugger} from 'debug';
+import {asyncWorker, promise as fastQPromise} from 'fastq';
+import PQueue from 'p-queue';
 
-const STEP = 35;
+const STEP = 125;
 console.debug('start ' + process.env.INSTANCE_ID, 'STEP', STEP);
 
 const baseURL = `http://${process.env.ADDRESS}:8000`;
@@ -84,6 +86,18 @@ class DigStats {
 
   public cashByDepth: Record<number, number[]> = {};
   public cashByAmount: Record<number, number[]> = {};
+
+  constructor() {
+    for (let i = 0; i <= 10; i++) {
+      this.treasuresByDepth[i] = [];
+      this.treasuresByAmount[i] = [];
+      this.cashByDepth[i] = [];
+      this.cashByAmount[i] = [];
+
+      this.amount[i] = 0;
+      this.depth[i] = 0;
+    }
+  }
 }
 
 class APIClient {
@@ -114,7 +128,7 @@ class APIClient {
   readonly start: number;
   constructor(client: AxiosInstance) {
     this.client = client;
-    this.start = Date.now();
+    this.start = performance.now();
   }
 
   async post_license(coins: number[]): Promise<License | null> {
@@ -398,7 +412,38 @@ const findAreaWithTreasures = async (
   return {area, explore};
 };
 
-import {asyncWorker, promise} from 'fastq';
+const pq = new PQueue({concurrency: 1});
+
+const makeCash = async function (
+  client: APIClient,
+  treasures: string[],
+  amount: number,
+  depth: number
+) {
+  for (const treasure of treasures) {
+    const cash = await client.post_cash(treasure);
+    if (cash) {
+      try {
+        client.digStats.cashByAmount[amount].push(cash.length);
+        client.digStats.cashByDepth[depth].push(cash.length);
+      } catch (error) {
+        console.error(error);
+        console.log(amount, depth);
+      }
+    }
+  }
+};
+
+const makeCashWrapper = function (
+  client: APIClient,
+  treasures: string[],
+  amount: number,
+  depth: number
+) {
+  return async () => {
+    await makeCash(client, treasures, amount, depth);
+  };
+};
 
 const worker: asyncWorker<QContext, Explore, void> = async function (
   explore: Explore
@@ -409,13 +454,6 @@ const worker: asyncWorker<QContext, Explore, void> = async function (
   let depth = 1;
   let left = explore.amount;
   while (depth <= 10 && left > 0) {
-    if (!digStats.treasuresByAmount[left])
-      digStats.treasuresByAmount[left] = [];
-    if (!digStats.treasuresByDepth[depth])
-      digStats.treasuresByAmount[depth] = [];
-    if (!digStats.cashByAmount[left]) digStats.cashByAmount[left] = [];
-    if (!digStats.cashByDepth[depth]) digStats.cashByDepth[depth] = [];
-
     while (
       !client.license ||
       client.license.digUsed >= client.license.digAllowed
@@ -431,22 +469,23 @@ const worker: asyncWorker<QContext, Explore, void> = async function (
 
     const treasures = await client.post_dig(dig);
     if (treasures) {
-      digStats.amount[explore.amount] = ++digStats.amount[explore.amount] || 1;
-      digStats.depth[depth] = ++digStats.depth[depth] || 1;
+      left--;
+      digStats.amount[explore.amount]++;
+      digStats.depth[depth]++;
 
       digStats.treasuresByAmount[explore.amount].push(
         treasures.treasures.length
       );
-      digStats.treasuresByAmount[depth].push(treasures.treasures.length);
+      digStats.treasuresByDepth[depth].push(treasures.treasures.length);
 
-      for (const treasure of treasures.treasures) {
-        const res = await client.post_cash(treasure);
-        if (res) {
-          left--;
-          digStats.cashByAmount[explore.amount].push(res.length);
-          digStats.cashByDepth[depth].push(res.length);
-        }
-      }
+      pq.add(async () => {
+        await makeCashWrapper(
+          client,
+          treasures.treasures,
+          explore.amount,
+          depth
+        );
+      });
     }
     client.license.digUsed++;
     depth++;
@@ -466,11 +505,12 @@ const workerDummy: asyncWorker<QContext, Explore, void> = async function (
 const noop = () => {};
 
 const game = async (client: APIClient) => {
-  const q = promise<{client: APIClient; log: Debugger}, Explore, void>(
+  const q = fastQPromise<{client: APIClient; log: Debugger}, Explore, void>(
     {client, log},
     worker,
     1
   );
+    q.pause();
   client
     .init_licenses()
     .then(time =>
@@ -492,16 +532,17 @@ const game = async (client: APIClient) => {
         errors += value;
       }
     }
-    const periodInSeconds = ((Date.now() - client.start) / 1000) | 0;
+    const periodInSeconds = ((performance.now() - client.start) / 1000) | 0;
     const rps = total / periodInSeconds;
     log(
-      'client qlen: %d, lcache: %d, total %d; errors: %d, rps: %d, dig stats: %o',
+      'client qlen: %d, pqlen: %d, lcache: %d, total %d; errors: %d, rps: %d',
       q.length(),
+      pq.size,
       client.licenseCache.length,
       total,
       errors,
-      rps,
-      client.digStats
+      rps
+      // client.digStats
       // client.stats
     );
   }, 5000);
@@ -565,7 +606,7 @@ const game = async (client: APIClient) => {
                 );
 
                 if (exploreWithTreasures && exploreWithTreasures.amount) {
-                  if (q.length() > 5) await sleep(1000);
+                  // if (q.length() > 10) await sleep(2000);
                   q.push(exploreWithTreasures);
                 }
               }
