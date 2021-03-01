@@ -165,19 +165,19 @@ class APIClient {
     return null;
   }
 
-  async get_license(): Promise<License[] | null> {
-    const start = performance.now();
-    const result = await this.client.get<License[]>('/licenses');
-    const isSuccess = result.status === 200;
-    this.stats.licenseList.setTime(result.status, performance.now() - start);
-    if (isSuccess) {
-      this.stats.licenseList.success++;
-      return result.data;
-    }
-    this.stats.licenseList.error[result.status] =
-      ++this.stats.licenseList.error[result.status] || 1;
-    return null;
-  }
+  // async get_license(): Promise<License[] | null> {
+  //   const start = performance.now();
+  //   const result = await this.client.get<License[]>('/licenses');
+  //   const isSuccess = result.status === 200;
+  //   this.stats.licenseList.setTime(result.status, performance.now() - start);
+  //   if (isSuccess) {
+  //     this.stats.licenseList.success++;
+  //     return result.data;
+  //   }
+  //   this.stats.licenseList.error[result.status] =
+  //     ++this.stats.licenseList.error[result.status] || 1;
+  //   return null;
+  // }
 
   async post_dig(dig: Dig): Promise<Treasure | null> {
     const start = performance.now();
@@ -248,6 +248,33 @@ class APIClient {
   //   if (isSuccess) return result.data;
   //   return null;
   // }
+  async get_license(): Promise<License | null> {
+    if (this.license) {
+      if (this.license.digUsed < this.license.digAllowed) return this.license;
+      delete this.license;
+    }
+    let license;
+    while (this.licenseCache.length) {
+      license = this.licenseCache.pop();
+      if (license && license.digUsed < license.digAllowed) return license;
+    }
+    await this.update_license();
+    if (this.license) return this.license;
+    while (this.licenseCache.length) {
+      license = this.licenseCache.pop();
+      if (license && license.digUsed < license.digAllowed) return license;
+    }
+    return null;
+  }
+
+  async use_license(dig: Dig): Promise<void> {
+    if (this.license && this.license.id === dig.licenseID) {
+      this.license.digUsed++;
+      if (this.license.digUsed >= this.license.digAllowed) delete this.license;
+    }
+    const license = this.licenseCache.find(it => it.id === dig.licenseID);
+    if (license) license.digUsed++;
+  }
 
   async update_license(coins: number[] = []): Promise<number> {
     const start = performance.now();
@@ -312,7 +339,7 @@ class APIClient {
         this.stats.licenseFree.error[result.status] =
           ++this.stats.licenseFree.error[result.status] || 1;
       }
-    } while (this.licenseCache.length < 2 && result.status !== 409);
+    } while (this.licenseCache.length < 5 && result.status !== 409);
     return performance.now() - globalStart;
   }
 }
@@ -453,41 +480,29 @@ const worker: asyncWorker<QContext, Explore, void> = async function (
 
   let depth = 1;
   let left = explore.amount;
-  while (depth <= 10 && left > 0) {
-    while (
-      !client.license ||
-      client.license.digUsed >= client.license.digAllowed
-    ) {
-      await client.update_license();
+  while (depth <= 6 && left > 0) {
+    let license;
+    while (!license) {
+      license = await client.get_license();
     }
     const dig: Dig = {
-      licenseID: client.license.id,
+      licenseID: license.id,
       posX: explore.area.posX,
       posY: explore.area.posY,
       depth,
     };
 
     const treasures = await client.post_dig(dig);
+    await client.use_license(dig);
     if (treasures) {
       left--;
-      digStats.amount[explore.amount]++;
-      digStats.depth[depth]++;
-
-      digStats.treasuresByAmount[explore.amount].push(
-        treasures.treasures.length
-      );
-      digStats.treasuresByDepth[depth].push(treasures.treasures.length);
-
-      pq.add(async () => {
-        await makeCashWrapper(
-          client,
-          treasures.treasures,
-          explore.amount,
-          depth
-        );
-      });
+      for (const treasure of treasures.treasures) {
+        // await client.post_cash(treasure);
+        pq.add(async () => {
+          await client.post_cash(treasure);
+        });
+      }
     }
-    client.license.digUsed++;
     depth++;
   }
 };
@@ -510,7 +525,7 @@ const game = async (client: APIClient) => {
     worker,
     1
   );
-    q.pause();
+  // q.pause();
   client
     .init_licenses()
     .then(time =>
@@ -535,15 +550,15 @@ const game = async (client: APIClient) => {
     const periodInSeconds = ((performance.now() - client.start) / 1000) | 0;
     const rps = total / periodInSeconds;
     log(
-      'client qlen: %d, pqlen: %d, lcache: %d, total %d; errors: %d, rps: %d',
+      'client qlen: %d, pqlen: %d, lcache: %d, total %d; errors: %d, rps: %d; client stats: %o',
       q.length(),
       pq.size,
       client.licenseCache.length,
       total,
       errors,
-      rps
+      rps,
       // client.digStats
-      // client.stats
+      client.stats
     );
   }, 5000);
   statsInterval.unref();
@@ -555,7 +570,7 @@ const game = async (client: APIClient) => {
   let maxX = 0;
   let maxY = 0;
   const xParts = 2;
-  const yParts = 2;
+  const yParts = 1;
   const xPartSize = 3500 / xParts;
   const yPartSize = 3500 / yParts;
 
@@ -606,7 +621,7 @@ const game = async (client: APIClient) => {
                 );
 
                 if (exploreWithTreasures && exploreWithTreasures.amount) {
-                  // if (q.length() > 10) await sleep(2000);
+                  if (q.length() > 20) await sleep(2000);
                   q.push(exploreWithTreasures);
                 }
               }
