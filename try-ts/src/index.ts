@@ -283,6 +283,7 @@ class APIClient {
 }
 
 const pqExplore = new PQueue({concurrency: 1});
+const pqCash = new PQueue({concurrency: 1});
 
 const splitArea = (area: Area): Area[] => {
   let area1, area2: Area;
@@ -441,10 +442,12 @@ const digWorker: asyncWorker<QContext, Explore, void> = async function (
     if (treasures) {
       left--;
       for (const treasure of treasures.treasures) {
-        await client.post_cash(treasure);
-        // pq.add(async () => {
-        //   await client.post_cash(treasure);
-        // });
+        pqCash.add(
+          async () => {
+            await client.post_cash(treasure);
+          },
+          {priority: depth}
+        );
       }
     }
     client.license.digUsed++;
@@ -476,9 +479,10 @@ const game = async (client: APIClient) => {
     const periodInSeconds = ((performance.now() - client.start) / 1000) | 0;
     const rps = total / periodInSeconds;
     log(
-      'client pqExploreSize: %d, qDigLen: %d, total %d; errors: %d, rps: %d; client stats: %o',
+      'client pqExploreSize: %d, qDigLen: %d, pqCashSize: %d, total %d; errors: %d, rps: %d; client stats: %o',
       pqExplore.size,
       qDig.length(),
+      pqCash.size,
       total,
       errors,
       rps,
