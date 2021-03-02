@@ -16,6 +16,8 @@ COPY --from=build-ts /usr/src/app/package.json /usr/src/app/yarn.lock /usr/src/a
 RUN yarn install --frozen-lockfile --production=true
 
 ENV DEBUG instance:1
+ENV MAX_PDIG_SIZE=10
+ENV STEP=125
 
 # Show current folder structure in logs
 RUN ls -al -R

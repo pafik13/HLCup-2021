@@ -35,6 +35,7 @@ type Treasure = {
 };
 
 import {performance} from 'perf_hooks';
+import {inspect} from 'util';
 
 // import {addLogger} from 'axios-debug-log';
 import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
@@ -42,10 +43,13 @@ import debug, {Debugger} from 'debug';
 import {asyncWorker, promise as fastQPromise} from 'fastq';
 import PQueue from 'p-queue';
 
-const STEP = 125;
+const MAX_PDIG_SIZE = Number(process.env.MAX_PDIG_SIZE) || 10;
+const STEP = Number(process.env.STEP) || 125;
 const SQ_SIZE = STEP * STEP;
 console.debug(
   'start ' + process.env.INSTANCE_ID,
+  'MAX_PDIG_SIZE',
+  MAX_PDIG_SIZE,
   'STEP',
   STEP,
   'SQ_SIZE',
@@ -83,7 +87,15 @@ class CallStats {
       this.time[status] = time;
     }
   };
+
+  [inspect.custom]() {
+    return `[${this.success}; ${inspect(this.error)}; ${inspect(this.time)}]`;
+  }
 }
+
+// CallStats.prototype.toString = function callStatsToString() {
+//   return `[${this.success}; ${inspect(this.error)}; ${this.time}]`;
+// };
 
 class DigStats {
   public depth: Record<number, number> = {};
@@ -113,7 +125,7 @@ class APIClient {
     cash: new CallStats(),
     licenseFree: new CallStats(),
     licensePaid: new CallStats(),
-    licenseList: new CallStats(),
+    // licenseList: new CallStats(),
     explore: new CallStats(),
   };
 
@@ -402,7 +414,7 @@ const apiClient = new APIClient(client);
 const digWorker: asyncWorker<QContext, Explore, void> = async function (
   explore: Explore
 ) {
-  if (qDig.length() > pqExplore.size) {
+  if (qDig.length() > MAX_PDIG_SIZE) {
     pqExplore.pause();
   } else if (pqExplore.isPaused) {
     pqExplore.start();
@@ -525,7 +537,7 @@ const game = async (client: APIClient) => {
           }
         } catch (error: unknown) {
           noop();
-          await sleep(100);
+          await sleep(1000);
         }
       }
     }
