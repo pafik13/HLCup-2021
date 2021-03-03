@@ -119,6 +119,9 @@ class DigStats {
   }
 }
 
+const pqExplore = new PQueue({concurrency: 1, autoStart: false});
+const pqCash = new PQueue({concurrency: 2});
+
 class APIClient {
   public stats = {
     dig: new CallStats(),
@@ -269,6 +272,7 @@ class APIClient {
 
   async update_license(coins: number[] = []): Promise<number> {
     const start = performance.now();
+    if (pqExplore.isPaused && qDig.length() < MAX_PDIG_SIZE) pqExplore.start();
     if (this.wallet.balance) {
       const coin = this.wallet.wallet.shift();
       if (coin) {
@@ -278,12 +282,10 @@ class APIClient {
     }
     const license = await this.post_license(coins);
     if (license) this.license = license;
+    if (!pqExplore.isPaused && qDig.length() > MAX_PDIG_SIZE) pqExplore.pause();
     return performance.now() - start;
   }
 }
-
-const pqExplore = new PQueue({concurrency: 1});
-const pqCash = new PQueue({concurrency: 1});
 
 const splitArea = (area: Area): Area[] => {
   let area1, area2: Area;
@@ -538,6 +540,7 @@ const game = async (client: APIClient) => {
             pqExplore.add(async () => await exploreWorker(client, explore), {
               priority: 1,
             });
+            if (!client.license) await client.update_license();
           }
         } catch (error: unknown) {
           noop();
