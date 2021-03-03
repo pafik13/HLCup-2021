@@ -431,27 +431,62 @@ const digWorker: asyncWorker<QContext, Explore, void> = async function (
     ) {
       await client.update_license();
     }
-    const dig: Dig = {
-      licenseID: client.license.id,
-      posX: explore.area.posX,
-      posY: explore.area.posY,
-      depth,
-    };
+    if (client.license.digAllowed < 2 || depth > 9) {
+      const dig: Dig = {
+        licenseID: client.license.id,
+        posX: explore.area.posX,
+        posY: explore.area.posY,
+        depth,
+      };
 
-    const treasures = await client.post_dig(dig);
-    if (treasures) {
-      left--;
-      for (const treasure of treasures.treasures) {
-        pqCash.add(
-          async () => {
-            await client.post_cash(treasure);
-          },
-          {priority: depth}
-        );
+      const treasures = await client.post_dig(dig);
+      if (treasures) {
+        left--;
+        for (const treasure of treasures.treasures) {
+          pqCash.add(
+            async () => {
+              await client.post_cash(treasure);
+            },
+            {priority: depth}
+          );
+        }
       }
+      client.license.digUsed++;
+      depth++;
+    } else {
+      const digs = [
+        {
+          licenseID: client.license.id,
+          posX: explore.area.posX,
+          posY: explore.area.posY,
+          depth,
+        },
+        {
+          licenseID: client.license.id,
+          posX: explore.area.posX,
+          posY: explore.area.posY,
+          depth: depth + 1,
+        },
+      ].map(dig => client.post_dig(dig));
+
+      const treasures = await Promise.all(digs);
+      for (const tr of treasures) {
+        if (tr) {
+          left--;
+          for (const treasure of tr.treasures) {
+            pqCash.add(
+              async () => {
+                await client.post_cash(treasure);
+              },
+              {priority: depth}
+            );
+          }
+        }
+      }
+
+      client.license.digUsed += 2;
+      depth += 2;
     }
-    client.license.digUsed++;
-    depth++;
   }
 };
 
