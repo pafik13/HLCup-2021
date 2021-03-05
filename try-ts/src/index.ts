@@ -146,6 +146,7 @@ class APIClient {
   };
   public client: AxiosInstance;
   public license?: License;
+  public license2?: License;
   readonly start: number;
   constructor(client: AxiosInstance) {
     this.client = client;
@@ -270,20 +271,44 @@ class APIClient {
   //   return null;
   // }
 
-  async update_license(coins: number[] = []): Promise<number> {
+  async update_license(): Promise<number> {
     const start = performance.now();
     if (pqExplore.isPaused && qDig.length() < MAX_PDIG_SIZE) pqExplore.start();
+    const reqs = [];
+    const coins1 = [];
     if (this.wallet.balance) {
       const coin = this.wallet.wallet.shift();
       if (coin) {
-        coins.push(coin);
         this.wallet.balance--;
+        coins1.push(coin);
       }
     }
-    const license = await this.post_license(coins);
-    if (license) this.license = license;
+    reqs.push(this.post_license(coins1));
+    const coins2 = [];
+    if (this.wallet.balance) {
+      const coin = this.wallet.wallet.shift();
+      if (coin) {
+        this.wallet.balance--;
+        coins2.push(coin);
+      }
+    }
+    reqs.push(this.post_license(coins2));
+    const licenses = await Promise.all(reqs);
+    if (licenses[0]) this.license = licenses[0];
+    if (licenses[1]) this.license2 = licenses[1];
     if (!pqExplore.isPaused && qDig.length() > MAX_PDIG_SIZE) pqExplore.pause();
     return performance.now() - start;
+  }
+
+  choose_license(): License | null {
+    let result: License | null = null;
+    if (this.license && this.license.digUsed < this.license.digAllowed) {
+      result = this.license;
+    }
+    if (this.license2 && this.license2.digUsed < this.license2.digAllowed) {
+      result = this.license2;
+    }
+    return result;
   }
 }
 
@@ -427,14 +452,14 @@ const digWorker: asyncWorker<QContext, Explore, void> = async function (
   let depth = 1;
   let left = explore.amount;
   while (depth <= 10 && left > 0) {
-    while (
-      !client.license ||
-      client.license.digUsed >= client.license.digAllowed
-    ) {
+    let license = client.choose_license();
+    while (!license) {
       await client.update_license();
+      license = client.choose_license();
     }
+
     const dig: Dig = {
-      licenseID: client.license.id,
+      licenseID: license.id,
       posX: explore.area.posX,
       posY: explore.area.posY,
       depth,
@@ -452,7 +477,7 @@ const digWorker: asyncWorker<QContext, Explore, void> = async function (
         );
       }
     }
-    client.license.digUsed++;
+    license.digUsed++;
     depth++;
   }
 };
