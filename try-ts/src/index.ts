@@ -301,7 +301,9 @@ class APIClient {
   async update_license(coins: number[] = []): Promise<number> {
     const start = performance.now();
     if (this.wallet.wallet.length) {
-      if (this.wallet.wallet.length > 11) {
+      if (this.wallet.wallet.length > 21) {
+        coins = this.wallet.wallet.splice(0, 21);
+      } else if (this.wallet.wallet.length > 11) {
         coins = this.wallet.wallet.splice(0, 11);
       } else if (this.wallet.wallet.length > 6) {
         coins = this.wallet.wallet.splice(0, 6);
@@ -313,13 +315,13 @@ class APIClient {
     const license = await this.post_license(coins);
     if (license) this.license = license;
     const time = performance.now() - start;
-    log('coins: %o; time: %d; license: %o', coins.length, time, license);
+    // log('coins: %o; time: %d; license: %o', coins.length, time, license);
     return time;
   }
 }
 
-const pqExplore = new PQueue({concurrency: 1});
-const pqCash = new PQueue({concurrency: 2});
+const pqExplore = new PQueue({concurrency: 3});
+const pqCash = new PQueue({concurrency: 4});
 
 const splitArea = (area: Area): Area[] => {
   let area1, area2: Area;
