@@ -11,6 +11,29 @@ type Explore = {
   amount: number;
 };
 
+type License = {
+  id: number;
+  digAllowed: number;
+  digUsed: number;
+};
+
+type Dig = {
+  licenseID: number;
+  posX: number;
+  posY: number;
+  depth: number;
+};
+
+type Wallet = {
+  balance: number;
+  wallet: number[];
+};
+
+type Treasure = {
+  priority: number;
+  treasures: string[];
+};
+
 process.on('unhandledRejection', () => {
   async () => await writeStats(apiClient);
 });
@@ -27,6 +50,7 @@ import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 import debug from 'debug';
 
 const MAX_PDIG_SIZE = Number(process.env.MAX_PDIG_SIZE) || 10;
+const MAX_LICENSE_COUNT = Number(process.env.MAX_LICENSE_COUNT) || 2;
 const TASKS = Number(process.env.TASKS) || 100;
 console.debug(
   'start ' + process.env.INSTANCE_ID,
@@ -64,13 +88,16 @@ const writeStats = async (client: APIClient) => {
   const periodInSeconds = ((performance.now() - client.start) / 1000) | 0;
   const rps = total / periodInSeconds;
   log(
-    'client total %d; errors: %d, rps: %d; client stats: %o; exploreTries: %d; exploreResults:%d',
+    'client total %d; errors: %d, rps: %d; client stats: %o; exploreTries: %d; exploreResults:%d; digTasksSize: %d, get_digAllowed: %d; needDig: %s',
     total,
     errors,
     rps,
     client.stats,
     client.exploreTries,
-    client.exploreResults.reduce((a, b) => a + b, 0)
+    client.exploreResults.reduce((a, b) => a + b, 0),
+    client.digTasksSize(),
+    client.get_digAllowed(),
+    client.digTasksSize() > client.get_digAllowed()
   );
 };
 
@@ -92,12 +119,40 @@ class CallStats {
   }
 }
 
+const digSuccess = [200, 404];
+
 class APIClient {
   public stats = {
     explore: new CallStats(),
+    licenseFree: new CallStats(),
+    licensePaid: new CallStats(),
+    dig: new CallStats(),
   };
   public exploreTries = 0;
   public exploreResults: number[] = [];
+
+  public wallet: Wallet = {
+    balance: 0,
+    wallet: [],
+  };
+
+  licenses: License[] = [];
+
+  public digTasks = Array.from(Array(10).keys()).reduce(
+    (acc: Record<number, Dig[]>, cur) => {
+      acc[cur + 1] = [];
+      return acc;
+    },
+    {}
+  );
+
+  digTasksSize() {
+    let result = 0;
+    for (let i = 1; i <= 10; i++) {
+      result += this.digTasks[i].length;
+    }
+    return result;
+  }
 
   private axiosConfigForCash: AxiosRequestConfig = {
     headers: {
@@ -132,15 +187,182 @@ class APIClient {
     }
     return null;
   }
+
+  async post_license(coins: number[]): Promise<License | null> {
+    try {
+      const start = performance.now();
+      const result = await this.client.post<License>('/licenses', coins);
+      const isSuccess = result.status === 200;
+      if (isSuccess) {
+        if (coins.length) {
+          this.stats.licensePaid.success++;
+          this.stats.licensePaid.setTime(
+            result.status,
+            performance.now() - start
+          );
+        } else {
+          this.stats.licenseFree.success++;
+          this.stats.licenseFree.setTime(
+            result.status,
+            performance.now() - start
+          );
+        }
+        return result.data;
+      }
+      if (coins.length) {
+        this.stats.licensePaid.setTime(
+          result.status,
+          performance.now() - start
+        );
+
+        this.stats.licensePaid.error[result.status] =
+          ++this.stats.licensePaid.error[result.status] || 1;
+      } else {
+        this.stats.licenseFree.setTime(
+          result.status,
+          performance.now() - start
+        );
+
+        this.stats.licenseFree.error[result.status] =
+          ++this.stats.licenseFree.error[result.status] || 1;
+      }
+    } catch (error) {
+      await writeStats(this);
+    }
+    return null;
+  }
+
+  get_digAllowed() {
+    let allowed = 0;
+    for (let i = 0; i < this.licenses.length; i++) {
+      const license = this.licenses[i];
+      allowed += license.digAllowed - license.digUsed;
+    }
+    return allowed;
+  }
+
+  async update_license(coins: number[] = []): Promise<number> {
+    try {
+      // log('licenses before: %o', this.licenses);
+      const start = performance.now();
+      const newLicenses: License[] = [];
+      if (this.licenses.length) {
+        do {
+          const license = this.licenses.pop();
+          if (license && license.digAllowed > license.digUsed) {
+            newLicenses.push(license);
+          }
+        } while (this.licenses.length);
+      }
+      if (newLicenses.length < MAX_LICENSE_COUNT) {
+        const tasks: Promise<License | null>[] = [];
+        for (let i = 0; i < MAX_LICENSE_COUNT - newLicenses.length; i++) {
+          if (this.wallet.wallet.length) {
+            if (this.wallet.wallet.length > 21) {
+              coins = this.wallet.wallet.splice(0, 21);
+            } else if (this.wallet.wallet.length > 11) {
+              coins = this.wallet.wallet.splice(0, 11);
+            } else if (this.wallet.wallet.length > 6) {
+              coins = this.wallet.wallet.splice(0, 6);
+            } else {
+              const coin = this.wallet.wallet.pop();
+              if (coin) coins.push(coin);
+            }
+          }
+          tasks.push(this.post_license(coins));
+        }
+        const results = await Promise.all(tasks);
+        for (const result of results) {
+          if (result) newLicenses.push(result);
+        }
+      }
+      this.licenses = newLicenses;
+      const time = performance.now() - start;
+      log('licenses after: %o, time: %d;', this.licenses, time);
+      return time;
+    } catch (error) {
+      await writeStats(this);
+    }
+    return 0;
+  }
+
+  async post_dig(dig: Dig): Promise<Treasure | null> {
+    try {
+      const start = performance.now();
+      const result = await this.client.post<string[]>('/dig', dig);
+      if (digSuccess.includes(result.status)) {
+        const license = this.licenses.find(it => it.id === dig.licenseID);
+        if (license) license.digUsed++;
+      }
+      const isSuccess = result.status === 200;
+      this.stats.dig.setTime(result.status, performance.now() - start);
+      if (isSuccess) {
+        this.stats.dig.success++;
+        return {priority: dig.depth, treasures: result.data};
+      }
+      this.stats.dig.error[result.status] =
+        ++this.stats.dig.error[result.status] || 1;
+      if (result.status === 403) {
+        log('dig 403: %o resut: %o', dig, result.data);
+        const licenseIdx = this.licenses.findIndex(
+          it => it.id === dig.licenseID
+        );
+        if (licenseIdx) this.licenses.splice(licenseIdx, 1);
+      }
+      if (result.status === 422) log('dig 422: %o resut: %o', dig, result.data);
+      if (dig.depth < 10) {
+        dig.depth++;
+        this.digTasks[dig.depth].push(dig);
+      }
+    } catch (error) {
+      await writeStats(this);
+    }
+    return null;
+  }
 }
+
+const digWorker = async function (client: APIClient) {
+  // log('digWorker license before: %o', client.licenses);
+  // log('digWorker digTasks before: %o', client.digTasks);
+
+  const tasks = [];
+  for (let l = 0; l < client.licenses.length; l++) {
+    const license = client.licenses[l];
+    let avail = license.digAllowed - license.digUsed;
+    if (avail)
+      for (let i = 10; i > 0 && avail > 0; i--) {
+        const digTasks = client.digTasks[i];
+        if (digTasks.length) {
+          do {
+            const dig = digTasks.pop();
+            if (dig) {
+              dig.licenseID = license.id;
+              tasks.push(client.post_dig(dig));
+              avail--;
+            }
+            // log(
+            //   'iter: i: %d dig: %d tasks: %d limit: %d',
+            //   i,
+            //   digTasks.length,
+            //   tasks.length,
+            //   avail
+            // );
+          } while (digTasks.length && avail > 0);
+        }
+      }
+  }
+
+  // log('digWorker license after: %o', client.licenses);
+  // log('digWorker digTasks after: %o', client.digTasks);
+
+  const results = await Promise.all(tasks);
+  // log('tasks resuls: %o', results);
+};
 
 const apiClient = new APIClient(client);
 
 const game = async (client: APIClient) => {
-  const statsInterval = setInterval(
-    async () => await writeStats(client),
-    15000
-  );
+  const statsInterval = setInterval(async () => await writeStats(client), 5000);
   statsInterval.unref();
 
   const instanceId = Number(process.env.INSTANCE_ID);
@@ -162,6 +384,7 @@ const game = async (client: APIClient) => {
 
   const tasks: Promise<Explore | null>[] = [];
   const areas: Area[] = [];
+  let licensesPromise;
   for (let globalX = minX; globalX < maxX; globalX += 1) {
     for (let globalY = minY; globalY < maxY; globalY += 1) {
       const area: Area = {
@@ -170,6 +393,7 @@ const game = async (client: APIClient) => {
         sizeX: 1,
         sizeY: 1,
       };
+      if (!licensesPromise) licensesPromise = client.update_license();
       try {
         if (tasks.length < TASKS) {
           areas.push(area);
@@ -178,12 +402,27 @@ const game = async (client: APIClient) => {
           const results = await Promise.all(tasks);
           client.exploreTries++;
           let count = 0;
-          for (const result of results) {
-            if (result && result.amount) count++;
+          for (let i = 0; i < results.length; i++) {
+            const result = results[i];
+            const area = areas[i];
+            if (result && result.amount) {
+              count++;
+              client.digTasks[1].push({
+                licenseID: -1,
+                depth: 1,
+                posX: area.posX,
+                posY: area.posY,
+              });
+            }
           }
+          await licensesPromise;
           client.exploreResults.push(count);
           tasks.length = 0;
           areas.length = 0;
+          licensesPromise = null;
+          if (client.digTasksSize() > client.get_digAllowed()) {
+            await digWorker(client);
+          }
         }
       } catch (error: unknown) {
         console.error('ERROR', error);
