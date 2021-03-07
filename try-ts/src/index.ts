@@ -132,6 +132,11 @@ class APIClient {
     explore: new CallStats(),
   };
 
+  public digAllowed = {
+    0: [],
+    1: [],
+    6: [],
+  } as Record<number, number[]>;
   public digStats = new DigStats();
 
   public wallet: Wallet = {
@@ -275,27 +280,23 @@ class APIClient {
     const start = performance.now();
     if (pqExplore.isPaused && qDig.length() < MAX_PDIG_SIZE) pqExplore.start();
     const reqs = [];
-    const coins1 = [];
-    if (this.wallet.balance) {
-      const coin = this.wallet.wallet.shift();
-      if (coin) {
-        this.wallet.balance--;
-        coins1.push(coin);
-      }
-    }
+    let toSlice = this.wallet.balance > 6 ? 6 : 1;
+    const coins1 = this.wallet.wallet.splice(0, toSlice);
+    this.wallet.balance -= coins1.length;
     reqs.push(this.post_license(coins1));
-    const coins2 = [];
-    if (this.wallet.balance) {
-      const coin = this.wallet.wallet.shift();
-      if (coin) {
-        this.wallet.balance--;
-        coins2.push(coin);
-      }
-    }
+    toSlice = this.wallet.balance > 6 ? 6 : 1;
+    const coins2 = this.wallet.wallet.splice(0, toSlice);
+    this.wallet.balance -= coins2.length;
     reqs.push(this.post_license(coins2));
     const licenses = await Promise.all(reqs);
-    if (licenses[0]) this.license = licenses[0];
-    if (licenses[1]) this.license2 = licenses[1];
+    if (licenses[0]) {
+      this.license = licenses[0];
+      this.digAllowed[coins1.length].push(this.license.digAllowed);
+    }
+    if (licenses[1]) {
+      this.license2 = licenses[1];
+      this.digAllowed[coins2.length].push(this.license2.digAllowed);
+    }
     if (!pqExplore.isPaused && qDig.length() > MAX_PDIG_SIZE) pqExplore.pause();
     return performance.now() - start;
   }
@@ -487,7 +488,7 @@ type QContext = {client: APIClient; log: Debugger};
 const qDig = fastQPromise<{client: APIClient; log: Debugger}, Explore, void>(
   {client: apiClient, log},
   digWorker,
-  1
+  2
 );
 
 const noop = () => {};
@@ -506,13 +507,14 @@ const game = async (client: APIClient) => {
     const periodInSeconds = ((performance.now() - client.start) / 1000) | 0;
     const rps = total / periodInSeconds;
     log(
-      'client pqExploreSize: %d, qDigLen: %d, pqCashSize: %d, total %d; errors: %d, rps: %d; client stats: %o',
+      'client pqExploreSize: %d, qDigLen: %d, pqCashSize: %d, total %d; errors: %d, rps: %d; digAllowed: %o, client stats: %o',
       pqExplore.size,
       qDig.length(),
       pqCash.size,
       total,
       errors,
       rps,
+      client.digAllowed,
       client.stats
     );
   }, 5000);
