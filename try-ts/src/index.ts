@@ -317,7 +317,7 @@ class APIClient {
 }
 
 const pqExplore = new PQueue({concurrency: 1});
-const pqCash = new PQueue({concurrency: 1});
+const pqCash = new PQueue({concurrency: 2});
 
 const splitArea = (area: Area): Area[] => {
   let area1, area2: Area;
