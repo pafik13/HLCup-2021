@@ -49,6 +49,7 @@ import {inspect} from 'util';
 
 // import {addLogger} from 'axios-debug-log';
 import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
+const rateLimit = require('axios-rate-limit');
 import debug, {Debugger} from 'debug';
 import {asyncWorker, promise as fastQPromise} from 'fastq';
 import PQueue from 'p-queue';
@@ -69,9 +70,14 @@ console.debug(
 const baseURL = `http://${process.env.ADDRESS}:8000`;
 console.debug('base url: ', baseURL);
 
-const client = axios.create({
+const baseClient = axios.create({
   baseURL,
   validateStatus: () => true /*, timeout: 10*/,
+});
+const client = rateLimit(baseClient, {
+  maxRequests: 140,
+  perMilliseconds: 1000,
+  maxRPS: 140,
 });
 
 // client.interceptors.response.use(function (response) {
