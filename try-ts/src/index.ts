@@ -300,16 +300,19 @@ class APIClient {
 
   async update_license(coins: number[] = []): Promise<number> {
     const start = performance.now();
-    if (this.wallet.balance) {
-      const coin = this.wallet.wallet.shift();
-      if (coin) {
-        coins.push(coin);
-        this.wallet.balance--;
+    if (this.wallet.wallet.length) {
+      if (this.wallet.wallet.length > 6) {
+        coins = this.wallet.wallet.splice(0, 6);
+      } else {
+        const coin = this.wallet.wallet.pop();
+        if (coin) coins.push(coin);
       }
     }
     const license = await this.post_license(coins);
     if (license) this.license = license;
-    return performance.now() - start;
+    const time = performance.now() - start;
+    // log('coins: %o; time: %d; license: %o', coins, time, license);
+    return time;
   }
 }
 
@@ -447,7 +450,10 @@ const digWorker: asyncWorker<QContext, Explore, void> = async function (
   explore: Explore
 ) {
   const {client} = this;
-  if (qDig.length() > MAX_PDIG_SIZE || client.digTasksSize() > MAX_PDIG_SIZE) {
+  if (
+    qDig.length() > MAX_PDIG_SIZE ||
+    client.digTasksSize() > Math.pow(MAX_PDIG_SIZE, 2)
+  ) {
     pqExplore.pause();
   } else if (pqExplore.isPaused) {
     pqExplore.start();
