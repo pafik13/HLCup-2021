@@ -301,7 +301,9 @@ class APIClient {
   async update_license(coins: number[] = []): Promise<number> {
     const start = performance.now();
     if (this.wallet.wallet.length) {
-      if (this.wallet.wallet.length > 6) {
+      if (this.wallet.wallet.length > 11) {
+        coins = this.wallet.wallet.splice(0, 11);
+      } else if (this.wallet.wallet.length > 6) {
         coins = this.wallet.wallet.splice(0, 6);
       } else {
         const coin = this.wallet.wallet.pop();
@@ -311,7 +313,7 @@ class APIClient {
     const license = await this.post_license(coins);
     if (license) this.license = license;
     const time = performance.now() - start;
-    // log('coins: %o; time: %d; license: %o', coins, time, license);
+    log('coins: %o; time: %d; license: %o', coins.length, time, license);
     return time;
   }
 }
