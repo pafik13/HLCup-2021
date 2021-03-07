@@ -1,0 +1,35 @@
+{
+  "name": "analyze-ts",
+  "version": "0.0.0",
+  "description": "",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
+  "files": [
+    "build/src"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
+  },
+  "engines": {
+    "node": "^12"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.5",
+    "@types/node": "^14.11.2",
+    "gts": "^3.1.0",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "debug": "^4.3.1"
+  }
+}
