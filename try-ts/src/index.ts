@@ -119,6 +119,8 @@ class DigStats {
   }
 }
 
+const digSuccess = [200, 404];
+
 class APIClient {
   public stats = {
     dig: new CallStats(),
@@ -130,6 +132,22 @@ class APIClient {
   };
 
   public digStats = new DigStats();
+
+  public digTasks = Array.from(Array(10).keys()).reduce(
+    (acc: Record<number, Dig[]>, cur) => {
+      acc[cur + 1] = [];
+      return acc;
+    },
+    {}
+  );
+
+  digTasksSize() {
+    let result = 0;
+    for (let i = 1; i <= 10; i++) {
+      result += this.digTasks[i].length;
+    }
+    return result;
+  }
 
   public wallet: Wallet = {
     balance: 0,
@@ -200,6 +218,12 @@ class APIClient {
   async post_dig(dig: Dig): Promise<Treasure | null> {
     const start = performance.now();
     const result = await this.client.post<string[]>('/dig', dig);
+    if (
+      digSuccess.includes(result.status) &&
+      dig.licenseID === this.license?.id
+    ) {
+      this.license.digUsed++;
+    }
     const isSuccess = result.status === 200;
     this.stats.dig.setTime(result.status, performance.now() - start);
     if (isSuccess) {
@@ -208,8 +232,15 @@ class APIClient {
     }
     this.stats.dig.error[result.status] =
       ++this.stats.dig.error[result.status] || 1;
-    if (result.status === 403 && this.license) delete this.license;
+    if (result.status === 403) {
+      log('dig 403: %o resut: %o', dig, result.data);
+      if (this.license) delete this.license;
+    }
     if (result.status === 422) log('dig 422: %o resut: %o', dig, result.data);
+    if (dig.depth < 10) {
+      dig.depth++;
+      this.digTasks[dig.depth].push(dig);
+    }
     return null;
   }
 
@@ -415,43 +446,59 @@ const apiClient = new APIClient(client);
 const digWorker: asyncWorker<QContext, Explore, void> = async function (
   explore: Explore
 ) {
-  if (qDig.length() > MAX_PDIG_SIZE) {
+  const {client} = this;
+  if (qDig.length() > MAX_PDIG_SIZE || client.digTasksSize() > MAX_PDIG_SIZE) {
     pqExplore.pause();
   } else if (pqExplore.isPaused) {
     pqExplore.start();
   }
-  const {client} = this;
-
-  let depth = 1;
-  let left = explore.amount;
-  while (depth <= 10 && left > 0) {
-    while (
-      !client.license ||
-      client.license.digUsed >= client.license.digAllowed
-    ) {
-      await client.update_license();
+  const dig = {
+    licenseID: -1,
+    posX: explore.area.posX,
+    posY: explore.area.posY,
+    depth: 1,
+  };
+  client.digTasks[1].push(dig);
+  // log('client.digTasks before: %o', client.digTasks);
+  // log('client.license before: %o', client.license);
+  while (
+    !client.license ||
+    client.license.digUsed >= client.license.digAllowed
+  ) {
+    await client.update_license();
+  }
+  // log('client.license updated: %o', client.license);
+  const {digAllowed, digUsed} = client.license;
+  const taskLimit = digAllowed - digUsed;
+  const tasks = [];
+  for (let i = 10; i > 0 && tasks.length < taskLimit; i--) {
+    const digTasks = client.digTasks[i];
+    if (digTasks.length) {
+      do {
+        const dig = digTasks.pop();
+        if (dig) {
+          dig.licenseID = client.license.id;
+          tasks.push(client.post_dig(dig));
+        }
+        // log('iter: i: %d dig: %d tasks: %d limit: %d', i, digTasks.length, tasks.length, taskLimit);
+      } while (digTasks.length && tasks.length < taskLimit);
     }
-    const dig: Dig = {
-      licenseID: client.license.id,
-      posX: explore.area.posX,
-      posY: explore.area.posY,
-      depth,
-    };
-
-    const treasures = await client.post_dig(dig);
-    if (treasures) {
-      left--;
-      for (const treasure of treasures.treasures) {
+  }
+  const results = await Promise.all(tasks);
+  // log('client.license after: %o', client.license);
+  // log('client.digTasks after: %o', client.digTasks);
+  // await sleep(1000);
+  for (const result of results) {
+    if (result) {
+      for (const treasure of result.treasures) {
         pqCash.add(
           async () => {
             await client.post_cash(treasure);
           },
-          {priority: depth}
+          {priority: 1}
         );
       }
     }
-    client.license.digUsed++;
-    depth++;
   }
 };
 
@@ -479,9 +526,10 @@ const game = async (client: APIClient) => {
     const periodInSeconds = ((performance.now() - client.start) / 1000) | 0;
     const rps = total / periodInSeconds;
     log(
-      'client pqExploreSize: %d, qDigLen: %d, pqCashSize: %d, total %d; errors: %d, rps: %d; client stats: %o',
+      'client pqExploreSize: %d, qDigLen: %d, digTasksSize: %d, pqCashSize: %d, total %d; errors: %d, rps: %d; client stats: %o',
       pqExplore.size,
       qDig.length(),
+      client.digTasksSize(),
       pqCash.size,
       total,
       errors,
