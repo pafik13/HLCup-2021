@@ -34,6 +34,16 @@ type Treasure = {
   treasures: string[];
 };
 
+const noop = () => {};
+
+process.on('unhandledRejection', () => {
+  async () => await writeStats(apiClient);
+});
+
+process.on('uncaughtException', () => {
+  async () => await writeStats(apiClient);
+});
+
 import {performance} from 'perf_hooks';
 import {inspect} from 'util';
 
@@ -63,6 +73,17 @@ const client = axios.create({
   baseURL,
   validateStatus: () => true /*, timeout: 10*/,
 });
+
+// client.interceptors.response.use(function (response) {
+//   // Any status code that lie within the range of 2xx cause this function to trigger
+//   // Do something with response data
+//   return response;
+// }, function (error) {
+//   // Any status codes that falls outside the range of 2xx cause this function to trigger
+//   // Do something with response error
+//   return Promise.resolve() //Promise.reject(error);
+// });
+
 const logger = debug('instance');
 const log = logger.extend(String(process.env.INSTANCE_ID));
 
@@ -74,6 +95,31 @@ const log = logger.extend(String(process.env.INSTANCE_ID));
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+const writeStats = async (client: APIClient) => {
+  let total = 0,
+    errors = 0;
+  for (const stat of Object.values(client.stats)) {
+    total += stat.success;
+    for (const value of Object.values(stat.error)) {
+      total += value;
+      errors += value;
+    }
+  }
+  const periodInSeconds = ((performance.now() - client.start) / 1000) | 0;
+  const rps = total / periodInSeconds;
+  log(
+    'client pqExploreSize: %d, qDigLen: %d, digTasksSize: %d, pqCashSize: %d, total %d; errors: %d, rps: %d; client stats: %o',
+    pqExplore.size,
+    qDig.length(),
+    client.digTasksSize(),
+    pqCash.size,
+    total,
+    errors,
+    rps,
+    client.stats
+  );
+};
 
 class CallStats {
   public success = 0;
@@ -118,6 +164,9 @@ class DigStats {
     }
   }
 }
+
+const pqExplore = new PQueue({concurrency: 3});
+const pqCash = new PQueue({concurrency: 10});
 
 const digSuccess = [200, 404];
 
@@ -168,35 +217,45 @@ class APIClient {
   }
 
   async post_license(coins: number[]): Promise<License | null> {
-    const start = performance.now();
-    const result = await this.client.post<License>('/licenses', coins);
-    const isSuccess = result.status === 200;
-    if (isSuccess) {
+    try {
+      const start = performance.now();
+      const result = await this.client.post<License>('/licenses', coins);
+      const isSuccess = result.status === 200;
+      if (isSuccess) {
+        if (coins.length) {
+          this.stats.licensePaid.success++;
+          this.stats.licensePaid.setTime(
+            result.status,
+            performance.now() - start
+          );
+        } else {
+          this.stats.licenseFree.success++;
+          this.stats.licenseFree.setTime(
+            result.status,
+            performance.now() - start
+          );
+        }
+        return result.data;
+      }
       if (coins.length) {
-        this.stats.licensePaid.success++;
         this.stats.licensePaid.setTime(
           result.status,
           performance.now() - start
         );
+
+        this.stats.licensePaid.error[result.status] =
+          ++this.stats.licensePaid.error[result.status] || 1;
       } else {
-        this.stats.licenseFree.success++;
         this.stats.licenseFree.setTime(
           result.status,
           performance.now() - start
         );
+
+        this.stats.licenseFree.error[result.status] =
+          ++this.stats.licenseFree.error[result.status] || 1;
       }
-      return result.data;
-    }
-    if (coins.length) {
-      this.stats.licensePaid.setTime(result.status, performance.now() - start);
-
-      this.stats.licensePaid.error[result.status] =
-        ++this.stats.licensePaid.error[result.status] || 1;
-    } else {
-      this.stats.licenseFree.setTime(result.status, performance.now() - start);
-
-      this.stats.licenseFree.error[result.status] =
-        ++this.stats.licenseFree.error[result.status] || 1;
+    } catch (error) {
+      await writeStats(this);
     }
     return null;
   }
@@ -216,70 +275,88 @@ class APIClient {
   // }
 
   async post_dig(dig: Dig): Promise<Treasure | null> {
-    const start = performance.now();
-    const result = await this.client.post<string[]>('/dig', dig);
-    if (
-      digSuccess.includes(result.status) &&
-      dig.licenseID === this.license?.id
-    ) {
-      this.license.digUsed++;
-    }
-    const isSuccess = result.status === 200;
-    this.stats.dig.setTime(result.status, performance.now() - start);
-    if (isSuccess) {
-      this.stats.dig.success++;
-      return {priority: 0, treasures: result.data};
-    }
-    this.stats.dig.error[result.status] =
-      ++this.stats.dig.error[result.status] || 1;
-    if (result.status === 403) {
-      log('dig 403: %o resut: %o', dig, result.data);
-      if (this.license) delete this.license;
-    }
-    if (result.status === 422) log('dig 422: %o resut: %o', dig, result.data);
-    if (dig.depth < 10) {
-      dig.depth++;
-      this.digTasks[dig.depth].push(dig);
+    try {
+      const start = performance.now();
+      const result = await this.client.post<string[]>('/dig', dig);
+      if (
+        digSuccess.includes(result.status) &&
+        dig.licenseID === this.license?.id
+      ) {
+        this.license.digUsed++;
+      }
+      const isSuccess = result.status === 200;
+      this.stats.dig.setTime(result.status, performance.now() - start);
+      if (isSuccess) {
+        this.stats.dig.success++;
+        return {priority: 0, treasures: result.data};
+      }
+      this.stats.dig.error[result.status] =
+        ++this.stats.dig.error[result.status] || 1;
+      if (result.status === 403) {
+        log('dig 403: %o resut: %o', dig, result.data);
+        if (this.license) delete this.license;
+      }
+      if (result.status === 422) log('dig 422: %o resut: %o', dig, result.data);
+      if (dig.depth < 10) {
+        dig.depth++;
+        this.digTasks[dig.depth].push(dig);
+      }
+    } catch (error) {
+      await writeStats(this);
     }
     return null;
   }
 
   async post_cash(treasure: string): Promise<number[] | null> {
-    const start = performance.now();
-    const result = await this.client.post<number[]>(
-      '/cash',
-      JSON.stringify(treasure),
-      this.axiosConfigForCash
-    );
-    const isSuccess = result.status === 200;
-    this.stats.cash.setTime(result.status, performance.now() - start);
-    if (isSuccess) {
-      this.stats.cash.success++;
-      this.wallet.balance += result.data.length;
-      for (const coin of result.data) {
-        this.wallet.wallet.push(coin);
+    try {
+      const start = performance.now();
+      const result = await this.client.post<number[]>(
+        '/cash',
+        JSON.stringify(treasure),
+        this.axiosConfigForCash
+      );
+      const isSuccess = result.status === 200;
+      this.stats.cash.setTime(result.status, performance.now() - start);
+      if (isSuccess) {
+        this.stats.cash.success++;
+        this.wallet.balance += result.data.length;
+        for (const coin of result.data) {
+          this.wallet.wallet.push(coin);
+        }
+        return result.data;
       }
-      return result.data;
+      pqCash.add(
+        async () => {
+          await this.post_cash(treasure);
+        },
+        {priority: 1}
+      );
+      this.stats.cash.error[result.status] =
+        ++this.stats.cash.error[result.status] || 1;
+    } catch (error) {
+      await writeStats(this);
     }
-    this.stats.cash.error[result.status] =
-      ++this.stats.cash.error[result.status] || 1;
     return null;
   }
 
   async post_explore(area: Area): Promise<Explore | null> {
-    const start = performance.now();
-    const result = await this.client.post<Explore>('/explore', area);
-    const isSuccess = result.status === 200;
-    this.stats.cash.setTime(result.status, performance.now() - start);
-    if (isSuccess) {
-      this.stats.explore.success++;
-      result.data.priority = 0;
-      return result.data;
-    }
-    this.stats.explore.error[result.status] =
-      ++this.stats.explore.error[result.status] || 1;
-    if (result.status === 422) {
-      throw Error('422');
+    try {
+      const start = performance.now();
+      const result = await this.client.post<Explore>('/explore', area);
+      const isSuccess = result.status === 200;
+      this.stats.explore.setTime(result.status, performance.now() - start);
+      if (isSuccess) {
+        this.stats.explore.success++;
+        result.data.priority = 0;
+        return result.data;
+      }
+      this.stats.explore.error[result.status] =
+        ++this.stats.explore.error[result.status] || 1;
+      if (result.status === 422) {
+        throw Error('422');
+      }
+    } catch (error) {
+      await writeStats(this);
     }
     return null;
   }
@@ -299,29 +376,31 @@ class APIClient {
   // }
 
   async update_license(coins: number[] = []): Promise<number> {
-    const start = performance.now();
-    if (this.wallet.wallet.length) {
-      if (this.wallet.wallet.length > 21) {
-        coins = this.wallet.wallet.splice(0, 21);
-      } else if (this.wallet.wallet.length > 11) {
-        coins = this.wallet.wallet.splice(0, 11);
-      } else if (this.wallet.wallet.length > 6) {
-        coins = this.wallet.wallet.splice(0, 6);
-      } else {
-        const coin = this.wallet.wallet.pop();
-        if (coin) coins.push(coin);
+    try {
+      const start = performance.now();
+      if (this.wallet.wallet.length) {
+        if (this.wallet.wallet.length > 21) {
+          coins = this.wallet.wallet.splice(0, 21);
+        } else if (this.wallet.wallet.length > 11) {
+          coins = this.wallet.wallet.splice(0, 11);
+        } else if (this.wallet.wallet.length > 6) {
+          coins = this.wallet.wallet.splice(0, 6);
+        } else {
+          const coin = this.wallet.wallet.pop();
+          if (coin) coins.push(coin);
+        }
       }
+      const license = await this.post_license(coins);
+      if (license) this.license = license;
+      const time = performance.now() - start;
+      return time;
+      // log('coins: %o; time: %d; license: %o', coins.length, time, license);
+    } catch (error) {
+      await writeStats(this);
     }
-    const license = await this.post_license(coins);
-    if (license) this.license = license;
-    const time = performance.now() - start;
-    // log('coins: %o; time: %d; license: %o', coins.length, time, license);
-    return time;
+    return 0;
   }
 }
-
-const pqExplore = new PQueue({concurrency: 3});
-const pqCash = new PQueue({concurrency: 4});
 
 const splitArea = (area: Area): Area[] => {
   let area1, area2: Area;
@@ -520,33 +599,11 @@ const qDig = fastQPromise<{client: APIClient; log: Debugger}, Explore, void>(
   1
 );
 
-const noop = () => {};
-
 const game = async (client: APIClient) => {
-  const statsInterval = setInterval(async () => {
-    let total = 0,
-      errors = 0;
-    for (const stat of Object.values(client.stats)) {
-      total += stat.success;
-      for (const value of Object.values(stat.error)) {
-        total += value;
-        errors += value;
-      }
-    }
-    const periodInSeconds = ((performance.now() - client.start) / 1000) | 0;
-    const rps = total / periodInSeconds;
-    log(
-      'client pqExploreSize: %d, qDigLen: %d, digTasksSize: %d, pqCashSize: %d, total %d; errors: %d, rps: %d; client stats: %o',
-      pqExplore.size,
-      qDig.length(),
-      client.digTasksSize(),
-      pqCash.size,
-      total,
-      errors,
-      rps,
-      client.stats
-    );
-  }, 5000);
+  const statsInterval = setInterval(
+    async () => await writeStats(client),
+    30000
+  );
   statsInterval.unref();
 
   const instanceId = Number(process.env.INSTANCE_ID);
@@ -598,7 +655,7 @@ const game = async (client: APIClient) => {
             });
           }
         } catch (error: unknown) {
-          noop();
+          await writeStats(client);
           await sleep(1000);
         }
       }
