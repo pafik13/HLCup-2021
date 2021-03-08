@@ -51,10 +51,16 @@ import debug from 'debug';
 import PQueue from 'p-queue';
 
 const MAX_LICENSE_COUNT = 2;
+const GLOBAL_OFFSET_X = Number(process.env.GLOBAL_OFFSET_X) || 0;
+const GLOBAL_OFFSET_Y = Number(process.env.GLOBAL_OFFSET_Y) || 0;
 const EXPLORE_CONCURRENCY = Number(process.env.EXPLORE_CONCURRENCY) || 50;
 const PQCASH_CONCURRENCY = Number(process.env.PQCASH_CONCURRENCY) || 40;
 console.debug(
   'start ' + process.env.INSTANCE_ID,
+  'GLOBAL_OFFSET_X',
+  GLOBAL_OFFSET_X,
+  'GLOBAL_OFFSET_Y',
+  GLOBAL_OFFSET_Y,
   'MAX_LICENSE_COUNT',
   MAX_LICENSE_COUNT,
   'EXPLORE_CONCURRENCY',
@@ -354,7 +360,7 @@ class APIClient {
           dig.depth,
           result.data.length,
         ]);
-        if (this.treasuresStats.length === 20) {
+        if (this.treasuresStats.length === 30) {
           log('treasuresStats: %o', this.treasuresStats);
           this.treasuresStats = [];
         }
@@ -451,8 +457,8 @@ const game = async (client: APIClient) => {
   const tasks: Promise<Explore | null>[] = [];
   const areas: Area[] = [];
   let licensesPromise;
-  for (let globalX = minX; globalX < maxX; globalX += 1) {
-    for (let globalY = minY; globalY < maxY; globalY += 1) {
+  for (let globalX = minX + GLOBAL_OFFSET_X; globalX < maxX; globalX += 1) {
+    for (let globalY = minY + GLOBAL_OFFSET_Y; globalY < maxY; globalY += 1) {
       const area: Area = {
         posX: globalX,
         posY: globalY,

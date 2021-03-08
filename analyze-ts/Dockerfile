@@ -16,6 +16,10 @@ COPY --from=build-ts /usr/src/app/package.json /usr/src/app/yarn.lock /usr/src/a
 RUN yarn install --frozen-lockfile --production=true
 
 ENV DEBUG instance:*
+ARG GLOBAL_OFFSET_X=1
+ENV GLOBAL_OFFSET_X=$GLOBAL_OFFSET_X
+ARG GLOBAL_OFFSET_Y=0
+ENV GLOBAL_OFFSET_Y=$GLOBAL_OFFSET_Y
 ENV EXPLORE_CONCURRENCY=50
 ENV PQCASH_CONCURRENCY=40
 
