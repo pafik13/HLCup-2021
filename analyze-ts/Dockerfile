@@ -15,7 +15,7 @@ COPY --from=build-ts /usr/src/app/package.json /usr/src/app/yarn.lock /usr/src/a
 
 RUN yarn install --frozen-lockfile --production=true
 
-ENV DEBUG instance:1
+ENV DEBUG instance:*
 ENV EXPLORE_CONCURRENCY=50
 ENV PQCASH_CONCURRENCY=40
 

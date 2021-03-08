@@ -30,7 +30,7 @@ type Wallet = {
 };
 
 type Treasure = {
-  priority: number;
+  dig: Dig;
   treasures: string[];
 };
 
@@ -103,7 +103,7 @@ const writeStats = async (client: APIClient) => {
     client.digTasksSize(),
     client.get_digAllowed(),
     client.digTasksSize() > client.get_digAllowed(),
-    pqCash.size,
+    pqCash.size
   );
 };
 
@@ -138,6 +138,9 @@ class APIClient {
   public exploreTries = 0;
   public exploreResults: number[] = [];
 
+  public treasuresSizes: number[] = [];
+  public treasuresDepths = [];
+
   public wallet: Wallet = {
     balance: 0,
     wallet: [],
@@ -160,6 +163,8 @@ class APIClient {
     }
     return result;
   }
+
+  public treasuresStats: number[][] = [];
 
   private axiosConfigForCash: AxiosRequestConfig = {
     headers: {
@@ -305,7 +310,7 @@ class APIClient {
       this.stats.dig.setTime(result.status, performance.now() - start);
       if (isSuccess) {
         this.stats.dig.success++;
-        return {priority: dig.depth, treasures: result.data};
+        return {dig, treasures: result.data};
       }
       this.stats.dig.error[result.status] =
         ++this.stats.dig.error[result.status] || 1;
@@ -327,7 +332,7 @@ class APIClient {
     return null;
   }
 
-  async post_cash(treasure: string): Promise<number[] | null> {
+  async post_cash(dig: Dig, treasure: string): Promise<number[] | null> {
     try {
       const start = performance.now();
       const result = await this.client.post<number[]>(
@@ -343,13 +348,23 @@ class APIClient {
         for (const coin of result.data) {
           this.wallet.wallet.push(coin);
         }
+        this.treasuresStats.push([
+          dig.posX,
+          dig.posY,
+          dig.depth,
+          result.data.length,
+        ]);
+        if (this.treasuresStats.length === 20) {
+          log('treasuresStats: %o', this.treasuresStats);
+          this.treasuresStats = [];
+        }
         return result.data;
       }
       pqCash.add(
         async () => {
-          await this.post_cash(treasure);
+          await this.post_cash(dig, treasure);
         },
-        {priority: 1}
+        {priority: dig.depth}
       );
       this.stats.cash.error[result.status] =
         ++this.stats.cash.error[result.status] || 1;
@@ -400,9 +415,9 @@ const digWorker = async function (client: APIClient) {
       for (const treasure of result.treasures) {
         pqCash.add(
           async () => {
-            await client.post_cash(treasure);
+            await client.post_cash(result.dig, treasure);
           },
-          {priority: result.priority}
+          {priority: result.dig.depth}
         );
       }
     }
@@ -413,8 +428,8 @@ const digWorker = async function (client: APIClient) {
 const apiClient = new APIClient(client);
 
 const game = async (client: APIClient) => {
-  const statsInterval = setInterval(async () => await writeStats(client), 5000);
-  statsInterval.unref();
+  // const statsInterval = setInterval(async () => await writeStats(client), 5000);
+  // statsInterval.unref();
 
   const instanceId = Number(process.env.INSTANCE_ID);
 
