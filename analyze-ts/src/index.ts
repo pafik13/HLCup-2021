@@ -48,16 +48,19 @@ import {inspect} from 'util';
 // import {addLogger} from 'axios-debug-log';
 import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 import debug from 'debug';
+import PQueue from 'p-queue';
 
-const MAX_PDIG_SIZE = Number(process.env.MAX_PDIG_SIZE) || 10;
-const MAX_LICENSE_COUNT = Number(process.env.MAX_LICENSE_COUNT) || 2;
-const TASKS = Number(process.env.TASKS) || 100;
+const MAX_LICENSE_COUNT = 2;
+const EXPLORE_CONCURRENCY = Number(process.env.EXPLORE_CONCURRENCY) || 50;
+const PQCASH_CONCURRENCY = Number(process.env.PQCASH_CONCURRENCY) || 40;
 console.debug(
   'start ' + process.env.INSTANCE_ID,
-  'MAX_PDIG_SIZE',
-  MAX_PDIG_SIZE,
-  'TASKS',
-  TASKS
+  'MAX_LICENSE_COUNT',
+  MAX_LICENSE_COUNT,
+  'EXPLORE_CONCURRENCY',
+  EXPLORE_CONCURRENCY,
+  'PQCASH_CONCURRENCY',
+  PQCASH_CONCURRENCY
 );
 
 const baseURL = `http://${process.env.ADDRESS}:8000`;
@@ -75,6 +78,8 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const pqCash = new PQueue({concurrency: PQCASH_CONCURRENCY});
+
 const writeStats = async (client: APIClient) => {
   let total = 0,
     errors = 0;
@@ -88,7 +93,7 @@ const writeStats = async (client: APIClient) => {
   const periodInSeconds = ((performance.now() - client.start) / 1000) | 0;
   const rps = total / periodInSeconds;
   log(
-    'client total %d; errors: %d, rps: %d; client stats: %o; exploreTries: %d; exploreResults:%d; digTasksSize: %d, get_digAllowed: %d; needDig: %s',
+    'client total %d; errors: %d, rps: %d; client stats: %o; exploreTries: %d; exploreResults:%d; digTasksSize: %d, get_digAllowed: %d; needDig: %s; pqCashSize: %d',
     total,
     errors,
     rps,
@@ -97,7 +102,8 @@ const writeStats = async (client: APIClient) => {
     client.exploreResults.reduce((a, b) => a + b, 0),
     client.digTasksSize(),
     client.get_digAllowed(),
-    client.digTasksSize() > client.get_digAllowed()
+    client.digTasksSize() > client.get_digAllowed(),
+    pqCash.size,
   );
 };
 
@@ -127,6 +133,7 @@ class APIClient {
     licenseFree: new CallStats(),
     licensePaid: new CallStats(),
     dig: new CallStats(),
+    cash: new CallStats(),
   };
   public exploreTries = 0;
   public exploreResults: number[] = [];
@@ -278,7 +285,7 @@ class APIClient {
       }
       this.licenses = newLicenses;
       const time = performance.now() - start;
-      log('licenses after: %o, time: %d;', this.licenses, time);
+      // log('licenses after: %o, time: %d;', this.licenses, time);
       return time;
     } catch (error) {
       await writeStats(this);
@@ -314,6 +321,38 @@ class APIClient {
         dig.depth++;
         this.digTasks[dig.depth].push(dig);
       }
+    } catch (error) {
+      await writeStats(this);
+    }
+    return null;
+  }
+
+  async post_cash(treasure: string): Promise<number[] | null> {
+    try {
+      const start = performance.now();
+      const result = await this.client.post<number[]>(
+        '/cash',
+        JSON.stringify(treasure),
+        this.axiosConfigForCash
+      );
+      const isSuccess = result.status === 200;
+      this.stats.cash.setTime(result.status, performance.now() - start);
+      if (isSuccess) {
+        this.stats.cash.success++;
+        this.wallet.balance += result.data.length;
+        for (const coin of result.data) {
+          this.wallet.wallet.push(coin);
+        }
+        return result.data;
+      }
+      pqCash.add(
+        async () => {
+          await this.post_cash(treasure);
+        },
+        {priority: 1}
+      );
+      this.stats.cash.error[result.status] =
+        ++this.stats.cash.error[result.status] || 1;
     } catch (error) {
       await writeStats(this);
     }
@@ -356,6 +395,18 @@ const digWorker = async function (client: APIClient) {
   // log('digWorker digTasks after: %o', client.digTasks);
 
   const results = await Promise.all(tasks);
+  for (const result of results) {
+    if (result) {
+      for (const treasure of result.treasures) {
+        pqCash.add(
+          async () => {
+            await client.post_cash(treasure);
+          },
+          {priority: result.priority}
+        );
+      }
+    }
+  }
   // log('tasks resuls: %o', results);
 };
 
@@ -395,7 +446,7 @@ const game = async (client: APIClient) => {
       };
       if (!licensesPromise) licensesPromise = client.update_license();
       try {
-        if (tasks.length < TASKS) {
+        if (tasks.length < EXPLORE_CONCURRENCY) {
           areas.push(area);
           tasks.push(client.post_explore(area));
         } else {
