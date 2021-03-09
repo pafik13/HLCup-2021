@@ -327,9 +327,12 @@ class APIClient {
           it => it.id === dig.licenseID
         );
         if (licenseIdx) this.licenses.splice(licenseIdx, 1);
+        dig.licenseID = -1;
+        this.digTasks[dig.depth].push(dig);
       }
       if (result.status === 422) log('dig 422: %o resut: %o', dig, result.data);
-      if (dig.depth < 10) {
+      if (result.status === 404 && dig.depth < 10) {
+        dig.licenseID = -1;
         dig.depth++;
         this.digTasks[dig.depth].push(dig);
       }
@@ -508,11 +511,13 @@ const game = async (client: APIClient) => {
       }
     } catch (error: unknown) {
       console.error('ERROR', error);
+      await digWorker(client);
       // await writeStats(client);
       // await sleep(1000);
     }
   }
 
+  await digWorker(client);
   tasks.length = 0;
   areas.length = 0;
 
