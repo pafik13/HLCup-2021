@@ -79,6 +79,7 @@ const client = axios.create({
 
 const logger = debug('instance');
 const log = logger.extend(String(process.env.INSTANCE_ID));
+const digCache: number[][] = require(`./dig${process.env.INSTANCE_ID}.json`);
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -354,16 +355,16 @@ class APIClient {
         for (const coin of result.data) {
           this.wallet.wallet.push(coin);
         }
-        this.treasuresStats.push([
-          dig.posX,
-          dig.posY,
-          dig.depth,
-          result.data.length,
-        ]);
-        if (this.treasuresStats.length === 30) {
-          log('treasuresStats: %o', this.treasuresStats);
-          this.treasuresStats = [];
-        }
+        // this.treasuresStats.push([
+        //   dig.posX,
+        //   dig.posY,
+        //   dig.depth,
+        //   result.data.length,
+        // ]);
+        // if (this.treasuresStats.length === 30) {
+        //   log('treasuresStats: %o', this.treasuresStats);
+        //   this.treasuresStats = [];
+        // }
         return result.data;
       }
       pqCash.add(
@@ -434,8 +435,8 @@ const digWorker = async function (client: APIClient) {
 const apiClient = new APIClient(client);
 
 const game = async (client: APIClient) => {
-  // const statsInterval = setInterval(async () => await writeStats(client), 5000);
-  // statsInterval.unref();
+  const statsInterval = setInterval(async () => await writeStats(client), 5000);
+  statsInterval.unref();
 
   const instanceId = Number(process.env.INSTANCE_ID);
 
@@ -456,7 +457,65 @@ const game = async (client: APIClient) => {
 
   const tasks: Promise<Explore | null>[] = [];
   const areas: Area[] = [];
+  // const lastDig = digCache.pop();
+
+  // log('minX: %d; minY: %d', minX, minY);
+  // log('lastDig: %o', lastDig);
+  // if (lastDig) {
+  //   minX = minX + GLOBAL_OFFSET_X + lastDig[0];
+  //   minY = minY + GLOBAL_OFFSET_Y + lastDig[1];
+  //   log('minX: %d; minY: %d', minX, minY);
+  // }
+
   let licensesPromise;
+  while (digCache.length) {
+    const digs = digCache.splice(0, EXPLORE_CONCURRENCY);
+    for (const dig of digs) {
+      if (!licensesPromise) licensesPromise = client.update_license();
+      const area: Area = {
+        posX: dig[0],
+        posY: dig[1],
+        sizeX: 1,
+        sizeY: 1,
+      };
+      areas.push(area);
+      tasks.push(client.post_explore(area));
+    }
+    try {
+      const results = await Promise.all(tasks);
+      client.exploreTries++;
+      let count = 0;
+      for (let i = 0; i < results.length; i++) {
+        const result = results[i];
+        const area = areas[i];
+        if (result && result.amount) {
+          count++;
+          client.digTasks[1].push({
+            licenseID: -1,
+            depth: 1,
+            posX: area.posX,
+            posY: area.posY,
+          });
+        }
+      }
+      await licensesPromise;
+      client.exploreResults.push(count);
+      tasks.length = 0;
+      areas.length = 0;
+      licensesPromise = null;
+      if (client.digTasksSize() > client.get_digAllowed()) {
+        await digWorker(client);
+      }
+    } catch (error: unknown) {
+      console.error('ERROR', error);
+      // await writeStats(client);
+      // await sleep(1000);
+    }
+  }
+
+  tasks.length = 0;
+  areas.length = 0;
+
   for (let globalX = minX + GLOBAL_OFFSET_X; globalX < maxX; globalX += 1) {
     for (let globalY = minY + GLOBAL_OFFSET_Y; globalY < maxY; globalY += 1) {
       const area: Area = {
