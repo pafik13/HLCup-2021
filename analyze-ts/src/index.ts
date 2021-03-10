@@ -45,8 +45,9 @@ process.on('uncaughtException', () => {
 import {performance} from 'perf_hooks';
 import {inspect} from 'util';
 
-// import {addLogger} from 'axios-debug-log';
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
+import * as request from 'superagent';
+import * as saprefix from 'superagent-prefix';
+
 import debug from 'debug';
 import PQueue from 'p-queue';
 
@@ -71,11 +72,8 @@ console.debug(
 
 const baseURL = `http://${process.env.ADDRESS}:8000`;
 console.debug('base url: ', baseURL);
-
-const client = axios.create({
-  baseURL,
-  validateStatus: () => true /*, timeout: 10*/,
-});
+const prefix = saprefix(baseURL);
+const client = request;
 
 const logger = debug('instance');
 const log = logger.extend(String(process.env.INSTANCE_ID));
@@ -173,14 +171,9 @@ class APIClient {
 
   public treasuresStats: number[][] = [];
 
-  private axiosConfigForCash: AxiosRequestConfig = {
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
-    },
-  };
-  public client: AxiosInstance;
+  public client: request.SuperAgentStatic;
   readonly start: number;
-  constructor(client: AxiosInstance) {
+  constructor(client: request.SuperAgentStatic) {
     this.client = client;
     this.start = performance.now();
   }
@@ -188,13 +181,17 @@ class APIClient {
   async post_explore(area: Area): Promise<Explore | null> {
     try {
       const start = performance.now();
-      const result = await this.client.post<Explore>('/explore', area);
+      const result = await this.client
+        .post('/explore')
+        .use(prefix)
+        .ok(res => true)
+        .send(area);
       const isSuccess = result.status === 200;
       this.stats.explore.setTime(result.status, performance.now() - start);
       if (isSuccess) {
         this.stats.explore.success++;
-        result.data.priority = 0;
-        return result.data;
+        result.body.priority = 0;
+        return result.body;
       }
       this.stats.explore.error[result.status] =
         ++this.stats.explore.error[result.status] || 1;
@@ -202,6 +199,7 @@ class APIClient {
         throw Error('422');
       }
     } catch (error) {
+      log(error);
       await writeStats(this);
     }
     return null;
@@ -210,7 +208,11 @@ class APIClient {
   async post_license(coins: number[]): Promise<License | null> {
     try {
       const start = performance.now();
-      const result = await this.client.post<License>('/licenses', coins);
+      const result = await this.client
+        .post('/licenses')
+        .use(prefix)
+        .ok(res => true)
+        .send(coins);
       const isSuccess = result.status === 200;
       if (isSuccess) {
         if (coins.length) {
@@ -226,7 +228,7 @@ class APIClient {
             performance.now() - start
           );
         }
-        return result.data;
+        return result.body;
       }
       if (coins.length) {
         this.stats.licensePaid.setTime(
@@ -246,6 +248,7 @@ class APIClient {
           ++this.stats.licenseFree.error[result.status] || 1;
       }
     } catch (error) {
+      log(error);
       await writeStats(this);
     }
     return null;
@@ -287,6 +290,7 @@ class APIClient {
       // log('licenses after: %o, time: %d;', this.licenses, time);
       return time;
     } catch (error) {
+      log(error);
       await writeStats(this);
     }
     return 0;
@@ -295,27 +299,32 @@ class APIClient {
   async post_dig(dig: Dig): Promise<Treasure | null> {
     try {
       const start = performance.now();
-      const result = await this.client.post<string[]>('/dig', dig);
+      const result = await this.client
+        .post('/dig')
+        .use(prefix)
+        .ok(res => true)
+        .send(dig);
       const isSuccess = result.status === 200;
       this.stats.dig.setTime(result.status, performance.now() - start);
       if (isSuccess) {
         this.stats.dig.success++;
-        return {dig, treasures: result.data};
+        return {dig, treasures: result.body};
       }
       this.stats.dig.error[result.status] =
         ++this.stats.dig.error[result.status] || 1;
       if (result.status === 403) {
-        log('dig 403: %o resut: %o', dig, result.data);
+        log('dig 403: %o resut: %o', dig, result.body);
         dig.licenseID = -1;
         this.digTasks[dig.depth].push(dig);
       }
-      if (result.status === 422) log('dig 422: %o resut: %o', dig, result.data);
+      if (result.status === 422) log('dig 422: %o resut: %o', dig, result.body);
       if (result.status === 404 && dig.depth < 10) {
         dig.licenseID = -1;
         dig.depth++;
         this.digTasks[dig.depth].push(dig);
       }
     } catch (error) {
+      log(error);
       await writeStats(this);
     }
     return null;
@@ -324,17 +333,18 @@ class APIClient {
   async post_cash(dig: Dig, treasure: string): Promise<number[] | null> {
     try {
       const start = performance.now();
-      const result = await this.client.post<number[]>(
-        '/cash',
-        JSON.stringify(treasure),
-        this.axiosConfigForCash
-      );
+      const result = await this.client
+        .post('/cash')
+        .use(prefix)
+        .ok(res => true)
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify(treasure));
       const isSuccess = result.status === 200;
       this.stats.cash.setTime(result.status, performance.now() - start);
       if (isSuccess) {
         this.stats.cash.success++;
-        this.wallet.balance += result.data.length;
-        for (const coin of result.data) {
+        this.wallet.balance += result.body.length;
+        for (const coin of result.body) {
           this.wallet.wallet.push(coin);
         }
         // this.treasuresStats.push([
@@ -347,7 +357,7 @@ class APIClient {
         //   log('treasuresStats: %o', this.treasuresStats);
         //   this.treasuresStats = [];
         // }
-        return result.data;
+        return result.body;
       }
       pqCash.add(
         async () => {
@@ -358,6 +368,7 @@ class APIClient {
       this.stats.cash.error[result.status] =
         ++this.stats.cash.error[result.status] || 1;
     } catch (error) {
+      log(error);
       await writeStats(this);
     }
     return null;
