@@ -257,7 +257,7 @@ class APIClient {
 
   async update_license(coins: number[] = []): Promise<number> {
     try {
-      log('licenses before: %o', this.licenses);
+      // log('licenses before: %o', this.licenses);
       const start = performance.now();
       const unique = [...new Set(this.licenses)];
       if (unique.length < MAX_LICENSE_COUNT) {
@@ -284,7 +284,7 @@ class APIClient {
         }
       }
       const time = performance.now() - start;
-      log('licenses after: %o, time: %d;', this.licenses, time);
+      // log('licenses after: %o, time: %d;', this.licenses, time);
       return time;
     } catch (error) {
       await writeStats(this);
@@ -365,8 +365,8 @@ class APIClient {
 }
 
 const digWorker = async function (client: APIClient) {
-  log('digWorker license before: %o', client.licenses);
-  log('digWorker digTasks before: %o', client.digTasks);
+  // log('digWorker license before: %o', client.licenses);
+  // log('digWorker digTasks before: %o', client.digTasks);
 
   const tasks = [];
   for (let i = 10; i > 0 && client.licenses.length; i--) {
@@ -383,8 +383,8 @@ const digWorker = async function (client: APIClient) {
     }
   }
 
-  log('digWorker license after: %o', client.licenses);
-  log('digWorker digTasks after: %o', client.digTasks);
+  // log('digWorker license after: %o', client.licenses);
+  // log('digWorker digTasks after: %o', client.digTasks);
 
   const results = await Promise.all(tasks);
   for (const result of results) {
