@@ -44,10 +44,10 @@ process.on('uncaughtException', () => {
 
 import {performance} from 'perf_hooks';
 import {inspect} from 'util';
+import {EventEmitter} from 'events';
 
 import * as request from 'superagent';
 import * as saprefix from 'superagent-prefix';
-const Throttle = require('superagent-throttle');
 
 import debug from 'debug';
 import PQueue from 'p-queue';
@@ -70,13 +70,6 @@ console.debug(
   'PQCASH_CONCURRENCY',
   PQCASH_CONCURRENCY
 );
-
-const throttle = new Throttle({
-  active: true, // set false to pause queue
-  rate: 250, // how many requests can be sent every `ratePer`
-  ratePer: 1000, // number of ms in which `rate` requests may be sent
-  concurrent: EXPLORE_CONCURRENCY * 2 + PQCASH_CONCURRENCY, // how many requests can be sent concurrently
-});
 
 const baseURL = `http://${process.env.ADDRESS}:8000`;
 console.debug('base url: ', baseURL);
@@ -192,8 +185,7 @@ class APIClient {
       const result = await this.client
         .post('/explore')
         .use(prefix)
-        .use(throttle.plugin())
-        .ok(res => true)
+        .ok(() => true)
         .send(area);
       const isSuccess = result.status === 200;
       this.stats.explore.setTime(result.status, performance.now() - start);
@@ -220,8 +212,7 @@ class APIClient {
       const result = await this.client
         .post('/licenses')
         .use(prefix)
-        .use(throttle.plugin())
-        .ok(res => true)
+        .ok(() => true)
         .send(coins);
       const isSuccess = result.status === 200;
       if (isSuccess) {
@@ -312,8 +303,7 @@ class APIClient {
       const result = await this.client
         .post('/dig')
         .use(prefix)
-        .use(throttle.plugin())
-        .ok(res => true)
+        .ok(() => true)
         .send(dig);
       const isSuccess = result.status === 200;
       this.stats.dig.setTime(result.status, performance.now() - start);
@@ -347,8 +337,7 @@ class APIClient {
       const result = await this.client
         .post('/cash')
         .use(prefix)
-        .use(throttle.plugin())
-        .ok(res => true)
+        .ok(() => true)
         .set('Content-Type', 'application/json')
         .send(JSON.stringify(treasure));
       const isSuccess = result.status === 200;
@@ -427,6 +416,37 @@ const digWorker = async function (client: APIClient) {
 
 const apiClient = new APIClient(client);
 
+const exploreAreas = async function (
+  client: APIClient,
+  areas: Array<Area>
+): Promise<Array<Explore | null>> {
+  return new Promise(resolve => {
+    const exploreEE = new EventEmitter();
+    const results: Array<Explore | null> = [];
+
+    async function runTask(area: Area) {
+      const result = await apiClient.post_explore(area);
+      exploreEE.emit('response', result);
+    }
+
+    exploreEE.on('request', runTask);
+
+    function handleResponse(result: Explore | null) {
+      results.push(result);
+
+      if (results.length === areas.length) {
+        exploreEE.emit('end', results);
+      }
+    }
+
+    exploreEE.on('response', handleResponse);
+
+    exploreEE.once('end', resolve);
+
+    areas.map(area => exploreEE.emit('request', area));
+  });
+};
+
 const game = async (client: APIClient) => {
   // const statsInterval = setInterval(async () => await writeStats(client), 5000);
   // statsInterval.unref();
@@ -448,7 +468,6 @@ const game = async (client: APIClient) => {
   maxX = minX + xPartSize;
   maxY = minY + yPartSize;
 
-  const tasks: Promise<Explore | null>[] = [];
   const areas: Area[] = [];
   // const lastDig = digCache.pop();
 
@@ -472,10 +491,9 @@ const game = async (client: APIClient) => {
         sizeY: 1,
       };
       areas.push(area);
-      tasks.push(client.post_explore(area));
     }
     try {
-      const results = await Promise.all(tasks);
+      const results = await exploreAreas(client, areas);
       client.exploreTries++;
       let count = 0;
       for (let i = 0; i < results.length; i++) {
@@ -493,7 +511,6 @@ const game = async (client: APIClient) => {
       }
       await licensesPromise;
       client.exploreResults.push(count);
-      tasks.length = 0;
       areas.length = 0;
       licensesPromise = null;
       if (client.digTasksSize() > client.get_digAllowed()) {
@@ -508,7 +525,7 @@ const game = async (client: APIClient) => {
   }
 
   await digWorker(client);
-  tasks.length = 0;
+  // tasks.length = 0;
   areas.length = 0;
 
   for (let globalX = minX + GLOBAL_OFFSET_X; globalX < maxX; globalX += 1) {
@@ -521,11 +538,10 @@ const game = async (client: APIClient) => {
       };
       if (!licensesPromise) licensesPromise = client.update_license();
       try {
-        if (tasks.length < EXPLORE_CONCURRENCY) {
+        if (areas.length < EXPLORE_CONCURRENCY) {
           areas.push(area);
-          tasks.push(client.post_explore(area));
         } else {
-          const results = await Promise.all(tasks);
+          const results = await exploreAreas(client, areas);
           client.exploreTries++;
           let count = 0;
           for (let i = 0; i < results.length; i++) {
@@ -543,7 +559,6 @@ const game = async (client: APIClient) => {
           }
           await licensesPromise;
           client.exploreResults.push(count);
-          tasks.length = 0;
           areas.length = 0;
           licensesPromise = null;
           if (client.digTasksSize() > client.get_digAllowed()) {
