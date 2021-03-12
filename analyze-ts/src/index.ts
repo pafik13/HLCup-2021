@@ -47,6 +47,7 @@ import {inspect} from 'util';
 
 import * as request from 'superagent';
 import * as saprefix from 'superagent-prefix';
+const Throttle = require('superagent-throttle');
 
 import debug from 'debug';
 import PQueue from 'p-queue';
@@ -69,6 +70,13 @@ console.debug(
   'PQCASH_CONCURRENCY',
   PQCASH_CONCURRENCY
 );
+
+const throttle = new Throttle({
+  active: true, // set false to pause queue
+  rate: 250, // how many requests can be sent every `ratePer`
+  ratePer: 1000, // number of ms in which `rate` requests may be sent
+  concurrent: EXPLORE_CONCURRENCY * 2 + PQCASH_CONCURRENCY, // how many requests can be sent concurrently
+});
 
 const baseURL = `http://${process.env.ADDRESS}:8000`;
 console.debug('base url: ', baseURL);
@@ -184,6 +192,7 @@ class APIClient {
       const result = await this.client
         .post('/explore')
         .use(prefix)
+        .use(throttle.plugin())
         .ok(res => true)
         .send(area);
       const isSuccess = result.status === 200;
@@ -211,6 +220,7 @@ class APIClient {
       const result = await this.client
         .post('/licenses')
         .use(prefix)
+        .use(throttle.plugin())
         .ok(res => true)
         .send(coins);
       const isSuccess = result.status === 200;
@@ -302,6 +312,7 @@ class APIClient {
       const result = await this.client
         .post('/dig')
         .use(prefix)
+        .use(throttle.plugin())
         .ok(res => true)
         .send(dig);
       const isSuccess = result.status === 200;
@@ -336,6 +347,7 @@ class APIClient {
       const result = await this.client
         .post('/cash')
         .use(prefix)
+        .use(throttle.plugin())
         .ok(res => true)
         .set('Content-Type', 'application/json')
         .send(JSON.stringify(treasure));
