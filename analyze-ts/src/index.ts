@@ -27,12 +27,14 @@ const baseURL = `http://${process.env.ADDRESS}:8000`;
 const GLOBAL_OFFSET_X = Number(process.env.GLOBAL_OFFSET_X) || 0;
 const GLOBAL_OFFSET_Y = Number(process.env.GLOBAL_OFFSET_Y) || 0;
 const EXPLORE_CONCURRENCY = Number(process.env.EXPLORE_CONCURRENCY) || 1;
+const EXPLORE_SIZE = Number(process.env.EXPLORE_SIZE) || 16;
 console.debug(
   'envs: ',
   baseURL,
   GLOBAL_OFFSET_X,
   GLOBAL_OFFSET_Y,
-  EXPLORE_CONCURRENCY
+  EXPLORE_CONCURRENCY,
+  EXPLORE_SIZE
 );
 
 function sleep(ms: number) {
@@ -68,7 +70,117 @@ const writeStats = function () {
   }
 };
 
-const explore = async function (area: Area): Promise<Explore | null> {
+const splitArea = (area: Area): Area[] => {
+  let area1, area2: Area;
+  const {sizeX, sizeY, posX: x, posY: y} = area;
+  if (sizeY > sizeX) {
+    const midSizeY = Math.floor(sizeY / 2);
+    area1 = {
+      posX: x,
+      posY: y,
+      sizeX,
+      sizeY: midSizeY,
+    };
+    area2 = {
+      posX: x,
+      posY: y + midSizeY,
+      sizeX,
+      sizeY: sizeY - midSizeY,
+    };
+  } else {
+    const midSizeX = Math.floor(sizeX / 2);
+    area1 = {
+      posX: x,
+      posY: y,
+      sizeX: midSizeX,
+      sizeY,
+    };
+    area2 = {
+      posX: x + midSizeX,
+      posY: y,
+      sizeX: sizeX - midSizeX,
+      sizeY,
+    };
+  }
+
+  return [area1, area2];
+};
+
+const findAreaWithTreasures = async (
+  initArea: Area
+): Promise<Explore | null> => {
+  let area = initArea;
+  let explore = null;
+  while (area.sizeX > 1 || area.sizeY > 1) {
+    const areas = splitArea(area);
+
+    let explores: Array<Explore | null> = [null, null];
+    try {
+      explores = await Promise.all(areas.map(it => post_explore(it)));
+    } catch (error) {
+      if (error instanceof Error) {
+        console.debug(
+          'area: %o; area0: %o; area1: %o; error: %o',
+          area,
+          areas[0],
+          areas[1],
+          error.message
+        );
+      } else {
+        console.debug(
+          'area: %o; area0: %o; area1: %o; error: %o',
+          area,
+          areas[0],
+          areas[1],
+          error
+        );
+      }
+    }
+
+    const explore0 = explores[0];
+    const explore1 = explores[1];
+
+    // console.debug(
+    //   'area: %o; area0: %o; area1: %o; explore0: %o; explore1: %o',
+    //   area,
+    //   areas[0],
+    //   areas[1],
+    //   explore0,
+    //   explore1
+    // );
+
+    if (explore0 && explore1) {
+      if (explore0.amount > explore1.amount) {
+        area = explore0.area;
+        explore = explore0;
+        // if (explore1.amount) {
+        //   exploreStats.amount++;
+        // }
+      } else {
+        area = explore1.area;
+        explore = explore1;
+        // if (explore0.amount) {
+        //   exploreStats.amount++;
+        // }
+      }
+    } else if (!explore0 && !explore1) {
+      area = areas[0];
+      explore = null;
+    } else {
+      if (explore1) {
+        area = explore1.area;
+        explore = explore1;
+      }
+      if (explore0) {
+        area = explore0.area;
+        explore = explore0;
+      }
+    }
+  }
+  return explore;
+};
+
+const post_explore = async function (area: Area): Promise<Explore | null> {
   return new Promise(resolve => {
     const data = JSON.stringify(area);
 
@@ -145,7 +257,7 @@ const explore = async function (area: Area): Promise<Explore | null> {
 };
 
 const start = async () => {
-  const statsInterval = setInterval(() => writeStats(), 60000);
+  const statsInterval = setInterval(() => writeStats(), 15000);
   statsInterval.unref();
 
   const instanceId = Number(process.env.INSTANCE_ID);
@@ -166,19 +278,27 @@ const start = async () => {
   maxY = minY + yPartSize;
 
   const tasks = [];
-  for (let globalX = minX + GLOBAL_OFFSET_X; globalX < maxX; globalX += 1) {
-    for (let globalY = minY + GLOBAL_OFFSET_Y; globalY < maxY; globalY += 1) {
+  for (
+    let globalX = minX + GLOBAL_OFFSET_X;
+    globalX + EXPLORE_SIZE < maxX;
+    globalX += EXPLORE_SIZE
+  ) {
+    for (
+      let globalY = minY + GLOBAL_OFFSET_Y;
+      globalY + EXPLORE_SIZE < maxY;
+      globalY += EXPLORE_SIZE
+    ) {
       const area: Area = {
         posX: globalX,
         posY: globalY,
-        sizeX: 1,
-        sizeY: 1,
+        sizeX: EXPLORE_SIZE,
+        sizeY: EXPLORE_SIZE,
       };
       try {
         if (tasks.length + 1 < EXPLORE_CONCURRENCY) {
-          tasks.push(explore(area));
+          tasks.push(findAreaWithTreasures(area));
         } else {
-          tasks.push(explore(area));
+          tasks.push(findAreaWithTreasures(area));
           const results = await Promise.all(tasks);
           exploreStats.tries++;
           for (const result of results) {
