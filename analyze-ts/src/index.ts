@@ -100,13 +100,13 @@ const summary = function (input: number[]) {
     .mean(input)
     .toFixed(2)} ${ss.quantile(input, 0.8).toFixed(2)} ${ss
     .max(input)
-    .toFixed(2)}`;
+    .toFixed(2)} ${ss.sum(input).toFixed(2)}`;
 };
 
 const writeStats = function () {
   if (process.env.INSTANCE_ID !== '1') return;
   console.debug(exploreStats, new Date().toISOString());
-  console.debug('stat: len min 1st mid mean 3rd max');
+  console.debug('stat: len min 1st mid mean 3rd max sum');
   // console.debug(globalStats);
   for (const [status, stats] of Object.entries(globalStats)) {
     for (const [key, values] of Object.entries(stats)) {
@@ -283,7 +283,20 @@ const wallet: number[] = [];
 let license: License | null = null;
 const update_license = async function (): Promise<void> {
   return new Promise(resolve => {
-    const coins: number[] = [];
+    let coins: number[] = [];
+    if (wallet.length) {
+      if (wallet.length > 21) {
+        coins = wallet.splice(0, 21);
+      } else if (wallet.length > 11) {
+        coins = wallet.splice(0, 11);
+      } else if (wallet.length > 6) {
+        coins = wallet.splice(0, 6);
+      } else {
+        const coin = wallet.pop();
+        if (coin) coins.push(coin);
+      }
+    }
+
     const data = JSON.stringify(coins);
 
     const timings = {
@@ -411,7 +424,7 @@ const post_dig = async function (dig: Dig): Promise<string[] | null> {
         const status = res.statusCode || -1;
         if (status === 200) {
           resolve(JSON.parse(Buffer.concat(chunks).toString()) as string[]);
-        } 
+        }
         // else {
         //   console.debug(JSON.parse(Buffer.concat(chunks).toString()));
         // }
