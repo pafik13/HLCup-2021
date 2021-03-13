@@ -60,7 +60,7 @@ const summary = function (input: number[]) {
 
 const writeStats = function () {
   if (process.env.INSTANCE_ID !== '1') return;
-  console.debug(exploreStats);
+  console.debug(exploreStats, new Date().toISOString());
   console.debug('stat: len min 1st mid mean 3rd max');
   // console.debug(globalStats);
   for (const [status, stats] of Object.entries(globalStats)) {
@@ -110,13 +110,12 @@ const findAreaWithTreasures = async (
   initArea: Area
 ): Promise<Explore | null> => {
   let area = initArea;
-  let explore = null;
+  let explore: Explore | null = null;
   while (area.sizeX > 1 || area.sizeY > 1) {
     const areas = splitArea(area);
 
-    let explores: Array<Explore | null> = [null, null];
     try {
-      explores = await Promise.all(areas.map(it => post_explore(it)));
+      explore = await post_explore(areas[0]);
     } catch (error) {
       if (error instanceof Error) {
         console.debug(
@@ -137,9 +136,6 @@ const findAreaWithTreasures = async (
       }
     }
 
-    const explore0 = explores[0];
-    const explore1 = explores[1];
-
     // console.debug(
     //   'area: %o; area0: %o; area1: %o; explore0: %o; explore1: %o',
     //   area,
@@ -149,35 +145,14 @@ const findAreaWithTreasures = async (
     //   explore1
     // );
 
-    if (explore0 && explore1) {
-      if (explore0.amount > explore1.amount) {
-        area = explore0.area;
-        explore = explore0;
-        // if (explore1.amount) {
-        //   exploreStats.amount++;
-        // }
-      } else {
-        area = explore1.area;
-        explore = explore1;
-        // if (explore0.amount) {
-        //   exploreStats.amount++;
-        // }
-      }
-    } else if (!explore0 && !explore1) {
-      area = areas[0];
-      explore = null;
+    if (explore && explore.amount) {
+      area = explore.area;
     } else {
-      if (explore1) {
-        area = explore1.area;
-        explore = explore1;
-      }
-      if (explore0) {
-        area = explore0.area;
-        explore = explore0;
-      }
+      area = areas[1];
     }
   }
-  return explore;
+  if (explore) return explore;
+  return await post_explore(area);
 };
 
 const post_explore = async function (area: Area): Promise<Explore | null> {
@@ -256,8 +231,10 @@ const post_explore = async function (area: Area): Promise<Explore | null> {
   });
 };
 
+
+
 const start = async () => {
-  const statsInterval = setInterval(() => writeStats(), 15000);
+  const statsInterval = setInterval(() => writeStats(), 60000);
   statsInterval.unref();
 
   const instanceId = Number(process.env.INSTANCE_ID);
