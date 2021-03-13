@@ -12,7 +12,6 @@ WORKDIR /usr/app
 
 COPY --from=build-ts /usr/src/app/build build/
 COPY --from=build-ts /usr/src/app/package.json /usr/src/app/yarn.lock /usr/src/app/ecosystem.config.js ./
-COPY --from=build-ts /usr/src/app/src/dig0.json /usr/src/app/src/dig1.json /usr/src/app/src/dig2.json /usr/src/app/src/dig3.json build/src/
 
 RUN yarn install --frozen-lockfile --production=true
 
@@ -21,7 +20,8 @@ ARG GLOBAL_OFFSET_X=0
 ENV GLOBAL_OFFSET_X=$GLOBAL_OFFSET_X
 ARG GLOBAL_OFFSET_Y=0
 ENV GLOBAL_OFFSET_Y=$GLOBAL_OFFSET_Y
-ENV EXPLORE_CONCURRENCY=50
+ARG EXPLORE_CONCURRENCY=1
+ENV EXPLORE_CONCURRENCY=$EXPLORE_CONCURRENCY
 ENV PQCASH_CONCURRENCY=40
 
 # Show current folder structure in logs
