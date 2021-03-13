@@ -27,8 +27,9 @@ type License = {
 
 import {request, RequestOptions} from 'http';
 import {performance} from 'perf_hooks';
-import * as ss from 'simple-statistics';
 import {inspect} from 'util';
+import * as ss from 'simple-statistics';
+import PQueue from 'p-queue';
 
 const baseURL = `http://${process.env.ADDRESS}:8000`;
 const GLOBAL_OFFSET_X = Number(process.env.GLOBAL_OFFSET_X) || 0;
@@ -36,14 +37,19 @@ const GLOBAL_OFFSET_Y = Number(process.env.GLOBAL_OFFSET_Y) || 0;
 const EXPLORE_CONCURRENCY = Number(process.env.EXPLORE_CONCURRENCY) || 1;
 const EXPLORE_SIZE = Number(process.env.EXPLORE_SIZE) || 16;
 const PRINT_STATS_TIME = Number(process.env.PRINT_STATS_TIME) || 60000;
+const PQCASH_CONCURRENCY = Number(process.env.PQCASH_CONCURRENCY) || 1
 console.debug(
   'envs: ',
   baseURL,
   GLOBAL_OFFSET_X,
   GLOBAL_OFFSET_Y,
   EXPLORE_CONCURRENCY,
-  EXPLORE_SIZE
+  EXPLORE_SIZE,
+  PRINT_STATS_TIME,
+  PQCASH_CONCURRENCY
 );
+
+const pqCash = new PQueue({concurrency: PQCASH_CONCURRENCY});
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -105,7 +111,7 @@ const summary = function (input: number[]) {
 
 const writeStats = function () {
   if (process.env.INSTANCE_ID !== '1') return;
-  console.debug(exploreStats, new Date().toISOString());
+  console.debug(exploreStats, pqCash.size, new Date().toISOString());
   console.debug('stat: len min 1st mid mean 3rd max sum');
   // console.debug(globalStats);
   for (const [status, stats] of Object.entries(globalStats)) {
@@ -622,7 +628,12 @@ const start = async () => {
                 if (treasures) {
                   left--;
                   for (const treasure of treasures) {
-                    await post_cash(treasure);
+                    pqCash.add(
+                      async () => {
+                        await post_cash(treasure);
+                      },
+                      {priority: 1}
+                    );
                   }
                 }
                 license.digUsed++;
