@@ -157,6 +157,10 @@ const splitArea = (area: Area): Area[] => {
 const findAreaWithTreasures = async (
   initArea: Area
 ): Promise<Explore | null> => {
+  let licensePromise: Promise<void> | null = null
+  if (!license || license.digUsed >= license.digAllowed) {
+    licensePromise = update_license()
+  }
   let area = initArea;
   let explore: Explore | null = null;
   while (area.sizeX > 1 || area.sizeY > 1) {
@@ -199,6 +203,8 @@ const findAreaWithTreasures = async (
       area = areas[1];
     }
   }
+
+  if (licensePromise) await licensePromise;
   if (explore) return explore;
   return await post_explore(area);
 };
@@ -570,6 +576,8 @@ const start = async () => {
 
   maxX = minX + xPartSize;
   maxY = minY + yPartSize;
+
+  // await sleep(instanceId * 50)
 
   const tasks = [];
   for (
