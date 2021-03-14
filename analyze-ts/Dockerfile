@@ -1,4 +1,4 @@
-FROM node:12-alpine as build-ts
+FROM node:14-alpine as build-ts
 
 WORKDIR /usr/src/app
 
@@ -6,12 +6,12 @@ COPY . .
 
 RUN yarn
 
-FROM keymetrics/pm2:12-alpine
+FROM node:14-alpine
 
 WORKDIR /usr/app
 
 COPY --from=build-ts /usr/src/app/build build/
-COPY --from=build-ts /usr/src/app/package.json /usr/src/app/yarn.lock /usr/src/app/ecosystem.config.js ./
+COPY --from=build-ts /usr/src/app/package.json /usr/src/app/yarn.lock ./
 
 RUN yarn install --frozen-lockfile --production=true
 
@@ -28,8 +28,9 @@ ARG PRINT_STATS_TIME=60000
 ENV PRINT_STATS_TIME=$PRINT_STATS_TIME
 ARG PQCASH_CONCURRENCY=1
 ENV PQCASH_CONCURRENCY=$PQCASH_CONCURRENCY
+ENV INSTANCE_ID=1
 
 # Show current folder structure in logs
 RUN ls -al -R
 
-CMD [ "pm2-runtime", "start", "ecosystem.config.js" ]
+CMD [ "node", "build/src/index.js" ]
