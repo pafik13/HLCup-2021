@@ -19,9 +19,11 @@ type GlobalStats = {
   total: number[];
 };
 
-type StepStas = {
-  
-}
+type StepStats = {
+  licenseAndExplore: number[];
+  digging: number[];
+  refreshLicense: number[];
+};
 
 type License = {
   id: number;
@@ -45,7 +47,7 @@ if (cluster.isMaster) {
   console.debug(process.versions);
 
   // Fork workers.
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 4; i++) {
     const worker = cluster.fork();
     worker.send({instanceId: i});
   }
@@ -79,6 +81,11 @@ if (cluster.isMaster) {
     const pqCash = new PQueue({concurrency: PQCASH_CONCURRENCY});
 
     const globalStats: Record<string, GlobalStats> = {};
+    const stepStats: StepStats = {
+      licenseAndExplore: [],
+      digging: [],
+      refreshLicense: [],
+    };
 
     const exploreStats = {
       tries: 0,
@@ -146,6 +153,9 @@ if (cluster.isMaster) {
       }
       for (const [key, stats] of Object.entries(callStats)) {
         console.debug(`${key}: ${inspect(stats)}`);
+      }
+      for (const [key, values] of Object.entries(stepStats)) {
+        if (values.length) console.debug(`${key}: ${summary(values)}`);
       }
     };
 
@@ -602,7 +612,7 @@ if (cluster.isMaster) {
       let minY = 0;
       let maxX = 0;
       let maxY = 0;
-      const xParts = 4;
+      const xParts = 2;
       const yParts = 2;
       const xPartSize = 3500 / xParts;
       const yPartSize = 3500 / yParts;
@@ -621,7 +631,8 @@ if (cluster.isMaster) {
       // const minY = 0
       // const maxY = 3500
 
-      const tasks = [];
+      const areas = [];
+      const explores = [];
       for (
         let globalX = minX + GLOBAL_OFFSET_X;
         globalX + EXPLORE_SIZE < maxX;
@@ -638,53 +649,74 @@ if (cluster.isMaster) {
             sizeX: EXPLORE_SIZE,
             sizeY: EXPLORE_SIZE,
           };
-          try {
-            if (tasks.length + 1 < EXPLORE_CONCURRENCY) {
-              tasks.push(findAreaWithTreasures(area));
-            } else {
-              tasks.push(findAreaWithTreasures(area));
-              const results = await Promise.all(tasks);
+          areas.push(area);
+        }
+      }
+
+      try {
+        while (areas.length) {
+          while (
+            areas.length &&
+            (!license ||
+              license.digUsed >= license.digAllowed ||
+              !explores.length)
+          ) {
+            const start = performance.now();
+            let licensePromise: Promise<void> | null = null;
+            if (!license || license.digUsed >= license.digAllowed)
+              licensePromise = update_license();
+            const area = areas.pop();
+            if (area) {
+              const explore = await findAreaWithTreasures(area);
               exploreStats.tries++;
-              for (const result of results) {
-                if (result && result.amount) {
-                  exploreStats.amount++;
-                  let left = result.amount;
-                  let depth = 1;
-                  while (left && depth < 10) {
-                    while (!license || license.digUsed >= license.digAllowed) {
-                      await update_license();
-                    }
-                    const dig: Dig = {
-                      depth,
-                      posX: result.area.posX,
-                      posY: result.area.posY,
-                      licenseID: license.id,
-                    };
-                    const treasures = await post_dig(dig);
-                    if (treasures) {
-                      left--;
-                      for (const treasure of treasures) {
-                        pqCash.add(
-                          async () => {
-                            await post_cash(treasure);
-                          },
-                          {priority: 1}
-                        );
-                      }
-                    }
-                    license.digUsed++;
-                    depth++;
-                  }
+              if (explore && explore.amount) {
+                explores.push(explore);
+                exploreStats.amount++;
+              }
+            }
+            if (licensePromise) await licensePromise;
+            stepStats.licenseAndExplore.push(performance.now() - start);
+          }
+
+          const result = explores.pop();
+          if (result) {
+            const start = performance.now();
+            let left = result.amount;
+            let depth = 1;
+            while (left && depth < 10) {
+              while (!license || license.digUsed >= license.digAllowed) {
+                const s = performance.now();
+                await update_license();
+                stepStats.refreshLicense.push(performance.now() - s);
+              }
+              const dig: Dig = {
+                depth,
+                posX: result.area.posX,
+                posY: result.area.posY,
+                licenseID: license.id,
+              };
+              const treasures = await post_dig(dig);
+              if (treasures) {
+                left--;
+                for (const treasure of treasures) {
+                  pqCash.add(
+                    async () => {
+                      await post_cash(treasure);
+                    },
+                    {priority: 1}
+                  );
                 }
               }
-              tasks.length = 0;
+              license.digUsed++;
+              depth++;
             }
-          } catch (error: unknown) {
-            console.error('ERROR', error);
-            writeStats();
-            await sleep(1000);
+            stepStats.digging.push(performance.now() - start);
           }
         }
+      } catch (error: unknown) {
+        console.error('ERROR', error);
+        writeStats();
+        await sleep(1000);
       }
     };
 
