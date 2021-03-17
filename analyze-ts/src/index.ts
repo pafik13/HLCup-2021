@@ -19,6 +19,10 @@ type GlobalStats = {
   total: number[];
 };
 
+type StepStas = {
+  
+}
+
 type License = {
   id: number;
   digAllowed: number;
@@ -32,7 +36,6 @@ import * as ss from 'simple-statistics';
 import PQueue from 'p-queue';
 import * as cluster from 'cluster';
 
-
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -42,7 +45,7 @@ if (cluster.isMaster) {
   console.debug(process.versions);
 
   // Fork workers.
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 8; i++) {
     const worker = cluster.fork();
     worker.send({instanceId: i});
   }
@@ -53,6 +56,8 @@ if (cluster.isMaster) {
   });
 } else {
   process.on('message', msg => {
+    const instanceId = Number(msg.instanceId);
+
     const baseURL = `http://${process.env.ADDRESS}:8000`;
     const GLOBAL_OFFSET_X = Number(process.env.GLOBAL_OFFSET_X) || 0;
     const GLOBAL_OFFSET_Y = Number(process.env.GLOBAL_OFFSET_Y) || 0;
@@ -124,13 +129,13 @@ if (cluster.isMaster) {
         .mean(input)
         .toFixed(2)} ${ss.quantile(input, 0.8).toFixed(2)} ${ss
         .max(input)
-        .toFixed(2)} ${ss.sum(input).toFixed(2)}`;
+        .toFixed(2)} ${ss.sum(input).toFixed(2)} ${input.length}`;
     };
 
     const writeStats = function () {
-      if (process.env.INSTANCE_ID !== '1') return;
+      if (instanceId !== 1) return;
       console.debug(exploreStats, pqCash.size, new Date().toISOString());
-      console.debug('stat: len min 1st mid mean 3rd max sum');
+      console.debug('stat: len min 1st mid mean 3rd max sum cnt');
       // console.debug(globalStats);
       for (const [status, stats] of Object.entries(globalStats)) {
         for (const [key, values] of Object.entries(stats)) {
@@ -188,7 +193,9 @@ if (cluster.isMaster) {
         licensePromise = update_license();
       }
       let area = initArea;
-      let explore: Explore | null = null;
+      let explore: Explore | null = await post_explore(area);
+      if (!explore) return null;
+      if (!explore.amount) return null;
       while (area.sizeX > 1 || area.sizeY > 1) {
         const areas = splitArea(area);
 
@@ -226,6 +233,13 @@ if (cluster.isMaster) {
       return await post_explore(area);
     };
 
+    const defaultReqErrorHandler = (error: Error) => {
+      if ('code' in error) {
+        if ((error as {code: string}).code !== 'ECONNREFUSED') {
+          console.log(error);
+        }
+      }
+    };
     const post_explore = async function (area: Area): Promise<Explore | null> {
       return new Promise(resolve => {
         const data = JSON.stringify(area);
@@ -251,6 +265,7 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
+          req.on('error', defaultReqErrorHandler);
           res.once('readable', () => {
             timings.firstByteAt = performance.now();
           });
@@ -346,6 +361,7 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
+          req.on('error', defaultReqErrorHandler);
           // res.once('readable', () => {
           //   timings.firstByteAt = performance.now();
           // });
@@ -439,6 +455,7 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
+          req.on('error', defaultReqErrorHandler);
           // res.once('readable', () => {
           //   timings.firstByteAt = performance.now();
           // });
@@ -518,6 +535,7 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
+          req.on('error', defaultReqErrorHandler);
           // res.once('readable', () => {
           //   timings.firstByteAt = performance.now();
           // });
@@ -580,13 +598,11 @@ if (cluster.isMaster) {
       const statsInterval = setInterval(() => writeStats(), PRINT_STATS_TIME);
       statsInterval.unref();
 
-      const instanceId = Number(msg.instanceId);
-
       let minX = 0;
       let minY = 0;
       let maxX = 0;
       let maxY = 0;
-      const xParts = 2;
+      const xParts = 4;
       const yParts = 2;
       const xPartSize = 3500 / xParts;
       const yPartSize = 3500 / yParts;
