@@ -87,6 +87,9 @@ if (cluster.isMaster) {
       refreshLicense: [],
     };
 
+    const areas: Area[] = [];
+    const explores: Explore[] = [];
+
     const exploreStats = {
       tries: 0,
       amount: 0,
@@ -141,16 +144,22 @@ if (cluster.isMaster) {
 
     const writeStats = function () {
       if (instanceId !== 1) return;
-      console.debug(exploreStats, pqCash.size, new Date().toISOString());
+      console.debug(
+        exploreStats,
+        pqCash.size,
+        areas.length,
+        explores.length,
+        new Date().toISOString()
+      );
       console.debug('stat: len min 1st mid mean 3rd max sum cnt');
       // console.debug(globalStats);
-      for (const [status, stats] of Object.entries(globalStats)) {
-        for (const [key, values] of Object.entries(stats)) {
-          console.debug(
-            `${status}-${key}: ${values.length} ${summary(values)}`
-          );
-        }
-      }
+      // for (const [status, stats] of Object.entries(globalStats)) {
+      //   for (const [key, values] of Object.entries(stats)) {
+      //     console.debug(
+      //       `${status}-${key}: ${values.length} ${summary(values)}`
+      //     );
+      //   }
+      // }
       for (const [key, stats] of Object.entries(callStats)) {
         console.debug(`${key}: ${inspect(stats)}`);
       }
@@ -198,10 +207,6 @@ if (cluster.isMaster) {
     const findAreaWithTreasures = async (
       initArea: Area
     ): Promise<Explore | null> => {
-      let licensePromise: Promise<void> | null = null;
-      if (!license || license.digUsed >= license.digAllowed) {
-        licensePromise = update_license();
-      }
       let area = initArea;
       let explore: Explore | null = await post_explore(area);
       if (!explore) return null;
@@ -238,7 +243,6 @@ if (cluster.isMaster) {
         }
       }
 
-      if (licensePromise) await licensePromise;
       if (explore) return explore;
       return await post_explore(area);
     };
@@ -631,8 +635,6 @@ if (cluster.isMaster) {
       // const minY = 0
       // const maxY = 3500
 
-      const areas = [];
-      const explores = [];
       for (
         let globalX = minX + GLOBAL_OFFSET_X;
         globalX + EXPLORE_SIZE < maxX;
