@@ -21,6 +21,8 @@ type GlobalStats = {
 
 type StepStats = {
   licenseAndExplore: number[];
+  explore: number[];
+  exploreAmount: number[];
   digging: number[];
   refreshLicense: number[];
 };
@@ -67,6 +69,7 @@ if (cluster.isMaster) {
     const EXPLORE_SIZE = Number(process.env.EXPLORE_SIZE) || 16;
     const PRINT_STATS_TIME = Number(process.env.PRINT_STATS_TIME) || 60000;
     const PQCASH_CONCURRENCY = Number(process.env.PQCASH_CONCURRENCY) || 1;
+    const STATS_INSTANCE_ID = Number(process.env.STATS_INSTANCE_ID) || 1;
     console.debug(
       'envs: ',
       baseURL,
@@ -75,7 +78,8 @@ if (cluster.isMaster) {
       EXPLORE_CONCURRENCY,
       EXPLORE_SIZE,
       PRINT_STATS_TIME,
-      PQCASH_CONCURRENCY
+      PQCASH_CONCURRENCY,
+      STATS_INSTANCE_ID
     );
 
     const pqCash = new PQueue({concurrency: PQCASH_CONCURRENCY});
@@ -83,6 +87,8 @@ if (cluster.isMaster) {
     const globalStats: Record<string, GlobalStats> = {};
     const stepStats: StepStats = {
       licenseAndExplore: [],
+      explore: [],
+      exploreAmount: [],
       digging: [],
       refreshLicense: [],
     };
@@ -126,6 +132,7 @@ if (cluster.isMaster) {
     }
 
     const callStats = {
+      explore: new CallStats(),
       dig: new CallStats(),
       cash: new CallStats(),
       licenseFree: new CallStats(),
@@ -143,7 +150,7 @@ if (cluster.isMaster) {
     };
 
     const writeStats = function () {
-      if (instanceId !== 1) return;
+      if (instanceId !== STATS_INSTANCE_ID) return;
       console.debug(
         exploreStats,
         pqCash.size,
@@ -249,8 +256,12 @@ if (cluster.isMaster) {
 
     const defaultReqErrorHandler = (error: Error) => {
       if ('code' in error) {
-        if ((error as {code: string}).code !== 'ECONNREFUSED') {
-          console.log(error);
+        if (
+          !['ECONNRESET', 'ECONNREFUSED'].includes(
+            (error as {code: string}).code
+          )
+        ) {
+          console.log('defaultReqErrorHandler', error);
         }
       }
     };
@@ -279,7 +290,6 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
-          req.on('error', defaultReqErrorHandler);
           res.once('readable', () => {
             timings.firstByteAt = performance.now();
           });
@@ -294,6 +304,10 @@ if (cluster.isMaster) {
             } else {
               resolve(null);
             }
+            callStats.explore.setTime(
+              status,
+              performance.now() - timings.startAt
+            );
             const stats = globalStats[status];
             if (stats) {
               stats.dnsLookup.push(timings.dnsLookupAt - timings.startAt);
@@ -320,6 +334,8 @@ if (cluster.isMaster) {
             }
           });
         });
+        req.on('error', defaultReqErrorHandler);
+
         req.on('socket', socket => {
           socket.on('lookup', () => {
             timings.dnsLookupAt = performance.now();
@@ -375,7 +391,6 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
-          req.on('error', defaultReqErrorHandler);
           // res.once('readable', () => {
           //   timings.firstByteAt = performance.now();
           // });
@@ -431,6 +446,7 @@ if (cluster.isMaster) {
         //     timings.tcpConnectionAt = performance.now();
         //   });
         // });
+        req.on('error', defaultReqErrorHandler);
 
         req.write(data);
         req.end();
@@ -469,7 +485,6 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
-          req.on('error', defaultReqErrorHandler);
           // res.once('readable', () => {
           //   timings.firstByteAt = performance.now();
           // });
@@ -518,6 +533,7 @@ if (cluster.isMaster) {
         //     timings.tcpConnectionAt = performance.now();
         //   });
         // });
+        req.on('error', defaultReqErrorHandler);
 
         req.write(data);
         req.end();
@@ -549,10 +565,10 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
-          req.on('error', defaultReqErrorHandler);
           // res.once('readable', () => {
           //   timings.firstByteAt = performance.now();
           // });
+          res.on('error', defaultReqErrorHandler);
           res.on('data', (chunk: Buffer) => {
             chunks.push(chunk);
           });
@@ -602,6 +618,7 @@ if (cluster.isMaster) {
         //     timings.tcpConnectionAt = performance.now();
         //   });
         // });
+        req.on('error', defaultReqErrorHandler);
 
         req.write(data);
         req.end();
@@ -675,6 +692,8 @@ if (cluster.isMaster) {
                 explores.push(explore);
                 exploreStats.amount++;
               }
+              if (explore) stepStats.exploreAmount.push(explore.amount);
+              stepStats.explore.push(performance.now() - start);
             }
             if (licensePromise) await licensePromise;
             stepStats.licenseAndExplore.push(performance.now() - start);
