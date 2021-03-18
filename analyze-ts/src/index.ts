@@ -49,7 +49,7 @@ if (cluster.isMaster) {
   console.debug(process.versions);
 
   // Fork workers.
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 8; i++) {
     const worker = cluster.fork();
     worker.send({instanceId: i});
   }
@@ -160,13 +160,13 @@ if (cluster.isMaster) {
       );
       console.debug('stat: len min 1st mid mean 3rd max sum cnt');
       // console.debug(globalStats);
-      // for (const [status, stats] of Object.entries(globalStats)) {
-      //   for (const [key, values] of Object.entries(stats)) {
-      //     console.debug(
-      //       `${status}-${key}: ${values.length} ${summary(values)}`
-      //     );
-      //   }
-      // }
+      for (const [status, stats] of Object.entries(globalStats)) {
+        for (const [key, values] of Object.entries(stats)) {
+          console.debug(
+            `${status}-${key}: ${values.length} ${summary(values)}`
+          );
+        }
+      }
       for (const [key, stats] of Object.entries(callStats)) {
         console.debug(`${key}: ${inspect(stats)}`);
       }
@@ -290,9 +290,9 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
-          res.once('readable', () => {
-            timings.firstByteAt = performance.now();
-          });
+          // res.once('readable', () => {
+          //   timings.firstByteAt = performance.now();
+          // });
           res.on('data', (chunk: Buffer) => {
             chunks.push(chunk);
           });
@@ -308,30 +308,30 @@ if (cluster.isMaster) {
               status,
               performance.now() - timings.startAt
             );
-            const stats = globalStats[status];
-            if (stats) {
-              stats.dnsLookup.push(timings.dnsLookupAt - timings.startAt);
-              stats.tcpConnection.push(
-                (timings.dnsLookupAt || timings.tcpConnectionAt) -
-                  timings.startAt
-              );
-              stats.firstByte.push(
-                timings.firstByteAt - timings.tcpConnectionAt
-              );
-              stats.contentTransfer.push(timings.endAt - timings.firstByteAt);
-              stats.total.push(timings.endAt - timings.startAt);
-            } else {
-              globalStats[status] = {
-                dnsLookup: [timings.dnsLookupAt - timings.startAt],
-                tcpConnection: [
-                  (timings.dnsLookupAt || timings.tcpConnectionAt) -
-                    timings.startAt,
-                ],
-                firstByte: [timings.firstByteAt - timings.tcpConnectionAt],
-                contentTransfer: [timings.endAt - timings.firstByteAt],
-                total: [timings.endAt - timings.startAt],
-              };
-            }
+            // const stats = globalStats[status];
+            // if (stats) {
+            //   stats.dnsLookup.push(timings.dnsLookupAt - timings.startAt);
+            //   stats.tcpConnection.push(
+            //     (timings.dnsLookupAt || timings.tcpConnectionAt) -
+            //       timings.startAt
+            //   );
+            //   stats.firstByte.push(
+            //     timings.firstByteAt - timings.tcpConnectionAt
+            //   );
+            //   stats.contentTransfer.push(timings.endAt - timings.firstByteAt);
+            //   stats.total.push(timings.endAt - timings.startAt);
+            // } else {
+            //   globalStats[status] = {
+            //     dnsLookup: [timings.dnsLookupAt - timings.startAt],
+            //     tcpConnection: [
+            //       (timings.dnsLookupAt || timings.tcpConnectionAt) -
+            //         timings.startAt,
+            //     ],
+            //     firstByte: [timings.firstByteAt - timings.tcpConnectionAt],
+            //     contentTransfer: [timings.endAt - timings.firstByteAt],
+            //     total: [timings.endAt - timings.startAt],
+            //   };
+            // }
           });
         });
         req.on('error', defaultReqErrorHandler);
@@ -565,15 +565,15 @@ if (cluster.isMaster) {
 
         const chunks: Buffer[] = [];
         const req = request(options, res => {
-          // res.once('readable', () => {
-          //   timings.firstByteAt = performance.now();
-          // });
+          res.once('readable', () => {
+            timings.firstByteAt = performance.now();
+          });
           res.on('error', defaultReqErrorHandler);
           res.on('data', (chunk: Buffer) => {
             chunks.push(chunk);
           });
           res.on('end', () => {
-            // timings.endAt = performance.now();
+            timings.endAt = performance.now();
             const status = res.statusCode || -1;
             if (status === 200) {
               for (const coin of JSON.parse(
@@ -587,39 +587,42 @@ if (cluster.isMaster) {
             // }
             callStats.cash.setTime(status, performance.now() - timings.startAt);
             resolve();
-            // const stats = globalStats[status];
-            // if (stats) {
-            //   stats.dnsLookup.push(timings.dnsLookupAt - timings.startAt);
-            //   stats.tcpConnection.push(
-            //     (timings.dnsLookupAt || timings.tcpConnectionAt) - timings.startAt
-            //   );
-            //   stats.firstByte.push(timings.firstByteAt - timings.tcpConnectionAt);
-            //   stats.contentTransfer.push(timings.endAt - timings.firstByteAt);
-            //   stats.total.push(timings.endAt - timings.startAt);
-            // } else {
-            //   globalStats[status] = {
-            //     dnsLookup: [timings.dnsLookupAt - timings.startAt],
-            //     tcpConnection: [
-            //       (timings.dnsLookupAt || timings.tcpConnectionAt) -
-            //         timings.startAt,
-            //     ],
-            //     firstByte: [timings.firstByteAt - timings.tcpConnectionAt],
-            //     contentTransfer: [timings.endAt - timings.firstByteAt],
-            //     total: [timings.endAt - timings.startAt],
-            //   };
-            // }
+            const stats = globalStats[status];
+            if (stats) {
+              stats.dnsLookup.push(timings.dnsLookupAt - timings.startAt);
+              stats.tcpConnection.push(
+                (timings.dnsLookupAt || timings.tcpConnectionAt) -
+                  timings.startAt
+              );
+              stats.firstByte.push(
+                timings.firstByteAt - timings.tcpConnectionAt
+              );
+              stats.contentTransfer.push(timings.endAt - timings.firstByteAt);
+              stats.total.push(timings.endAt - timings.startAt);
+            } else {
+              globalStats[status] = {
+                dnsLookup: [timings.dnsLookupAt - timings.startAt],
+                tcpConnection: [
+                  (timings.dnsLookupAt || timings.tcpConnectionAt) -
+                    timings.startAt,
+                ],
+                firstByte: [timings.firstByteAt - timings.tcpConnectionAt],
+                contentTransfer: [timings.endAt - timings.firstByteAt],
+                total: [timings.endAt - timings.startAt],
+              };
+            }
           });
         });
-        // req.on('socket', socket => {
-        //   socket.on('lookup', () => {
-        //     timings.dnsLookupAt = performance.now();
-        //   });
-        //   socket.on('connect', () => {
-        //     timings.tcpConnectionAt = performance.now();
-        //   });
-        // });
         req.on('error', defaultReqErrorHandler);
-
+        req.on('socket', socket => {
+          socket.on('lookup', () => {
+            timings.dnsLookupAt = performance.now();
+          });
+          socket.on('connect', () => {
+            timings.tcpConnectionAt = performance.now();
+          });
+        });
+        
         req.write(data);
         req.end();
       });
@@ -634,7 +637,7 @@ if (cluster.isMaster) {
       let maxX = 0;
       let maxY = 0;
       const xParts = 2;
-      const yParts = 2;
+      const yParts = 4;
       const xPartSize = 3500 / xParts;
       const yPartSize = 3500 / yParts;
 
