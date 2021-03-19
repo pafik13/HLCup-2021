@@ -49,7 +49,7 @@ if (cluster.isMaster) {
   console.debug(process.versions);
 
   // Fork workers.
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 10; i++) {
     const worker = cluster.fork();
     worker.send({instanceId: i});
   }
@@ -154,6 +154,8 @@ if (cluster.isMaster) {
       console.debug(
         exploreStats,
         pqCash.size,
+        pqCash.isPaused,
+        wallet.length,
         areas.length,
         explores.length,
         new Date().toISOString()
@@ -356,16 +358,18 @@ if (cluster.isMaster) {
       return new Promise(resolve => {
         let coins: number[] = [];
         if (wallet.length) {
-          if (wallet.length > 21) {
-            coins = wallet.splice(0, 21);
-          } else if (wallet.length > 11) {
-            coins = wallet.splice(0, 11);
-          } else if (wallet.length > 6) {
-            coins = wallet.splice(0, 6);
-          } else {
-            const coin = wallet.pop();
-            if (coin) coins = [coin];
-          }
+          // if (wallet.length > 21) {
+          //   coins = wallet.splice(0, 21);
+          // } else
+          // if (wallet.length > 11) {
+          //   coins = wallet.splice(0, 11);
+          // } else
+          // if (wallet.length > 6) {
+          //   coins = wallet.splice(0, 6);
+          // } else {
+          const coin = wallet.pop();
+          if (coin) coins = [coin];
+          // }
         }
 
         const data = JSON.stringify(coins);
@@ -540,7 +544,10 @@ if (cluster.isMaster) {
       });
     };
 
-    const post_cash = async function (treasure: string): Promise<void> {
+    const post_cash = async function (
+      dig: Dig,
+      treasure: string
+    ): Promise<void> {
       return new Promise(resolve => {
         const data = JSON.stringify(treasure);
 
@@ -576,15 +583,22 @@ if (cluster.isMaster) {
             timings.endAt = performance.now();
             const status = res.statusCode || -1;
             if (status === 200) {
-              for (const coin of JSON.parse(
-                Buffer.concat(chunks).toString()
-              ) as number[]) {
-                wallet.push(coin);
+              if (wallet.length < 2000) {
+                for (const coin of JSON.parse(
+                  Buffer.concat(chunks).toString()
+                ) as number[]) {
+                  wallet.push(coin);
+                }
               }
+            } else {
+              // console.debug(Buffer.concat(chunks).toString())
+              pqCash.add(
+                async () => {
+                  await post_cash(dig, treasure);
+                },
+                {priority: dig.depth}
+              );
             }
-            // else {
-            //   console.debug(Buffer.concat(chunks).toString())
-            // }
             callStats.cash.setTime(status, performance.now() - timings.startAt);
             resolve();
             const stats = globalStats[status];
@@ -622,7 +636,7 @@ if (cluster.isMaster) {
             timings.tcpConnectionAt = performance.now();
           });
         });
-        
+
         req.write(data);
         req.end();
       });
@@ -637,7 +651,7 @@ if (cluster.isMaster) {
       let maxX = 0;
       let maxY = 0;
       const xParts = 2;
-      const yParts = 4;
+      const yParts = 5;
       const xPartSize = 3500 / xParts;
       const yPartSize = 3500 / yParts;
 
@@ -654,6 +668,7 @@ if (cluster.isMaster) {
       // const maxX = 3500
       // const minY = 0
       // const maxY = 3500
+      // pqCash.pause();
 
       for (
         let globalX = minX + GLOBAL_OFFSET_X;
@@ -687,15 +702,20 @@ if (cluster.isMaster) {
             let licensePromise: Promise<void> | null = null;
             if (!license || license.digUsed >= license.digAllowed)
               licensePromise = update_license();
-            const area = areas.pop();
-            if (area) {
-              const explore = await findAreaWithTreasures(area);
+            const area = areas.splice(0, EXPLORE_CONCURRENCY);
+            if (area.length) {
+              const explore = await Promise.all(
+                area.map(findAreaWithTreasures)
+              );
               exploreStats.tries++;
-              if (explore && explore.amount) {
-                explores.push(explore);
-                exploreStats.amount++;
+              for (const e of explore) {
+                if (e && e.amount) {
+                  explores.push(e);
+                  exploreStats.amount++;
+                }
+                if (e) stepStats.exploreAmount.push(e.amount);
               }
-              if (explore) stepStats.exploreAmount.push(explore.amount);
+
               stepStats.explore.push(performance.now() - start);
             }
             if (licensePromise) await licensePromise;
@@ -725,15 +745,20 @@ if (cluster.isMaster) {
                 for (const treasure of treasures) {
                   pqCash.add(
                     async () => {
-                      await post_cash(treasure);
+                      await post_cash(dig, treasure);
                     },
-                    {priority: 1}
+                    {priority: dig.depth}
                   );
                 }
               }
               license.digUsed++;
               depth++;
             }
+            // if (wallet.length) {
+            //   pqCash.pause();
+            // } else if (pqCash.isPaused) {
+            //   pqCash.start();
+            // }
             stepStats.digging.push(performance.now() - start);
           }
         }
