@@ -730,7 +730,24 @@ if (cluster.isMaster) {
             while (left && depth < 10) {
               while (!license || license.digUsed >= license.digAllowed) {
                 const s = performance.now();
-                await update_license();
+                const licensePromise: Promise<void> = update_license();
+                const area = areas.splice(0, EXPLORE_CONCURRENCY);
+                if (area.length) {
+                  const explore = await Promise.all(
+                    area.map(findAreaWithTreasures)
+                  );
+                  exploreStats.tries++;
+                  for (const e of explore) {
+                    if (e && e.amount) {
+                      explores.push(e);
+                      exploreStats.amount++;
+                    }
+                    if (e) stepStats.exploreAmount.push(e.amount);
+                  }
+
+                  stepStats.explore.push(performance.now() - start);
+                }
+                await licensePromise;
                 stepStats.refreshLicense.push(performance.now() - s);
               }
               const dig: Dig = {
