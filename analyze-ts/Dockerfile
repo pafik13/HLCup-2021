@@ -1,4 +1,4 @@
-FROM node:14-alpine as build-ts
+FROM node:15-alpine as build-ts
 
 WORKDIR /usr/src/app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN yarn
 
-FROM node:14-alpine
+FROM node:15-alpine
 
 WORKDIR /usr/app
 
@@ -30,6 +30,8 @@ ARG STATS_INSTANCE_ID=1
 ENV STATS_INSTANCE_ID=$STATS_INSTANCE_ID
 ARG PQCASH_CONCURRENCY=1
 ENV PQCASH_CONCURRENCY=$PQCASH_CONCURRENCY
+ARG PRINT_DIGS_COUNT=100
+ENV PRINT_DIGS_COUNT=$PRINT_DIGS_COUNT
 
 # Show current folder structure in logs
 RUN ls -al -R

@@ -39,6 +39,7 @@ import {inspect} from 'util';
 import * as ss from 'simple-statistics';
 import PQueue from 'p-queue';
 import * as cluster from 'cluster';
+import * as msgpack from "msgpack5";
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -49,7 +50,7 @@ if (cluster.isMaster) {
   console.debug(process.versions);
 
   // Fork workers.
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 4; i++) {
     const worker = cluster.fork();
     worker.send({instanceId: i});
   }
@@ -70,6 +71,7 @@ if (cluster.isMaster) {
     const PRINT_STATS_TIME = Number(process.env.PRINT_STATS_TIME) || 60000;
     const PQCASH_CONCURRENCY = Number(process.env.PQCASH_CONCURRENCY) || 1;
     const STATS_INSTANCE_ID = Number(process.env.STATS_INSTANCE_ID) || 1;
+    const PRINT_DIGS_COUNT = Number(process.env.PRINT_DIGS_COUNT) || 100;
     console.debug(
       'envs: ',
       baseURL,
@@ -79,10 +81,12 @@ if (cluster.isMaster) {
       EXPLORE_SIZE,
       PRINT_STATS_TIME,
       PQCASH_CONCURRENCY,
-      STATS_INSTANCE_ID
+      STATS_INSTANCE_ID,
+      PRINT_DIGS_COUNT
     );
 
     const pqCash = new PQueue({concurrency: PQCASH_CONCURRENCY});
+    const packer = msgpack()
 
     const globalStats: Record<string, GlobalStats> = {};
     const stepStats: StepStats = {
@@ -150,7 +154,7 @@ if (cluster.isMaster) {
     };
 
     const writeStats = function () {
-      if (instanceId !== STATS_INSTANCE_ID) return;
+      if (STATS_INSTANCE_ID !== -1 && instanceId !== STATS_INSTANCE_ID) return;
       console.debug(
         exploreStats,
         pqCash.size,
@@ -160,21 +164,20 @@ if (cluster.isMaster) {
         explores.length,
         new Date().toISOString()
       );
-      console.debug('stat: len min 1st mid mean 3rd max sum cnt');
-      // console.debug(globalStats);
-      for (const [status, stats] of Object.entries(globalStats)) {
-        for (const [key, values] of Object.entries(stats)) {
-          console.debug(
-            `${status}-${key}: ${values.length} ${summary(values)}`
-          );
-        }
-      }
-      for (const [key, stats] of Object.entries(callStats)) {
-        console.debug(`${key}: ${inspect(stats)}`);
-      }
-      for (const [key, values] of Object.entries(stepStats)) {
-        if (values.length) console.debug(`${key}: ${summary(values)}`);
-      }
+      // console.debug('stat: len min 1st mid mean 3rd max sum cnt');
+      // for (const [status, stats] of Object.entries(globalStats)) {
+      //   for (const [key, values] of Object.entries(stats)) {
+      //     console.debug(
+      //       `${status}-${key}: ${values.length} ${summary(values)}`
+      //     );
+      //   }
+      // }
+      // for (const [key, stats] of Object.entries(callStats)) {
+      //   console.debug(`${key}: ${inspect(stats)}`);
+      // }
+      // for (const [key, values] of Object.entries(stepStats)) {
+      //   if (values.length) console.debug(`${key}: ${summary(values)}`);
+      // }
     };
 
     const splitArea = (area: Area): Area[] => {
@@ -651,7 +654,7 @@ if (cluster.isMaster) {
       let maxX = 0;
       let maxY = 0;
       const xParts = 2;
-      const yParts = 5;
+      const yParts = 2;
       const xPartSize = 3500 / xParts;
       const yPartSize = 3500 / yParts;
 
@@ -668,7 +671,9 @@ if (cluster.isMaster) {
       // const maxX = 3500
       // const minY = 0
       // const maxY = 3500
-      // pqCash.pause();
+      pqCash.pause();
+
+      const successDigs: number[] = []
 
       for (
         let globalX = minX + GLOBAL_OFFSET_X;
@@ -759,6 +764,7 @@ if (cluster.isMaster) {
               const treasures = await post_dig(dig);
               if (treasures) {
                 left--;
+                successDigs.push(dig.posX, dig.posY, dig.depth)
                 for (const treasure of treasures) {
                   pqCash.add(
                     async () => {
@@ -771,12 +777,16 @@ if (cluster.isMaster) {
               license.digUsed++;
               depth++;
             }
-            // if (wallet.length) {
-            //   pqCash.pause();
-            // } else if (pqCash.isPaused) {
-            //   pqCash.start();
-            // }
+            if (wallet.length) {
+              pqCash.pause();
+            } else if (pqCash.isPaused) {
+              pqCash.start();
+            }
             stepStats.digging.push(performance.now() - start);
+            if (successDigs.length === PRINT_DIGS_COUNT * 3) {
+              console.debug(packer.encode(successDigs).toString('base64'))
+              successDigs.length = 0
+            }
           }
         }
       } catch (error: unknown) {
